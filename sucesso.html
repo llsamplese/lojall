@@ -1,0 +1,60 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pagamento aprovado | LL Samples</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; min-height: 100vh; display: grid; place-items: center; background: linear-gradient(135deg, #ffd700, #ffef9c); color: #212121; }
+    .card { width: min(720px, calc(100vw - 32px)); background: #fff; border-radius: 20px; padding: 32px; box-shadow: 0 20px 60px rgba(0,0,0,.18); }
+    h1 { margin: 0 0 12px; }
+    p { line-height: 1.5; }
+    .muted { color: #616161; }
+    .items { margin: 20px 0; padding: 0; list-style: none; }
+    .items li { display: flex; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid #eee; }
+    .actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 24px; }
+    a, button { border: none; border-radius: 10px; padding: 12px 18px; text-decoration: none; font-weight: 700; cursor: pointer; }
+    a { background: #212121; color: #fff; }
+    button { background: #ffc107; color: #212121; }
+    .totals { background: #f7f7f7; border-radius: 14px; padding: 16px; margin-top: 18px; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Pagamento aprovado</h1>
+    <p>O Mercado Pago confirmou o pagamento. Abaixo está o último pedido iniciado neste navegador.</p>
+    <p class="muted">Se você quiser liberar links de download automaticamente com segurança, o próximo passo é integrar webhook + backend de entrega. Nesta versão, não deixei links sensíveis no frontend.</p>
+    <div class="totals" id="summary">Carregando resumo do pedido...</div>
+    <ul class="items" id="items"></ul>
+    <div class="actions">
+      <a href="/index.html">Voltar ao catálogo</a>
+      <button type="button" id="copySummary">Copiar resumo</button>
+    </div>
+  </div>
+  <script>
+    const raw = localStorage.getItem('llsamples:lastCheckout');
+    const summary = document.getElementById('summary');
+    const items = document.getElementById('items');
+    const button = document.getElementById('copySummary');
+
+    function money(value) {
+      return Number(value || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    }
+
+    if (raw) {
+      const data = JSON.parse(raw);
+      const total = data.mode === 'card' ? data.totals.card : data.totals.pix;
+      summary.innerHTML = `<strong>Pagamento:</strong> ${data.mode === 'card' ? 'Cartão' : 'PIX'}<br><strong>Total:</strong> ${money(total)}<br><strong>Data:</strong> ${new Date(data.createdAt).toLocaleString('pt-BR')}`;
+      items.innerHTML = data.items.map(item => `<li><span>${item.nome}</span><strong>${money(item.valor)}</strong></li>`).join('');
+      button.onclick = async () => {
+        const text = [`LL Samples`, `Pagamento aprovado`, `Modo: ${data.mode === 'card' ? 'Cartão' : 'PIX'}`, `Total: ${money(total)}`, '', ...data.items.map(item => `- ${item.nome} | ${money(item.valor)}`)].join('\n');
+        await navigator.clipboard.writeText(text);
+        button.textContent = 'Resumo copiado';
+      };
+    } else {
+      summary.textContent = 'Nenhum resumo local encontrado neste navegador.';
+      button.disabled = true;
+    }
+  </script>
+</body>
+</html>
