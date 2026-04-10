@@ -4,13 +4,123 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pagamento pendente | LL Samples</title>
-  <style>body{font-family:Arial,sans-serif;margin:0;min-height:100vh;display:grid;place-items:center;background:#fff7d1;color:#212121}.card{width:min(680px,calc(100vw - 32px));background:#fff;border-radius:20px;padding:32px;box-shadow:0 20px 60px rgba(0,0,0,.12)}a{display:inline-block;margin-top:18px;background:#212121;color:#fff;text-decoration:none;padding:12px 18px;border-radius:10px;font-weight:700}</style>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, #fff7d1, #ffd95f);
+      color: #212121;
+      padding: 24px;
+    }
+    .card {
+      width: min(720px, calc(100vw - 32px));
+      background: #fff;
+      border-radius: 24px;
+      padding: 32px;
+      box-shadow: 0 20px 60px rgba(0,0,0,.12);
+    }
+    h1 { margin: 0 0 12px; }
+    p { line-height: 1.55; }
+    .status {
+      margin-top: 18px;
+      padding: 16px 18px;
+      border-radius: 16px;
+      background: #fff4d0;
+      border: 1px solid rgba(255, 179, 0, .25);
+      font-weight: 700;
+    }
+    .meta {
+      margin-top: 18px;
+      display: grid;
+      gap: 10px;
+    }
+    .meta-item {
+      padding: 12px 14px;
+      background: #f7f7f7;
+      border-radius: 14px;
+      font-size: 14px;
+    }
+    .actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 24px; }
+    a, button {
+      border: none;
+      border-radius: 12px;
+      padding: 12px 18px;
+      text-decoration: none;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    a { background: #212121; color: #fff; }
+    button { background: #ffc107; color: #212121; }
+  </style>
 </head>
 <body>
   <div class="card">
     <h1>Pagamento pendente</h1>
-    <p>O pedido foi criado, mas o Mercado Pago ainda não confirmou a aprovação. Assim que o pagamento for concluído, você pode voltar ao catálogo ou acompanhar pelo painel da conta.</p>
-    <a href="/index.html">Voltar ao catálogo</a>
+    <p>Estamos acompanhando o status do pagamento automaticamente. Assim que o Mercado Pago confirmar a aprovação, você será redirecionado para a página de entrega.</p>
+    <div id="status" class="status">Aguardando confirmação do pagamento...</div>
+    <div id="meta" class="meta"></div>
+    <div class="actions">
+      <a href="/index.html">Voltar ao catálogo</a>
+      <button id="retryButton" type="button">Verificar agora</button>
+    </div>
   </div>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const paymentId = params.get('payment_id') || params.get('collection_id') || '';
+    const statusEl = document.getElementById('status');
+    const metaEl = document.getElementById('meta');
+    const retryButton = document.getElementById('retryButton');
+    let timer = null;
+
+    function money(value) {
+      return Number(value || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    }
+
+    function renderMeta(data) {
+      metaEl.innerHTML = [
+        ['Payment ID', data.payment_id || '-'],
+        ['Status', data.status || '-'],
+        ['Detalhe', data.status_detail || '-'],
+        ['Valor', data.transaction_amount ? money(data.transaction_amount) : '-']
+      ].map(([label, value]) => `<div class="meta-item"><strong>${label}:</strong> ${value}</div>`).join('');
+    }
+
+    async function checkStatus() {
+      if (!paymentId) {
+        statusEl.textContent = 'Não foi possível identificar o pagamento nesta URL.';
+        retryButton.disabled = true;
+        return;
+      }
+
+      try {
+        const response = await fetch(`/api/payment-status?payment_id=${encodeURIComponent(paymentId)}`);
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || 'Não foi possível consultar o status do pagamento.');
+        }
+
+        renderMeta(data);
+
+        if (data.status === 'approved') {
+          statusEl.textContent = 'Pagamento aprovado. Redirecionando para a entrega...';
+          window.location.href = `/sucesso.html?payment_id=${encodeURIComponent(paymentId)}`;
+          return;
+        }
+
+        statusEl.textContent = `Pagamento ainda ${data.status}. Vamos verificar novamente em alguns segundos.`;
+      } catch (error) {
+        statusEl.textContent = error.message || 'Erro ao verificar pagamento.';
+      }
+    }
+
+    retryButton.addEventListener('click', checkStatus);
+    checkStatus();
+    timer = setInterval(checkStatus, 7000);
+    window.addEventListener('beforeunload', () => clearInterval(timer));
+  </script>
 </body>
 </html>
