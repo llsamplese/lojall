@@ -153,36 +153,42 @@
     }
 
     .cart-summary {
-        background: white; /* Fundo branco para o carrinho */
-        color: #212121; /* Texto preto padrão para o carrinho */
-        padding: 20px 25px;
-        border-radius: 15px;
-        margin-bottom: 25px;
+        background:
+            radial-gradient(circle at top left, rgba(255, 193, 7, 0.35), transparent 32%),
+            linear-gradient(135deg, #171717 0%, #232323 62%, #2d2412 100%);
+        color: #f6f0da;
+        padding: 22px 24px;
+        border-radius: 22px;
+        margin-bottom: 28px;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.2); /* Sombra mais suave para o branco */
+        gap: 18px;
+        box-shadow: 0 18px 46px rgba(0,0,0,0.28);
+        border: 1px solid rgba(255, 215, 0, 0.22);
         position: sticky;
         top: 20px;
         z-index: 100;
+        overflow: hidden;
     }
 
     .cart-info {
         font-size: 18px;
-        font-weight: 600;
-        color: #212121; /* Texto da quantidade de samples em preto */
+        font-weight: 700;
+        color: #fff8dc;
     }
 
     .cart-total {
-        font-size: 24px;
-        font-weight: 800;
-        color: #212121; /* Amarelo principal para o total */
+        font-size: 28px;
+        font-weight: 900;
+        color: #ffd54f;
+        letter-spacing: -0.03em;
     }
 
     .cart-total-note {
         margin-top: 6px;
         font-size: 13px;
-        color: #616161;
+        color: #d6c48a;
         font-weight: 600;
     }
 
@@ -195,46 +201,56 @@
 
     /* Estilos para os botões do carrinho */
     .btn-finalizar, .btn-copy-names, .btn-select-all, .btn-clear-all, .btn-pay-pix, .btn-pay-card {
-        padding: 12px 30px;
-        background: #FFC107; /* Amarelo principal para o fundo */
-        color: #212121; /* Texto preto */
-        border: none;
-        border-radius: 10px;
+        padding: 13px 20px;
+        background: #FFC107;
+        color: #212121;
+        border: 1px solid transparent;
+        border-radius: 14px;
         font-weight: 700;
         cursor: pointer;
-        transition: all 0.3s;
-        font-size: 16px;
+        transition: all 0.25s ease;
+        font-size: 15px;
+        letter-spacing: 0.01em;
     }
 
     .btn-finalizar:hover, .btn-copy-names:hover, .btn-select-all:hover, .btn-clear-all:hover, .btn-pay-pix:hover, .btn-pay-card:hover {
         transform: translateY(-3px);
-        box-shadow: 0 8px 20px rgba(0,0,0,0.3); /* Sombra mais suave */
-        filter: brightness(1.05); /* Leve brilho no hover */
+        box-shadow: 0 14px 26px rgba(0,0,0,0.24);
+        filter: brightness(1.05);
     }
 
     .btn-copy-names {
-        background: #FFD700; /* Amarelo mais claro para copiar nomes */
-        color: #212121;
+        background: rgba(255, 255, 255, 0.08);
+        color: #fff4c2;
+        border-color: rgba(255, 255, 255, 0.08);
     }
 
     .btn-select-all {
-        background: #FFC107; /* Amarelo principal */
-        color: #212121; /* Texto preto */
+        background: linear-gradient(135deg, #ffd54f 0%, #ffb300 100%);
+        color: #2b2002;
     }
 
     .btn-clear-all {
-        background: #424242; /* Cinza escuro para limpar tudo */
-        color: white; /* Texto branco */
+        background: rgba(255, 255, 255, 0.06);
+        color: #f5f5f5;
+        border-color: rgba(255, 255, 255, 0.12);
+    }
+
+    .btn-finalizar {
+        background: linear-gradient(135deg, #fff3c4 0%, #ffd54f 100%);
+        color: #271d00;
     }
 
     .btn-pay-pix {
-        background: linear-gradient(135deg, #00a650 0%, #79ffb0 100%);
+        background: linear-gradient(135deg, #00a650 0%, #6bffae 100%);
         color: #05210f;
+        box-shadow: inset 0 -1px 0 rgba(255,255,255,0.18);
     }
 
     .btn-pay-card {
-        background: linear-gradient(135deg, #3483fa 0%, #95c7ff 100%);
+        background: linear-gradient(135deg, #3483fa 0%, #8bc5ff 100%);
         color: #041a33;
+        box-shadow: inset 0 -1px 0 rgba(255,255,255,0.22);
     }
 
     .checkout-status {
@@ -242,9 +258,9 @@
         margin-top: 12px;
         padding: 12px 14px;
         border-radius: 12px;
-        border: 1px solid rgba(0,0,0,0.08);
-        background: #f5f5f5;
-        color: #424242;
+        border: 1px solid rgba(255,255,255,0.08);
+        background: rgba(255,255,255,0.05);
+        color: #efe2b5;
         font-size: 13px;
         line-height: 1.45;
     }
@@ -274,22 +290,23 @@
     }
 
     .sample-card {
-        background: #212121; /* Fundo preto para os cards */
-        border-radius: 15px;
+        background: linear-gradient(180deg, #222222 0%, #171717 100%);
+        border-radius: 20px;
         overflow: hidden;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-        transition: all 0.3s;
+        box-shadow: 0 14px 36px rgba(0,0,0,0.26);
+        transition: all 0.28s ease;
         position: relative;
+        border: 1px solid rgba(255,255,255,0.05);
     }
 
     .sample-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 15px 40px rgba(0,0,0,0.5);
+        transform: translateY(-7px);
+        box-shadow: 0 22px 46px rgba(0,0,0,0.34);
     }
 
     .sample-card.selected {
-        border: 3px solid #FFC107; /* Borda amarela para selecionado */
-        box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.3); /* Sombra amarela */
+        border: 1px solid rgba(255, 193, 7, 0.85);
+        box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.18), 0 24px 48px rgba(0,0,0,0.34);
     }
 
     .video-thumbnail {
@@ -327,6 +344,37 @@
         padding: 20px;
     }
 
+    .sample-badges {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 14px;
+    }
+
+    .sample-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 10px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+    }
+
+    .sample-badge.test {
+        background: rgba(52, 131, 250, 0.16);
+        color: #9fd0ff;
+        border: 1px solid rgba(52, 131, 250, 0.34);
+    }
+
+    .sample-badge.instant {
+        background: rgba(255, 193, 7, 0.16);
+        color: #ffe599;
+        border: 1px solid rgba(255, 193, 7, 0.34);
+    }
+
     .sample-name {
         font-size: 18px;
         font-weight: 700;
@@ -348,23 +396,24 @@
 
     .btn-select {
         flex: 1;
-        padding: 12px;
-        border: none;
-        border-radius: 8px;
-        font-weight: 600;
+        padding: 13px 14px;
+        border: 1px solid transparent;
+        border-radius: 14px;
+        font-weight: 700;
         cursor: pointer;
-        transition: all 0.3s;
+        transition: all 0.22s ease;
         font-size: 15px;
     }
 
     .btn-select.add {
-        background: #FFC107; /* Amarelo principal para adicionar */
-        color: #212121; /* Texto preto */
+        background: linear-gradient(135deg, #ffd54f 0%, #ffb300 100%);
+        color: #2b2002;
     }
 
     .btn-select.remove {
-        background: #424242; /* Cinza escuro para remover */
-        color: white; /* Texto branco */
+        background: rgba(255,255,255,0.08);
+        color: white;
+        border-color: rgba(255,255,255,0.1);
     }
 
     .btn-select:hover {
@@ -458,7 +507,7 @@
         justify-content: center;
     }
 
-    .btn-finalizar, .btn-copy-names, .btn-select-all, .btn-clear-all {
+    .btn-finalizar, .btn-copy-names, .btn-select-all, .btn-clear-all, .btn-pay-pix, .btn-pay-card {
         padding: 8px 10px;     /* botões mais baixos */
         font-size: 13px;       /* fonte menor */
         border-radius: 8px;
@@ -1165,6 +1214,7 @@
     // Array samplesData atualizado com a lista completa fornecida anteriormente
     // e agora com os links de vídeo preenchidos
     const samplesData = [
+        {nome: "LL Teste Mercado Pago", valor: 1, video: null},
         {nome: "LL Drums Filho do Piseiro", valor: 70, video: "https://youtu.be/fQa6_yS6Zi8?si=WOVFCiuFOR0dRhh_"},
         {nome: "LL Acordeon Forró v2", valor: 70, video: "https://www.youtube.com/watch?v=9R_xmNK0M4c"},
         {nome: "LL Bass Forró", valor: 70, video: "https://www.youtube.com/watch?v=Am54KWkecBM"},
@@ -1351,6 +1401,17 @@
         return `https://img.youtube.com/vi/${videoId}/${quality}.jpg`;
     }
 
+    function getSampleBadges(sample) {
+        const badges = [];
+        if (sample.nome === 'LL Teste Mercado Pago') {
+            badges.push({ label: 'Teste real', className: 'test' });
+        }
+        if (sample.valor <= 1) {
+            badges.push({ label: 'R$ 1,00', className: 'instant' });
+        }
+        return badges;
+    }
+
     function openYoutubeVideo(url) {
         if (url) {
             window.open(url, '_blank');
@@ -1392,6 +1453,9 @@
         card.className = `sample-card ${isSelected ? 'selected' : ''}`;
         card.dataset.index = globalIndex; // Adiciona o índice como um atributo de dado
         const thumbnailUrl = await getValidThumbnailUrl(sample.video);
+        const badgesHtml = getSampleBadges(sample)
+            .map(badge => `<span class="sample-badge ${badge.className}">${badge.label}</span>`)
+            .join('');
         const thumbnailContent = `
             <img src="${thumbnailUrl}" alt="${sample.nome}" loading="lazy">
             <span class="play-icon">▶️</span>
@@ -1401,6 +1465,7 @@
                 ${thumbnailContent}
             </div>
             <div class="card-content">
+                ${badgesHtml ? `<div class="sample-badges">${badgesHtml}</div>` : ''}
                 <div class="sample-name">${sample.nome}</div>
                 <div class="sample-price">R$ ${sample.valor.toFixed(2)}</div>
                 <div class="card-actions">
