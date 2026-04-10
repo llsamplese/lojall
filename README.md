@@ -1,35 +1,38 @@
 ﻿# LL Samples + Mercado Pago na Vercel
 
-Projeto preparado para rodar como catálogo estático + função serverless na Vercel.
+Projeto preparado para rodar como catálogo estático + funções serverless na Vercel.
 
 ## Estrutura
 
 - `index.html`: catálogo principal com seleção de samples e checkout Mercado Pago.
 - `api/create-preference.js`: cria a preferência no Mercado Pago sem expor o token no navegador.
+- `api/webhook.js`: recebe notificações de pagamento e consulta o status real na API do Mercado Pago.
 - `sucesso.html`, `pendente.html`, `falha.html`: páginas de retorno do checkout.
 - `.env.example`: variáveis que precisam ser cadastradas na Vercel.
-- `vercel.json`: configuração da função serverless.
 
-## Como publicar
+## Variáveis na Vercel
 
-1. Suba esta pasta para um repositório no GitHub.
-2. Importe o repositório na Vercel.
-3. Em `Settings > Environment Variables`, cadastre:
-   - `MP_ACCESS_TOKEN`
-   - `MP_SUCCESS_URL`
-   - `MP_PENDING_URL`
-   - `MP_FAILURE_URL`
-   - `MP_NOTIFICATION_URL` (opcional)
-4. Faça o deploy.
+Cadastre em `Settings > Environment Variables`:
 
-## Como o checkout funciona
+- `MP_ACCESS_TOKEN`
+- `MP_SUCCESS_URL`
+- `MP_PENDING_URL`
+- `MP_FAILURE_URL`
+- `MP_NOTIFICATION_URL`
+- `MP_WEBHOOK_SECRET` (opcional, mas recomendado)
 
-- `Pagar com PIX`: usa a soma dos items selecionados.
-- `Pagar com Cartão`: usa a soma com acréscimo de `5,24%`.
-- O backend cria uma preferência com o total final e guarda os items originais em `metadata`.
-- O navegador salva um resumo local do último checkout para exibir na página `sucesso.html`.
+## Webhook
 
-## Limite importante desta versão
+Use como URL de notificação:
 
-- Os links de download não foram embutidos no frontend, porque isso deixaria os arquivos expostos no código-fonte.
-- Se você quiser liberar downloads automaticamente só após pagamento aprovado, o próximo passo é integrar webhook + backend de entrega.
+- `https://seu-dominio.vercel.app/api/webhook`
+
+Quando a notificação for do tipo `payment`, o backend:
+
+1. valida a assinatura se `MP_WEBHOOK_SECRET` estiver configurado;
+2. consulta `GET /v1/payments/{id}` no Mercado Pago;
+3. registra no log da Vercel um JSON normalizado com status, valor, payer e metadata.
+
+## Próximo passo para entrega automática
+
+O webhook já confirma o status real do pagamento. Para liberar links automaticamente, o próximo passo é conectar esse webhook a uma camada de persistência/entrega segura.
