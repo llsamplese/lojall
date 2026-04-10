@@ -1,4 +1,5 @@
 module.exports = {
+  "LL Teste Mercado Pago": "https://lojall.vercel.app",
   "`LL Drums Filho do Piseiro": "https://we.tl/t-dhb2nZq9J8BrcMvy",
   "LL Acordeon Forró v2": "https://we.tl/t-qDRXWPj20Y",
   "LL Bass Forró": "https://we.tl/t-b0bQNEwYbs",
