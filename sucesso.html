@@ -3,58 +3,214 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pagamento aprovado | LL Samples</title>
+  <title>Entrega liberada | LL Samples</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 0; min-height: 100vh; display: grid; place-items: center; background: linear-gradient(135deg, #ffd700, #ffef9c); color: #212121; }
-    .card { width: min(720px, calc(100vw - 32px)); background: #fff; border-radius: 20px; padding: 32px; box-shadow: 0 20px 60px rgba(0,0,0,.18); }
-    h1 { margin: 0 0 12px; }
-    p { line-height: 1.5; }
-    .muted { color: #616161; }
-    .items { margin: 20px 0; padding: 0; list-style: none; }
-    .items li { display: flex; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid #eee; }
-    .actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 24px; }
-    a, button { border: none; border-radius: 10px; padding: 12px 18px; text-decoration: none; font-weight: 700; cursor: pointer; }
-    a { background: #212121; color: #fff; }
-    button { background: #ffc107; color: #212121; }
-    .totals { background: #f7f7f7; border-radius: 14px; padding: 16px; margin-top: 18px; }
+    :root {
+      --bg: #f3c600;
+      --panel: #141414;
+      --panel-2: #1d1d1d;
+      --ink: #f7f1d5;
+      --muted: #ccb976;
+      --gold: #ffd54f;
+      --green: #00a650;
+      --red: #d32f2f;
+      --blue: #3483fa;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, sans-serif;
+      background:
+        radial-gradient(circle at top, rgba(255,255,255,.32), transparent 28%),
+        linear-gradient(180deg, #2b2b2b 0 14px, var(--bg) 14px 100%);
+      color: var(--ink);
+      padding: 32px 16px;
+    }
+    .shell {
+      width: min(980px, 100%);
+      margin: 0 auto;
+      display: grid;
+      gap: 18px;
+    }
+    .card {
+      background: linear-gradient(180deg, rgba(20,20,20,.98), rgba(29,29,29,.98));
+      border: 1px solid rgba(255, 213, 79, .18);
+      border-radius: 24px;
+      padding: 28px;
+      box-shadow: 0 24px 60px rgba(0,0,0,.25);
+    }
+    h1 { margin: 0 0 10px; font-size: clamp(28px, 5vw, 42px); color: var(--gold); }
+    p { line-height: 1.5; margin: 0; }
+    .muted { color: var(--muted); }
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      margin-top: 18px;
+    }
+    .summary-item {
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.06);
+      border-radius: 16px;
+      padding: 14px 16px;
+    }
+    .summary-item strong { display: block; color: var(--muted); font-size: 12px; text-transform: uppercase; margin-bottom: 6px; letter-spacing: .05em; }
+    .delivery-list { list-style: none; padding: 0; margin: 18px 0 0; display: grid; gap: 12px; }
+    .delivery-item {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: center;
+      background: rgba(255,255,255,.045);
+      border: 1px solid rgba(255,255,255,.06);
+      border-radius: 18px;
+      padding: 16px;
+    }
+    .delivery-title { font-weight: 700; color: #fff6c7; }
+    .delivery-meta { font-size: 13px; color: var(--muted); margin-top: 6px; }
+    .actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 22px; }
+    .button, button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border: none;
+      border-radius: 14px;
+      padding: 13px 18px;
+      text-decoration: none;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform .2s ease, box-shadow .2s ease;
+    }
+    .button:hover, button:hover { transform: translateY(-2px); box-shadow: 0 14px 26px rgba(0,0,0,.25); }
+    .button.primary { background: linear-gradient(135deg, #ffd54f, #ffb300); color: #2a2002; }
+    .button.dark { background: rgba(255,255,255,.08); color: #fff5cc; border: 1px solid rgba(255,255,255,.08); }
+    .status {
+      margin-top: 18px;
+      padding: 15px 16px;
+      border-radius: 16px;
+      font-weight: 700;
+    }
+    .status.loading { background: rgba(52,131,250,.14); color: #cfe2ff; border: 1px solid rgba(52,131,250,.28); }
+    .status.ok { background: rgba(0,166,80,.14); color: #c7ffd9; border: 1px solid rgba(0,166,80,.28); }
+    .status.error { background: rgba(211,47,47,.14); color: #ffd4d4; border: 1px solid rgba(211,47,47,.28); }
+    .copyable { width: 100%; min-height: 140px; border-radius: 14px; border: 1px solid rgba(255,255,255,.08); background: #101010; color: #fff7d6; padding: 14px; font: inherit; margin-top: 16px; }
+    @media (max-width: 640px) {
+      .card { padding: 22px; }
+      .delivery-item { grid-template-columns: 1fr; }
+      .actions { flex-direction: column; }
+      .button, button { width: 100%; }
+    }
   </style>
 </head>
 <body>
-  <div class="card">
-    <h1>Pagamento aprovado</h1>
-    <p>O Mercado Pago confirmou o pagamento. Abaixo está o último pedido iniciado neste navegador.</p>
-    <p class="muted">Se você quiser liberar links de download automaticamente com segurança, o próximo passo é integrar webhook + backend de entrega. Nesta versão, não deixei links sensíveis no frontend.</p>
-    <div class="totals" id="summary">Carregando resumo do pedido...</div>
-    <ul class="items" id="items"></ul>
-    <div class="actions">
-      <a href="/index.html">Voltar ao catálogo</a>
-      <button type="button" id="copySummary">Copiar resumo</button>
+  <div class="shell">
+    <div class="card">
+      <h1>Entrega liberada</h1>
+      <p>Quando o pagamento estiver aprovado, os links dos itens comprados aparecem aqui. Esta página consulta o pagamento real no Mercado Pago antes de mostrar qualquer entrega.</p>
+      <div id="status" class="status loading">Validando pagamento...</div>
+      <div id="summary" class="summary"></div>
+      <ul id="deliveryList" class="delivery-list"></ul>
+      <textarea id="bulkLinks" class="copyable" readonly style="display:none;"></textarea>
+      <div class="actions">
+        <a class="button primary" href="/index.html">Voltar ao catálogo</a>
+        <button id="copyAll" class="button dark" type="button" style="display:none;">Copiar todos os links</button>
+      </div>
     </div>
   </div>
   <script>
-    const raw = localStorage.getItem('llsamples:lastCheckout');
-    const summary = document.getElementById('summary');
-    const items = document.getElementById('items');
-    const button = document.getElementById('copySummary');
+    const params = new URLSearchParams(window.location.search);
+    const paymentId = params.get('payment_id') || params.get('collection_id') || '';
+    const statusEl = document.getElementById('status');
+    const summaryEl = document.getElementById('summary');
+    const listEl = document.getElementById('deliveryList');
+    const bulkLinksEl = document.getElementById('bulkLinks');
+    const copyAllButton = document.getElementById('copyAll');
 
     function money(value) {
       return Number(value || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
     }
 
-    if (raw) {
-      const data = JSON.parse(raw);
-      const total = data.mode === 'card' ? data.totals.card : data.totals.pix;
-      summary.innerHTML = `<strong>Pagamento:</strong> ${data.mode === 'card' ? 'Cartão' : 'PIX'}<br><strong>Total:</strong> ${money(total)}<br><strong>Data:</strong> ${new Date(data.createdAt).toLocaleString('pt-BR')}`;
-      items.innerHTML = data.items.map(item => `<li><span>${item.nome}</span><strong>${money(item.valor)}</strong></li>`).join('');
-      button.onclick = async () => {
-        const text = [`LL Samples`, `Pagamento aprovado`, `Modo: ${data.mode === 'card' ? 'Cartão' : 'PIX'}`, `Total: ${money(total)}`, '', ...data.items.map(item => `- ${item.nome} | ${money(item.valor)}`)].join('\n');
-        await navigator.clipboard.writeText(text);
-        button.textContent = 'Resumo copiado';
-      };
-    } else {
-      summary.textContent = 'Nenhum resumo local encontrado neste navegador.';
-      button.disabled = true;
+    function setStatus(message, kind) {
+      statusEl.className = `status ${kind}`;
+      statusEl.textContent = message;
     }
+
+    function renderSummary(data) {
+      const items = [
+        ['Pagamento', data.payment_type_id === 'credit_card' ? 'Cartão' : data.payment_type_id || 'Confirmado'],
+        ['Total aprovado', money(data.transaction_amount)],
+        ['Payment ID', String(data.payment_id)],
+        ['Aprovado em', data.date_approved ? new Date(data.date_approved).toLocaleString('pt-BR') : 'Agora']
+      ];
+      summaryEl.innerHTML = items.map(([label, value]) => `<div class="summary-item"><strong>${label}</strong>${value}</div>`).join('');
+    }
+
+    function renderLinks(data) {
+      const deliveredItems = data.items.filter(item => item.delivered);
+      const missingItems = data.items.filter(item => !item.delivered);
+
+      listEl.innerHTML = data.items.map(item => {
+        const action = item.delivered
+          ? `<a class="button primary" href="${item.link}" target="_blank" rel="noopener noreferrer">Abrir download</a>`
+          : `<span class="button dark" style="cursor:default;">Link não cadastrado</span>`;
+        return `
+          <li class="delivery-item">
+            <div>
+              <div class="delivery-title">${item.title}</div>
+              <div class="delivery-meta">Valor pago referente ao item: ${money(item.unit_price)}</div>
+            </div>
+            ${action}
+          </li>`;
+      }).join('');
+
+      if (deliveredItems.length > 0) {
+        const text = deliveredItems.map(item => `${item.title}\n${item.link}`).join('\n\n');
+        bulkLinksEl.value = text;
+        bulkLinksEl.style.display = 'block';
+        copyAllButton.style.display = 'inline-flex';
+        copyAllButton.onclick = async () => {
+          await navigator.clipboard.writeText(text);
+          copyAllButton.textContent = 'Links copiados';
+        };
+      }
+
+      if (missingItems.length > 0) {
+        const note = document.createElement('div');
+        note.className = 'status error';
+        note.textContent = `Faltam links cadastrados para: ${missingItems.map(item => item.title).join(', ')}`;
+        listEl.after(note);
+      }
+    }
+
+    async function loadDelivery() {
+      if (!paymentId) {
+        setStatus('O retorno não trouxe payment_id. Reabra esta página a partir do checkout aprovado ou use um link de retorno válido.', 'error');
+        return;
+      }
+
+      try {
+        const response = await fetch(`/api/delivery?payment_id=${encodeURIComponent(paymentId)}`);
+        const data = await response.json();
+
+        if (!response.ok) {
+          if (response.status === 409) {
+            setStatus(`Pagamento ainda não aprovado. Status atual: ${data.status}.`, 'loading');
+            return;
+          }
+          throw new Error(data.error || 'Não foi possível carregar a entrega.');
+        }
+
+        renderSummary(data);
+        renderLinks(data);
+        setStatus('Pagamento confirmado. Seus links de download foram liberados abaixo.', 'ok');
+      } catch (error) {
+        setStatus(error.message || 'Erro ao validar entrega.', 'error');
+      }
+    }
+
+    loadDelivery();
   </script>
 </body>
 </html>
