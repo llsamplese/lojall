@@ -162,10 +162,11 @@ module.exports = async (req, res) => {
       status: data.status,
       status_detail: data.status_detail,
       payment_type_id: data.payment_type_id,
+      point_of_interaction_type: data?.point_of_interaction?.type || "",
       totals,
       qr_code: data?.point_of_interaction?.transaction_data?.qr_code || "",
       qr_code_base64: data?.point_of_interaction?.transaction_data?.qr_code_base64 || "",
-      ticket_url: data?.point_of_interaction?.transaction_data?.ticket_url || ""
+      ticket_url: data?.point_of_interaction?.transaction_data?.ticket_url || data?.transaction_details?.external_resource_url || ""
     });
   } catch (error) {
     return res.status(500).json({

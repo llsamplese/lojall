@@ -1364,6 +1364,7 @@
                 <img id="pixQrImage" class="pix-qr" alt="QR Code Pix">
                 <textarea id="pixCode" class="pix-copy" readonly rows="4"></textarea>
                 <button class="pix-copy-button" type="button" onclick="copyPixCode()">Copiar código Pix</button>
+                <a id="pixTicketLink" class="checkout-secondary-button" href="#" target="_blank" rel="noopener" style="display:none; text-decoration:none; align-items:center; justify-content:center;">Abrir comprovante / instruções</a>
                 <button class="checkout-secondary-button" type="button" onclick="checkCurrentPaymentStatus(true)">Já paguei, verificar agora</button>
             </div>
         </div>
@@ -2216,10 +2217,28 @@
         const wrapper = document.getElementById('pixResult');
         const qrImage = document.getElementById('pixQrImage');
         const pixCode = document.getElementById('pixCode');
+        const ticketLink = document.getElementById('pixTicketLink');
         if (!wrapper || !qrImage || !pixCode) return;
 
-        qrImage.src = `data:image/png;base64,${data.qr_code_base64}`;
+        if (data.qr_code_base64) {
+            qrImage.src = `data:image/png;base64,${data.qr_code_base64}`;
+            qrImage.style.display = 'block';
+        } else {
+            qrImage.removeAttribute('src');
+            qrImage.style.display = 'none';
+        }
+
         pixCode.value = data.qr_code || '';
+
+        if (ticketLink) {
+            if (data.ticket_url) {
+                ticketLink.href = data.ticket_url;
+                ticketLink.style.display = 'inline-flex';
+            } else {
+                ticketLink.href = '#';
+                ticketLink.style.display = 'none';
+            }
+        }
         wrapper.classList.add('open');
     }
 
@@ -2227,9 +2246,17 @@
         const wrapper = document.getElementById('pixResult');
         const qrImage = document.getElementById('pixQrImage');
         const pixCode = document.getElementById('pixCode');
+        const ticketLink = document.getElementById('pixTicketLink');
         if (wrapper) wrapper.classList.remove('open');
-        if (qrImage) qrImage.removeAttribute('src');
+        if (qrImage) {
+            qrImage.removeAttribute('src');
+            qrImage.style.display = 'block';
+        }
         if (pixCode) pixCode.value = '';
+        if (ticketLink) {
+            ticketLink.href = '#';
+            ticketLink.style.display = 'none';
+        }
     }
 
     async function copyPixCode() {
@@ -2352,8 +2379,8 @@
             return;
         }
 
-        if (data.payment_type_id === 'pix' && data.qr_code) {
-            setBrickStatus('Pix gerado. Pague pelo QR Code abaixo e a entrega será liberada automaticamente.', '');
+        if (data.payment_type_id === 'pix' || data.payment_type_id === 'bank_transfer' || data.qr_code || data.qr_code_base64 || data.ticket_url) {
+            setBrickStatus('Pix gerado. Pague pelo QR Code ou pelo código copia e cola abaixo. A entrega será liberada automaticamente.', '');
             showPixResult(data);
             startPaymentStatusPolling(data.payment_id);
             return;
@@ -2397,10 +2424,10 @@
                 },
                 paymentMethods: {
                     creditCard: 'all',
-                    debitCard: 'all',
+                    debitCard: 'none',
                     prepaidCard: 'all',
                     bankTransfer: 'all',
-                    ticket: 'all',
+                    ticket: 'none',
                     maxInstallments: 12
                 }
             },
