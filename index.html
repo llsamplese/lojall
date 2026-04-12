@@ -548,6 +548,81 @@
         font-weight: 600;
     }
 
+    .coupon-box {
+        display: grid;
+        gap: 10px;
+        margin-top: 14px;
+        padding-top: 14px;
+        border-top: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .coupon-row {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 10px;
+    }
+
+    .coupon-input {
+        width: 100%;
+        min-height: 44px;
+        border-radius: 14px;
+        border: 1px solid rgba(255, 193, 7, 0.18);
+        background: rgba(255,255,255,0.04);
+        color: #fff6d6;
+        padding: 0 14px;
+        font-size: 0.95rem;
+        text-transform: uppercase;
+    }
+
+    .coupon-input:focus {
+        outline: none;
+        border-color: rgba(255, 193, 7, 0.5);
+        box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.08);
+    }
+
+    .coupon-apply,
+    .coupon-remove {
+        min-height: 44px;
+        border-radius: 14px;
+        padding: 0 16px;
+        font-size: 0.9rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .coupon-apply {
+        background: rgba(255, 193, 7, 0.12);
+        color: #ffe8a0;
+        border: 1px solid rgba(255, 193, 7, 0.35);
+    }
+
+    .coupon-remove {
+        background: rgba(255,255,255,0.05);
+        color: #f4f1e2;
+        border: 1px solid rgba(255,255,255,0.12);
+    }
+
+    .coupon-feedback {
+        min-height: 20px;
+        font-size: 0.85rem;
+        color: #d6c48a;
+    }
+
+    .coupon-feedback.error {
+        color: #ffb8b8;
+    }
+
+    .coupon-feedback.success {
+        color: #c7ffd0;
+    }
+
+    .cart-discount-line {
+        font-size: 0.9rem;
+        color: #9ef0a9;
+        font-weight: 700;
+    }
+
     .cart-actions-group {
         display: grid;
         grid-template-columns: 1fr;
@@ -1103,7 +1178,15 @@
         </div>
         <div class="cart-totals">
             <div class="cart-total" id="cartTotal">PIX: R$ 0,00</div>
+            <div class="cart-discount-line" id="cartDiscountLine" style="display:none;">Cupom: -R$ 0,00</div>
             <div class="cart-total-note" id="cartCardTotal">Cartão: R$ 0,00</div>
+            <div class="coupon-box">
+                <div class="coupon-row">
+                    <input class="coupon-input" id="couponInput" type="text" placeholder="Cupom de desconto" maxlength="24">
+                    <button class="coupon-apply" id="couponApplyButton" type="button" onclick="applyCoupon()">Aplicar</button>
+                </div>
+                <div class="coupon-feedback" id="couponFeedback">Você pode ativar ou desativar cupons no cadastro do projeto.</div>
+            </div>
         </div>
         <div class="cart-actions-group">
             <div class="cart-primary-actions">
@@ -1815,7 +1898,9 @@
         {nome: "LL Sax v1.5", valor: 60, video: "https://youtu.be/YotFGV5IQl8?si=4ahVjkVZTQeqbfmK"}
     ];
     const CHECKOUT_ENDPOINT = '/api/create-preference';
+    const COUPON_ENDPOINT = '/api/validate-coupon';
     const CARD_SURCHARGE = 1.0524;
+    let appliedCoupon = null;
 
     function roundCurrency(value) {
         return Math.round((Number(value) + Number.EPSILON) * 100) / 100;
@@ -1830,6 +1915,39 @@
         if (!status) return;
         status.className = `checkout-status${type ? ` ${type}` : ''}`;
         status.textContent = message;
+    }
+
+    function setCouponFeedback(message, type = '') {
+        const feedback = document.getElementById('couponFeedback');
+        if (!feedback) return;
+        feedback.className = `coupon-feedback${type ? ` ${type}` : ''}`;
+        feedback.textContent = message;
+    }
+
+    function updateCouponUI() {
+        const couponInput = document.getElementById('couponInput');
+        const couponApplyButton = document.getElementById('couponApplyButton');
+        const discountLine = document.getElementById('cartDiscountLine');
+        if (!couponInput || !couponApplyButton || !discountLine) return;
+
+        if (appliedCoupon) {
+            couponInput.value = appliedCoupon.code;
+            couponInput.disabled = true;
+            couponApplyButton.textContent = 'Remover';
+            couponApplyButton.className = 'coupon-remove';
+            couponApplyButton.onclick = removeCoupon;
+            discountLine.style.display = 'block';
+            discountLine.textContent = `Cupom ${appliedCoupon.code}: -${formatCurrency(appliedCoupon.discount)}`;
+            setCouponFeedback(`${appliedCoupon.label || appliedCoupon.code} aplicado com sucesso.`, 'success');
+        } else {
+            couponInput.disabled = false;
+            couponApplyButton.textContent = 'Aplicar';
+            couponApplyButton.className = 'coupon-apply';
+            couponApplyButton.onclick = applyCoupon;
+            discountLine.style.display = 'none';
+            discountLine.textContent = 'Cupom: -R$ 0,00';
+            setCouponFeedback('Você pode ativar ou desativar cupons no cadastro do projeto.');
+        }
     }
 
     function toggleMenu(forceOpen) {
@@ -1877,11 +1995,81 @@
 
     function getCartTotals() {
         const subtotal = getSelectedItems().reduce((total, item) => total + item.valor, 0);
+        const discount = appliedCoupon ? roundCurrency(appliedCoupon.discount || 0) : 0;
+        const discountedSubtotal = Math.max(0, subtotal - discount);
         return {
             subtotal: roundCurrency(subtotal),
-            pix: roundCurrency(subtotal),
-            card: roundCurrency(subtotal * CARD_SURCHARGE)
+            discount,
+            pix: roundCurrency(discountedSubtotal),
+            card: roundCurrency(discountedSubtotal * CARD_SURCHARGE)
         };
+    }
+
+    async function applyCoupon() {
+        const couponInput = document.getElementById('couponInput');
+        const code = couponInput ? couponInput.value.trim().toUpperCase() : '';
+        const items = getSelectedItems();
+        const subtotal = roundCurrency(items.reduce((total, item) => total + item.valor, 0));
+
+        if (!code) {
+            setCouponFeedback('Digite um cupom antes de aplicar.', 'error');
+            return;
+        }
+
+        if (items.length === 0) {
+            setCouponFeedback('Selecione pelo menos um sample antes de aplicar cupom.', 'error');
+            return;
+        }
+
+        setCouponFeedback('Validando cupom...', '');
+
+        try {
+            const response = await fetch(COUPON_ENDPOINT, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    code,
+                    subtotal,
+                    itemsCount: items.length
+                })
+            });
+
+            const data = await response.json();
+            if (!response.ok || !data.valid) {
+                throw new Error(data.error || 'Cupom inválido.');
+            }
+
+            appliedCoupon = data.coupon;
+            updateCouponUI();
+            updateCart();
+        } catch (error) {
+            appliedCoupon = null;
+            updateCouponUI();
+            setCouponFeedback(error.message || 'Falha ao validar cupom.', 'error');
+            updateCart();
+        }
+    }
+
+    function removeCoupon() {
+        appliedCoupon = null;
+        const couponInput = document.getElementById('couponInput');
+        if (couponInput) {
+            couponInput.value = '';
+        }
+        updateCouponUI();
+        updateCart();
+    }
+
+    function invalidateCouponDueToCartChange() {
+        if (!appliedCoupon) return;
+        const previousCode = appliedCoupon.code;
+        appliedCoupon = null;
+        const couponInput = document.getElementById('couponInput');
+        if (couponInput) {
+            couponInput.value = previousCode;
+        }
+        updateCouponUI();
+        setCouponFeedback(`Os itens do carrinho mudaram. Reaplique o cupom ${previousCode}.`, 'error');
     }
 
     function updateSelectedItemsList() {
@@ -1935,6 +2123,11 @@
             createdAt: new Date().toISOString(),
             mode,
             totals,
+            coupon: appliedCoupon ? {
+                code: appliedCoupon.code,
+                label: appliedCoupon.label,
+                discount: appliedCoupon.discount
+            } : null,
             items: items.map(item => ({
                 nome: item.nome,
                 valor: item.valor
@@ -2051,6 +2244,7 @@
 
 
     function toggleSample(index, cardElement) {
+        const hadCoupon = Boolean(appliedCoupon);
         if (selectedSamples.has(index)) {
             selectedSamples.delete(index);
             cardElement.classList.remove('selected');
@@ -2063,6 +2257,9 @@
             cardElement.querySelector('.btn-select').classList.remove('add');
             cardElement.querySelector('.btn-select').classList.add('remove');
             cardElement.querySelector('.btn-select').textContent = 'Remover';
+        }
+        if (hadCoupon) {
+            invalidateCouponDueToCartChange();
         }
         updateCart(); // Atualiza o carrinho imediatamente
     }
@@ -2081,7 +2278,8 @@
             cartInfo.textContent = `${count} sample${count > 1 ? 's' : ''} selecionado${count > 1 ? 's' : ''}`;
             cartTotal.textContent = `PIX: ${formatCurrency(totals.pix)}`;
             cartCardTotal.textContent = `Cartão: ${formatCurrency(totals.card)}`;
-            setCheckoutStatus(`Pedido pronto para checkout. PIX: ${formatCurrency(totals.pix)} | Cartão: ${formatCurrency(totals.card)}`, 'success');
+            const discountMessage = totals.discount > 0 ? ` | Cupom: -${formatCurrency(totals.discount)}` : '';
+            setCheckoutStatus(`Pedido pronto para checkout. PIX: ${formatCurrency(totals.pix)} | Cartão: ${formatCurrency(totals.card)}${discountMessage}`, 'success');
             cartBadge.style.display = 'grid';
             cartBadge.textContent = count;
             updateSelectedItemsList();
@@ -2091,6 +2289,9 @@
             cartBadge.style.display = 'none';
             cartBadge.textContent = '0';
             selectedItemsExpanded = false;
+            if (appliedCoupon) {
+                removeCoupon();
+            }
             updateSelectedItemsList();
         }
     }
@@ -2122,6 +2323,7 @@
                 body: JSON.stringify({
                     mode,
                     totals,
+                    coupon: appliedCoupon ? { code: appliedCoupon.code } : null,
                     items: items.map(item => ({
                         title: item.nome,
                         unit_price: item.valor,
@@ -2196,6 +2398,7 @@
     }
 
     function selectAllSamples() {
+        const hadCoupon = Boolean(appliedCoupon);
         selectedSamples.clear();
         const visibleSampleCards = document.querySelectorAll('.sample-card');
         visibleSampleCards.forEach(cardElement => {
@@ -2207,10 +2410,14 @@
             btn.classList.add('remove');
             btn.textContent = 'Remover';
         });
+        if (hadCoupon) {
+            invalidateCouponDueToCartChange();
+        }
         updateCart();
     }
 
     function clearAllSamples() {
+        const hadCoupon = Boolean(appliedCoupon);
         selectedSamples.clear();
         document.querySelectorAll('.sample-card').forEach(cardElement => {
             cardElement.classList.remove('selected');
@@ -2219,6 +2426,9 @@
             btn.classList.add('add');
             btn.textContent = 'Comprar';
         });
+        if (hadCoupon) {
+            invalidateCouponDueToCartChange();
+        }
         updateCart();
     }
 
@@ -2329,8 +2539,20 @@
         renderCatalog(this.value);
     });
 
+    document.getElementById('couponInput')?.addEventListener('keydown', function(event) {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            if (appliedCoupon) {
+                removeCoupon();
+            } else {
+                applyCoupon();
+            }
+        }
+    });
+
     // Renderiza catálogo inicial
     renderCatalog();
+    updateCouponUI();
     setCheckoutStatus('Selecione os samples para liberar o checkout.');
 </script>
 

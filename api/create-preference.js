@@ -1,4 +1,5 @@
 ﻿const MERCADO_PAGO_API = "https://api.mercadopago.com/checkout/preferences";
+const { validateCoupon, roundCurrency } = require("../lib/coupon-utils");
 
 function parseBody(req) {
   if (!req.body) return {};
@@ -14,10 +15,6 @@ function parseBody(req) {
 
 function normalizeMode(mode) {
   return mode === "card" ? "card" : "pix";
-}
-
-function roundCurrency(value) {
-  return Math.round((Number(value) + Number.EPSILON) * 100) / 100;
 }
 
 function buildPaymentMethods(mode) {
@@ -66,9 +63,22 @@ function buildPreference(body) {
   }
 
   const customer = body.customer || {};
-  const totals = body.totals || {};
-  const amount = mode === "card" ? totals.card : totals.pix;
-  const finalAmount = roundCurrency(amount || 0);
+  const subtotal = roundCurrency(items.reduce((sum, item) => sum + (item.unit_price * item.quantity), 0));
+  const couponCode = String(body.coupon?.code || "").trim();
+  const couponResult = validateCoupon(body.coupon?.code, {
+    subtotal,
+    itemsCount: items.reduce((sum, item) => sum + item.quantity, 0)
+  });
+
+  if (couponCode && !couponResult.valid) {
+    throw new Error(couponResult.error || "Cupom inválido.");
+  }
+
+  const discount = couponResult.valid ? couponResult.coupon.discount : 0;
+  const discountedSubtotal = roundCurrency(Math.max(0, subtotal - discount));
+  const totalPix = discountedSubtotal;
+  const totalCard = roundCurrency(discountedSubtotal * 1.0524);
+  const finalAmount = roundCurrency(mode === "card" ? totalCard : totalPix);
 
   if (finalAmount <= 0) {
     throw new Error("O valor final do checkout precisa ser maior que zero.");
@@ -101,11 +111,14 @@ function buildPreference(body) {
       customer_name: String(customer.name || "").trim(),
       customer_contact: String(customer.contact || "").trim(),
       customer_note: String(customer.note || "").trim(),
+      coupon_code: couponResult.valid ? couponResult.coupon.code : "",
+      coupon_label: couponResult.valid ? couponResult.coupon.label : "",
+      coupon_discount: discount,
       original_items: items,
-      subtotal: roundCurrency(totals.subtotal || 0),
-      discount: roundCurrency(totals.discount || 0),
-      total_pix: roundCurrency(totals.pix || 0),
-      total_card: roundCurrency(totals.card || 0)
+      subtotal,
+      discount,
+      total_pix: totalPix,
+      total_card: totalCard
     },
     external_reference: `llsamples-${mode}-${Date.now()}`,
     statement_descriptor: "LLSAMPLES",
@@ -126,7 +139,16 @@ function buildPreference(body) {
     preference.payer = { email: payerEmail };
   }
 
-  return preference;
+  return {
+    preference,
+    coupon: couponResult.valid ? couponResult.coupon : null,
+    totals: {
+      subtotal,
+      discount,
+      pix: totalPix,
+      card: totalCard
+    }
+  };
 }
 
 module.exports = async (req, res) => {
@@ -141,7 +163,7 @@ module.exports = async (req, res) => {
 
   try {
     const body = parseBody(req);
-    const preference = buildPreference(body);
+    const { preference, coupon, totals } = buildPreference(body);
 
     const response = await fetch(MERCADO_PAGO_API, {
       method: "POST",
@@ -165,7 +187,9 @@ module.exports = async (req, res) => {
     return res.status(200).json({
       id: data.id,
       init_point: data.init_point,
-      sandbox_init_point: data.sandbox_init_point
+      sandbox_init_point: data.sandbox_init_point,
+      coupon,
+      totals
     });
   } catch (error) {
     return res.status(500).json({
