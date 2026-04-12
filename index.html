@@ -2206,6 +2206,41 @@
         status.textContent = message;
     }
 
+    function hideUnwantedPaymentOptions() {
+        const container = document.getElementById('paymentBrick_container');
+        if (!container) return;
+
+        const blockedLabels = [
+            'Cartão de Débito Virtual CAIXA',
+            'Boleto'
+        ];
+
+        container.querySelectorAll('*').forEach((node) => {
+            const text = (node.textContent || '').trim();
+            if (!text) return;
+            if (!blockedLabels.includes(text)) return;
+
+            const option = node.closest('label, li, button, div');
+            if (option instanceof HTMLElement) {
+                option.style.display = 'none';
+            }
+        });
+    }
+
+    function observePaymentBrickOptions() {
+        const container = document.getElementById('paymentBrick_container');
+        if (!container) return;
+
+        hideUnwantedPaymentOptions();
+
+        const observer = new MutationObserver(() => {
+            hideUnwantedPaymentOptions();
+        });
+
+        observer.observe(container, { childList: true, subtree: true });
+        setTimeout(() => observer.disconnect(), 15000);
+    }
+
     function stopPaymentStatusPolling() {
         if (paymentStatusPoll) {
             clearInterval(paymentStatusPoll);
@@ -2424,15 +2459,16 @@
                 },
                 paymentMethods: {
                     creditCard: 'all',
-                    debitCard: 'none',
+                    debitCard: 'all',
                     prepaidCard: 'all',
                     bankTransfer: 'all',
-                    ticket: 'none',
+                    ticket: 'all',
                     maxInstallments: 12
                 }
             },
             callbacks: {
                 onReady: () => {
+                    observePaymentBrickOptions();
                     setBrickStatus('Checkout transparente carregado. Escolha Pix ou cartão e finalize aqui.', '');
                 },
                 onSubmit: ({ formData }) => {
