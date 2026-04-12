@@ -170,6 +170,224 @@
         pointer-events: auto;
     }
 
+    .checkout-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.76);
+        backdrop-filter: blur(10px);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.24s ease;
+        z-index: 280;
+    }
+
+    .checkout-overlay.open {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .checkout-modal {
+        position: fixed;
+        inset: 50% auto auto 50%;
+        transform: translate(-50%, -46%);
+        width: min(760px, calc(100vw - 28px));
+        max-height: calc(100vh - 32px);
+        overflow: auto;
+        background: linear-gradient(180deg, rgba(14,14,14,0.98), rgba(20,20,20,0.98));
+        border: 1px solid rgba(255, 193, 7, 0.14);
+        border-radius: 24px;
+        box-shadow: 0 30px 80px rgba(0,0,0,0.45);
+        padding: 22px;
+        z-index: 300;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.24s ease, transform 0.24s ease;
+    }
+
+    .checkout-modal.open {
+        opacity: 1;
+        pointer-events: auto;
+        transform: translate(-50%, -50%);
+    }
+
+    .checkout-modal-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 18px;
+    }
+
+    .checkout-modal-title {
+        color: #fff6d4;
+        font-size: 1.35rem;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+    }
+
+    .checkout-modal-subtitle {
+        color: #a99967;
+        font-size: 0.92rem;
+        margin-top: 6px;
+        line-height: 1.45;
+    }
+
+    .checkout-close {
+        width: 42px;
+        height: 42px;
+        border-radius: 14px;
+        border: 1px solid rgba(255,255,255,0.08);
+        background: rgba(255,255,255,0.04);
+        color: #fff3c1;
+        cursor: pointer;
+        font-size: 1.2rem;
+    }
+
+    .checkout-modal-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
+        gap: 18px;
+    }
+
+    .checkout-panel {
+        padding: 18px;
+        border-radius: 20px;
+        background: rgba(255,255,255,0.03);
+        border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .checkout-panel-title {
+        color: #fff4c8;
+        font-size: 0.96rem;
+        font-weight: 700;
+        margin-bottom: 12px;
+    }
+
+    .checkout-summary-list {
+        display: grid;
+        gap: 8px;
+        margin-bottom: 14px;
+    }
+
+    .checkout-summary-item {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 8px;
+        align-items: center;
+        padding: 10px 12px;
+        border-radius: 14px;
+        background: rgba(255,255,255,0.03);
+        border: 1px solid rgba(255,255,255,0.05);
+        font-size: 0.9rem;
+    }
+
+    .checkout-summary-item strong {
+        font-weight: 600;
+        color: #fff7db;
+        min-width: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .checkout-summary-item span {
+        color: #ffd56f;
+        font-weight: 700;
+    }
+
+    .checkout-totals {
+        display: grid;
+        gap: 6px;
+        padding-top: 12px;
+        border-top: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .checkout-total-line {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        font-size: 0.92rem;
+        color: #d9c998;
+    }
+
+    .checkout-total-line strong {
+        color: #fff6d0;
+        font-size: 1.02rem;
+    }
+
+    .checkout-brick-host {
+        min-height: 420px;
+    }
+
+    .checkout-brick-status {
+        margin-top: 12px;
+        padding: 12px 14px;
+        border-radius: 14px;
+        background: rgba(255,255,255,0.04);
+        border: 1px solid rgba(255,255,255,0.06);
+        color: #efe2b5;
+        font-size: 0.9rem;
+        line-height: 1.5;
+    }
+
+    .checkout-brick-status.error {
+        color: #ffd1d1;
+        border-color: rgba(211, 47, 47, 0.28);
+        background: rgba(211, 47, 47, 0.12);
+    }
+
+    .checkout-brick-status.success {
+        color: #d1ffd8;
+        border-color: rgba(0, 166, 80, 0.28);
+        background: rgba(0, 166, 80, 0.12);
+    }
+
+    .pix-result {
+        display: none;
+        gap: 14px;
+        margin-top: 14px;
+        padding: 18px;
+        border-radius: 18px;
+        background: rgba(255,255,255,0.03);
+        border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .pix-result.open {
+        display: grid;
+    }
+
+    .pix-qr {
+        width: min(220px, 100%);
+        aspect-ratio: 1;
+        margin: 0 auto;
+        border-radius: 20px;
+        background: #fff;
+        padding: 14px;
+    }
+
+    .pix-copy {
+        width: 100%;
+        min-height: 46px;
+        border-radius: 14px;
+        border: 1px solid rgba(255,255,255,0.08);
+        background: rgba(255,255,255,0.04);
+        color: #fff6d6;
+        padding: 10px 12px;
+        font-size: 0.88rem;
+    }
+
+    .pix-copy-button,
+    .checkout-secondary-button {
+        min-height: 46px;
+        border-radius: 14px;
+        border: 1px solid rgba(255, 193, 7, 0.22);
+        background: rgba(255, 193, 7, 0.08);
+        color: #fff0b7;
+        font-size: 0.92rem;
+        font-weight: 700;
+        cursor: pointer;
+    }
+
     .menu-header {
         display: flex;
         align-items: center;
@@ -1022,6 +1240,21 @@
         font-size: 0.82rem;
     }
 
+    .checkout-modal {
+        width: calc(100vw - 18px);
+        max-height: calc(100vh - 18px);
+        padding: 16px;
+        border-radius: 20px;
+    }
+
+    .checkout-modal-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .coupon-row {
+        grid-template-columns: 1fr;
+    }
+
     /* Se quiser ainda mais compacto, pode esconder os textos e deixar só ícones. Exemplo:
     .btn-finalizar span.text,
     .btn-copy-names span.text,
@@ -1050,6 +1283,7 @@
 </head>
 <body>
 <div id="menuOverlay" class="menu-overlay" onclick="toggleMenu(false)"></div>
+<div id="checkoutOverlay" class="checkout-overlay" onclick="closeTransparentCheckout()"></div>
 <aside id="menuPanel" class="menu-panel" aria-hidden="true">
     <div class="menu-header">
         <div>
@@ -1096,6 +1330,38 @@
         </div>
     </div>
 </aside>
+<section id="checkoutModal" class="checkout-modal" aria-hidden="true">
+    <div class="checkout-modal-header">
+        <div>
+            <div class="checkout-modal-title">Finalizar compra no site</div>
+            <div class="checkout-modal-subtitle">Escolha Pix ou cartão sem sair da loja. O pagamento continua vinculado ao seu webhook e à entrega automática.</div>
+        </div>
+        <button class="checkout-close" type="button" onclick="closeTransparentCheckout()">×</button>
+    </div>
+    <div class="checkout-modal-grid">
+        <div class="checkout-panel">
+            <div class="checkout-panel-title">Resumo do pedido</div>
+            <div class="checkout-summary-list" id="checkoutSummaryList"></div>
+            <div class="checkout-totals">
+                <div class="checkout-total-line"><span>Subtotal</span><strong id="checkoutSubtotal">R$ 0,00</strong></div>
+                <div class="checkout-total-line" id="checkoutDiscountRow" style="display:none;"><span>Desconto</span><strong id="checkoutDiscount">-R$ 0,00</strong></div>
+                <div class="checkout-total-line"><span>PIX</span><strong id="checkoutPixTotal">R$ 0,00</strong></div>
+                <div class="checkout-total-line"><span>Cartão</span><strong id="checkoutCardTotal">R$ 0,00</strong></div>
+            </div>
+        </div>
+        <div class="checkout-panel">
+            <div class="checkout-panel-title">Pagamento</div>
+            <div id="paymentBrick_container" class="checkout-brick-host"></div>
+            <div id="checkoutBrickStatus" class="checkout-brick-status">Carregue o checkout para pagar com Pix ou cartão diretamente aqui.</div>
+            <div id="pixResult" class="pix-result">
+                <img id="pixQrImage" class="pix-qr" alt="QR Code Pix">
+                <textarea id="pixCode" class="pix-copy" readonly rows="4"></textarea>
+                <button class="pix-copy-button" type="button" onclick="copyPixCode()">Copiar código Pix</button>
+                <button class="checkout-secondary-button" type="button" onclick="checkCurrentPaymentStatus(true)">Já paguei, verificar agora</button>
+            </div>
+        </div>
+    </div>
+</section>
 <div class="container">
     <div class="topbar">
         <div class="brand">
@@ -1190,8 +1456,8 @@
         </div>
         <div class="cart-actions-group">
             <div class="cart-primary-actions">
-                <button class="btn-pay-pix" onclick="iniciarCheckout('pix')">Pagar com PIX</button>
-                <button class="btn-pay-card" onclick="iniciarCheckout('card')">Pagar com Cartão</button>
+                <button class="btn-pay-pix" onclick="openTransparentCheckout()">Finalizar no site</button>
+                <button class="btn-pay-card" onclick="openTransparentCheckout()">Escolher Pix ou Cartão</button>
             </div>
             <div class="cart-utility-actions">
                 <button class="btn-finalizar" onclick="finalizarSelecao()">Copiar pedido</button>
@@ -1639,6 +1905,7 @@
             </div>
         </div></div>
 </div>
+<script src="https://sdk.mercadopago.com/js/v2"></script>
 <script>
     // Função para remover acentos (já existente, mas crucial para a busca e correspondência de vídeos)
     function removerAcentos(texto) {
@@ -1899,8 +2166,15 @@
     ];
     const CHECKOUT_ENDPOINT = '/api/create-preference';
     const COUPON_ENDPOINT = '/api/validate-coupon';
+    const TRANSPARENT_CONFIG_ENDPOINT = '/api/payment-config';
+    const TRANSPARENT_PAYMENT_ENDPOINT = '/api/process-payment';
+    const PAYMENT_STATUS_ENDPOINT = '/api/payment-status';
     const CARD_SURCHARGE = 1.0524;
     let appliedCoupon = null;
+    let transparentCheckoutConfig = null;
+    let brickController = null;
+    let currentPaymentId = null;
+    let paymentStatusPoll = null;
 
     function roundCurrency(value) {
         return Math.round((Number(value) + Number.EPSILON) * 100) / 100;
@@ -1915,6 +2189,258 @@
         if (!status) return;
         status.className = `checkout-status${type ? ` ${type}` : ''}`;
         status.textContent = message;
+    }
+
+    function setBrickStatus(message, type = '') {
+        const status = document.getElementById('checkoutBrickStatus');
+        if (!status) return;
+        status.className = `checkout-brick-status${type ? ` ${type}` : ''}`;
+        status.textContent = message;
+    }
+
+    function stopPaymentStatusPolling() {
+        if (paymentStatusPoll) {
+            clearInterval(paymentStatusPoll);
+            paymentStatusPoll = null;
+        }
+    }
+
+    function showPixResult(data) {
+        const wrapper = document.getElementById('pixResult');
+        const qrImage = document.getElementById('pixQrImage');
+        const pixCode = document.getElementById('pixCode');
+        if (!wrapper || !qrImage || !pixCode) return;
+
+        qrImage.src = `data:image/png;base64,${data.qr_code_base64}`;
+        pixCode.value = data.qr_code || '';
+        wrapper.classList.add('open');
+    }
+
+    function hidePixResult() {
+        const wrapper = document.getElementById('pixResult');
+        const qrImage = document.getElementById('pixQrImage');
+        const pixCode = document.getElementById('pixCode');
+        if (wrapper) wrapper.classList.remove('open');
+        if (qrImage) qrImage.removeAttribute('src');
+        if (pixCode) pixCode.value = '';
+    }
+
+    async function copyPixCode() {
+        const pixCode = document.getElementById('pixCode');
+        if (!pixCode || !pixCode.value) return;
+        await navigator.clipboard.writeText(pixCode.value);
+        setBrickStatus('Código Pix copiado. Você pode pagar e aguardar a confirmação automática.', 'success');
+    }
+
+    function updateTransparentCheckoutSummary() {
+        const items = getSelectedItems();
+        const totals = getCartTotals();
+        const list = document.getElementById('checkoutSummaryList');
+        const subtotal = document.getElementById('checkoutSubtotal');
+        const discountRow = document.getElementById('checkoutDiscountRow');
+        const discount = document.getElementById('checkoutDiscount');
+        const pix = document.getElementById('checkoutPixTotal');
+        const card = document.getElementById('checkoutCardTotal');
+
+        if (!list || !subtotal || !discountRow || !discount || !pix || !card) return;
+
+        list.innerHTML = '';
+        items.forEach(item => {
+            const row = document.createElement('div');
+            row.className = 'checkout-summary-item';
+            row.innerHTML = `<strong>${getDisplaySampleName(item.nome)}</strong><span>${formatCurrency(item.valor)}</span>`;
+            list.appendChild(row);
+        });
+
+        subtotal.textContent = formatCurrency(totals.subtotal);
+        pix.textContent = formatCurrency(totals.pix);
+        card.textContent = formatCurrency(totals.card);
+        if (totals.discount > 0) {
+            discountRow.style.display = 'flex';
+            discount.textContent = `-${formatCurrency(totals.discount)}`;
+        } else {
+            discountRow.style.display = 'none';
+            discount.textContent = '-R$ 0,00';
+        }
+    }
+
+    async function loadTransparentCheckoutConfig() {
+        if (transparentCheckoutConfig) return transparentCheckoutConfig;
+        const response = await fetch(TRANSPARENT_CONFIG_ENDPOINT);
+        const data = await response.json();
+        if (!response.ok) {
+            throw new Error(data.error || 'Não foi possível carregar a configuração do checkout transparente.');
+        }
+        transparentCheckoutConfig = data;
+        return data;
+    }
+
+    async function destroyPaymentBrick() {
+        if (brickController && typeof brickController.unmount === 'function') {
+            await brickController.unmount();
+        }
+        brickController = null;
+    }
+
+    async function checkCurrentPaymentStatus(forceMessage = false) {
+        if (!currentPaymentId) return;
+
+        try {
+            const response = await fetch(`${PAYMENT_STATUS_ENDPOINT}?payment_id=${encodeURIComponent(currentPaymentId)}`);
+            const data = await response.json();
+            if (!response.ok) {
+                throw new Error(data.error || 'Não foi possível verificar o status do pagamento.');
+            }
+
+            if (data.status === 'approved') {
+                stopPaymentStatusPolling();
+                setBrickStatus('Pagamento aprovado. Preparando sua entrega...', 'success');
+                window.location.href = `/sucesso.html?payment_id=${data.payment_id}`;
+                return;
+            }
+
+            if (forceMessage) {
+                setBrickStatus(`Status atual: ${data.status}. Assim que aprovar, a entrega será liberada automaticamente.`, '');
+            }
+        } catch (error) {
+            if (forceMessage) {
+                setBrickStatus(error.message || 'Falha ao consultar o pagamento.', 'error');
+            }
+        }
+    }
+
+    function startPaymentStatusPolling(paymentId) {
+        currentPaymentId = paymentId;
+        stopPaymentStatusPolling();
+        paymentStatusPoll = setInterval(() => {
+            checkCurrentPaymentStatus(false);
+        }, 7000);
+    }
+
+    async function submitTransparentPayment(formData) {
+        const items = getSelectedItems();
+        const totals = getCartTotals();
+        const response = await fetch(TRANSPARENT_PAYMENT_ENDPOINT, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                formData,
+                items: items.map(item => ({
+                    title: item.nome,
+                    unit_price: item.valor,
+                    quantity: 1
+                })),
+                coupon: appliedCoupon ? { code: appliedCoupon.code } : null
+            })
+        });
+
+        const data = await response.json();
+        if (!response.ok) {
+            throw new Error(data.error || 'Falha ao processar pagamento.');
+        }
+
+        if (data.status === 'approved') {
+            setBrickStatus('Pagamento aprovado. Redirecionando para sua entrega...', 'success');
+            window.location.href = `/sucesso.html?payment_id=${data.payment_id}`;
+            return;
+        }
+
+        if (data.payment_type_id === 'pix' && data.qr_code) {
+            setBrickStatus('Pix gerado. Pague pelo QR Code abaixo e a entrega será liberada automaticamente.', '');
+            showPixResult(data);
+            startPaymentStatusPolling(data.payment_id);
+            return;
+        }
+
+        if (data.status === 'pending' || data.status === 'in_process') {
+            currentPaymentId = data.payment_id;
+            setBrickStatus(`Pagamento criado com status ${data.status}. Vamos acompanhar a aprovação.`, '');
+            startPaymentStatusPolling(data.payment_id);
+            return;
+        }
+
+        throw new Error(data.status_detail || 'O pagamento não foi aprovado.');
+    }
+
+    async function renderTransparentCheckoutBrick() {
+        const config = await loadTransparentCheckoutConfig();
+        const totals = getCartTotals();
+
+        if (!window.MercadoPago) {
+            throw new Error('SDK do Mercado Pago não carregado.');
+        }
+
+        await destroyPaymentBrick();
+        hidePixResult();
+        stopPaymentStatusPolling();
+        currentPaymentId = null;
+
+        const mp = new MercadoPago(config.publicKey, { locale: 'pt-BR' });
+        const bricksBuilder = mp.bricks();
+
+        brickController = await bricksBuilder.create('payment', 'paymentBrick_container', {
+            initialization: {
+                amount: totals.pix
+            },
+            customization: {
+                visual: {
+                    style: {
+                        theme: 'dark'
+                    }
+                },
+                paymentMethods: {
+                    maxInstallments: 12
+                }
+            },
+            callbacks: {
+                onReady: () => {
+                    setBrickStatus('Checkout transparente carregado. Escolha Pix ou cartão e finalize aqui.', '');
+                },
+                onSubmit: ({ formData }) => {
+                    setBrickStatus('Enviando pagamento para o Mercado Pago...', '');
+                    return submitTransparentPayment(formData);
+                },
+                onError: (error) => {
+                    console.error(error);
+                    setBrickStatus(error?.message || 'Erro no checkout transparente.', 'error');
+                }
+            }
+        });
+    }
+
+    async function openTransparentCheckout() {
+        if (selectedSamples.size === 0) {
+            alert('Selecione ao menos um sample antes de abrir o checkout.');
+            return;
+        }
+
+        const overlay = document.getElementById('checkoutOverlay');
+        const modal = document.getElementById('checkoutModal');
+        overlay?.classList.add('open');
+        modal?.classList.add('open');
+        modal?.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+        updateTransparentCheckoutSummary();
+        setBrickStatus('Carregando checkout transparente...', '');
+
+        try {
+            await renderTransparentCheckoutBrick();
+        } catch (error) {
+            console.error(error);
+            setBrickStatus(error.message || 'Não foi possível abrir o checkout transparente.', 'error');
+        }
+    }
+
+    async function closeTransparentCheckout() {
+        const overlay = document.getElementById('checkoutOverlay');
+        const modal = document.getElementById('checkoutModal');
+        overlay?.classList.remove('open');
+        modal?.classList.remove('open');
+        modal?.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+        stopPaymentStatusPolling();
+        hidePixResult();
+        await destroyPaymentBrick();
     }
 
     function setCouponFeedback(message, type = '') {

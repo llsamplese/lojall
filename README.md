@@ -4,8 +4,10 @@ Projeto preparado para rodar como catálogo estático + funções serverless na 
 
 ## Estrutura
 
-- `index.html`: catálogo principal com seleção de samples e checkout Mercado Pago.
-- `api/create-preference.js`: cria a preferência no Mercado Pago sem expor o token no navegador.
+- `index.html`: catálogo principal com seleção de samples e checkout transparente com Payment Brick.
+- `api/process-payment.js`: processa Pix ou cartão dentro do site, recalculando total e cupom no backend.
+- `api/payment-config.js`: entrega a `MP_PUBLIC_KEY` para inicializar o Payment Brick no navegador.
+- `api/validate-coupon.js`: valida cupons antes do pagamento.
 - `api/webhook.js`: recebe notificações de pagamento e consulta o status real na API do Mercado Pago.
 - `sucesso.html`, `pendente.html`, `falha.html`: páginas de retorno do checkout.
 - `.env.example`: variáveis que precisam ser cadastradas na Vercel.
@@ -14,6 +16,7 @@ Projeto preparado para rodar como catálogo estático + funções serverless na 
 
 Cadastre em `Settings > Environment Variables`:
 
+- `MP_PUBLIC_KEY`
 - `MP_ACCESS_TOKEN`
 - `MP_SUCCESS_URL`
 - `MP_PENDING_URL`
