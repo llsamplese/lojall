@@ -862,7 +862,7 @@
     }
 
     .cart-primary-actions {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns: 1fr;
     }
 
     .cart-utility-actions {
@@ -1365,7 +1365,7 @@
                 <textarea id="pixCode" class="pix-copy" readonly rows="4"></textarea>
                 <button class="pix-copy-button" type="button" onclick="copyPixCode()">Copiar código Pix</button>
                 <a id="pixTicketLink" class="checkout-secondary-button" href="#" target="_blank" rel="noopener" style="display:none; text-decoration:none; align-items:center; justify-content:center;">Abrir comprovante / instruções</a>
-                <button class="checkout-secondary-button" type="button" onclick="checkCurrentPaymentStatus(true)">Já paguei, verificar agora</button>
+                <button class="checkout-secondary-button" type="button" onclick="checkCurrentPaymentStatus(true)">Já paguei</button>
             </div>
         </div>
     </div>
@@ -1464,8 +1464,7 @@
         </div>
         <div class="cart-actions-group">
             <div class="cart-primary-actions">
-                <button class="btn-pay-pix" onclick="openTransparentCheckout()">Finalizar no site</button>
-                <button class="btn-pay-card" onclick="openTransparentCheckout()">Escolher Pix ou Cartão</button>
+                <button class="btn-pay-pix" onclick="openTransparentCheckout()">Escolher Pix ou Cartão</button>
             </div>
             <div class="cart-utility-actions">
                 <button class="btn-finalizar" onclick="finalizarSelecao()">Copiar pedido</button>
@@ -2369,7 +2368,7 @@
             }
 
             if (forceMessage) {
-                setBrickStatus(`Status atual: ${data.status}. Assim que aprovar, a entrega será liberada automaticamente.`, '');
+                setBrickStatus('Aguardando pagamento. Assim que o Pix for aprovado, sua entrega será liberada automaticamente.', '');
             }
         } catch (error) {
             if (forceMessage) {
