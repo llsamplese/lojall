@@ -61,16 +61,24 @@
         min-width: 0;
     }
 
-    .brand-mark {
-        width: 44px;
-        height: 44px;
+    .brand-logo {
+        width: 46px;
+        height: 46px;
         border-radius: 14px;
+        padding: 8px;
         display: grid;
         place-items: center;
-        background: linear-gradient(135deg, #ffe082, #ffb300);
-        color: #1b1400;
-        font-weight: 900;
-        box-shadow: 0 12px 24px rgba(255, 193, 7, 0.18);
+        background: linear-gradient(135deg, rgba(255, 224, 130, 0.16), rgba(255, 191, 0, 0.08));
+        border: 1px solid rgba(255, 193, 7, 0.18);
+        box-shadow: 0 12px 24px rgba(255, 193, 7, 0.12);
+        flex-shrink: 0;
+    }
+
+    .brand-logo img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        filter: drop-shadow(0 6px 12px rgba(0,0,0,0.35));
     }
 
     .brand-copy {
@@ -411,21 +419,20 @@
         box-shadow: 0 18px 44px rgba(0,0,0,0.32);
         border: 1px solid rgba(255, 193, 7, 0.12);
         display: grid;
-        grid-template-columns: minmax(0, 1.2fr) minmax(320px, 1fr);
-        gap: 16px;
+        gap: 14px;
         align-items: start;
     }
 
     .search-box {
         display: flex;
-        gap: 15px;
-        flex-wrap: wrap;
+        gap: 12px;
         margin: 0;
+        align-items: center;
     }
 
     .search-box input {
         flex: 1;
-        min-width: 250px;
+        min-width: 0;
         padding: 12px 20px;
         border: 1px solid rgba(255,255,255,0.08);
         border-radius: 14px;
@@ -444,10 +451,6 @@
         border-color: rgba(255, 193, 7, 0.66);
         box-shadow: 0 0 0 4px rgba(255, 193, 7, 0.12);
         background-color: rgba(255,255,255,0.06);
-    }
-
-    .filter-group {
-        margin-bottom: 10px;
     }
 
     .filter-group-label {
@@ -503,47 +506,94 @@
         font-style: italic;
     }
 
-    .search-main {
-        display: grid;
-        gap: 14px;
+    .filter-toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
     }
 
-    .search-side {
+    .filters-panel-toggle {
+        padding: 12px 16px;
+        border-radius: 14px;
+        border: 1px solid rgba(255, 193, 7, 0.16);
+        background: rgba(255,255,255,0.04);
+        color: #fff1bc;
+        font-weight: 800;
+        cursor: pointer;
+        transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+        min-width: 150px;
+    }
+
+    .filters-panel-toggle:hover {
+        transform: translateY(-2px);
+        border-color: rgba(255, 193, 7, 0.32);
+        background: rgba(255, 193, 7, 0.08);
+    }
+
+    .filters-panel-toggle .arrow {
+        display: inline-block;
+        margin-left: 8px;
+        transition: transform 0.24s ease;
+    }
+
+    .filters-panel-toggle.open .arrow {
+        transform: rotate(180deg);
+    }
+
+    .filters-panel {
+        display: none;
+        padding: 16px;
+        border-radius: 18px;
+        background: rgba(255,255,255,0.03);
+        border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .filters-panel.open {
         display: grid;
-        gap: 12px;
+        gap: 16px;
+        animation: fadeIn 0.18s ease;
+    }
+
+    .filter-group {
+        margin-bottom: 0;
     }
 
     .cart-summary {
         background:
-            radial-gradient(circle at top left, rgba(255, 193, 7, 0.18), transparent 32%),
-            linear-gradient(135deg, #121212 0%, #171717 62%, #1c1a14 100%);
+            radial-gradient(circle at left, rgba(255, 193, 7, 0.18), transparent 32%),
+            linear-gradient(135deg, #121212 0%, #171717 58%, #16130d 100%);
         color: #f6f0da;
         padding: 22px 24px;
         border-radius: 22px;
         margin-bottom: 18px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
+        display: grid;
+        grid-template-columns: minmax(220px, 0.9fr) minmax(220px, 0.85fr) minmax(320px, 1.25fr);
         gap: 18px;
         box-shadow: 0 20px 50px rgba(0,0,0,0.36);
         border: 1px solid rgba(255, 215, 0, 0.22);
         position: sticky;
         top: 20px;
         z-index: 100;
-        overflow: hidden;
-        flex-wrap: wrap;
+        align-items: stretch;
     }
 
     .cart-main {
         display: grid;
-        gap: 8px;
-        min-width: 220px;
+        gap: 10px;
+        align-content: center;
+        padding: 8px 2px;
     }
 
     .cart-totals {
         display: grid;
         gap: 6px;
-        min-width: 180px;
+        align-content: center;
+        padding: 18px 20px;
+        border-radius: 20px;
+        background: rgba(255,255,255,0.035);
+        border: 1px solid rgba(255,255,255,0.06);
     }
 
     .cart-info {
@@ -553,7 +603,7 @@
     }
 
     .cart-total {
-        font-size: 28px;
+        font-size: 2rem;
         font-weight: 900;
         color: #ffd54f;
         letter-spacing: -0.03em;
@@ -570,8 +620,7 @@
         display: grid;
         grid-template-columns: 1fr;
         gap: 12px;
-        min-width: min(620px, 100%);
-        flex: 1;
+        align-content: center;
     }
 
     .cart-primary-actions,
@@ -585,7 +634,7 @@
     }
 
     .cart-utility-actions {
-        grid-template-columns: repeat(4, minmax(0, 1fr));
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
     .btn-finalizar, .btn-copy-names, .btn-select-all, .btn-clear-all, .btn-pay-pix, .btn-pay-card {
@@ -597,6 +646,12 @@
         font-size: 14px;
         letter-spacing: 0.02em;
         min-height: 48px;
+    }
+
+    .btn-pay-pix,
+    .btn-pay-card {
+        min-height: 54px;
+        font-size: 15px;
     }
 
     .btn-finalizar:hover, .btn-copy-names:hover, .btn-select-all:hover, .btn-clear-all:hover, .btn-pay-pix:hover, .btn-pay-card:hover {
@@ -645,7 +700,6 @@
 
     .checkout-status {
         width: 100%;
-        margin-top: 12px;
         padding: 12px 14px;
         border-radius: 12px;
         border: 1px solid rgba(255,255,255,0.08);
@@ -858,36 +912,6 @@
         font-size: 20px;
     }
 
-    .filter-toggle-btn {
-        display: none;
-        width: 100%;
-        padding: 10px 16px;
-        background: #2A2A2A;
-        border: 2px solid #424242;
-        border-radius: 10px;
-        color: #FFC107;
-        font-weight: 700;
-        font-size: 14px;
-        cursor: pointer;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 8px;
-        transition: all 0.2s;
-    }
-
-    .filter-toggle-btn:hover {
-        border-color: #FFC107;
-        background: #333;
-    }
-
-    .filter-toggle-btn .arrow {
-        transition: transform 0.25s;
-    }
-
-    .filter-toggle-btn.open .arrow {
-        transform: rotate(180deg);
-    }
-
 @media (max-width: 768px) {
     .topbar {
         top: 8px;
@@ -922,31 +946,26 @@
         min-height: 130px;
     }
 
-    .search-filter {
-        grid-template-columns: 1fr;
-        padding: 14px;
-        border-radius: 18px;
-    }
-
-    .search-side {
-        gap: 10px;
+    .search-box {
+        flex-direction: column;
+        align-items: stretch;
     }
 
     .catalog-grid {
         grid-template-columns: 1fr;
     }
 
-    .filter-group {
-        display: none;
+    .filter-toolbar {
+        flex-direction: column;
+        align-items: stretch;
     }
 
-    .filter-group.open {
-        display: block;
-        animation: fadeIn 0.2s ease;
+    .filters-panel-toggle {
+        width: 100%;
     }
 
-    .filter-toggle-btn {
-        display: flex !important;
+    .filters-panel {
+        padding: 14px;
     }
 
     .header h1 {
@@ -960,7 +979,7 @@
         margin-bottom: 15px;
         gap: 8px;
         border-radius: 12px;
-        display: grid;
+        grid-template-columns: 1fr;
     }
 
     .cart-primary-actions,
@@ -976,6 +995,10 @@
 
     .cart-total {
         font-size: 18px;
+    }
+
+    .cart-totals {
+        padding: 14px 16px;
     }
 
     /* Colocar os botões em 2 colunas (ou todos menores) */
@@ -1083,7 +1106,9 @@
 <div class="container">
     <div class="topbar">
         <div class="brand">
-            <div class="brand-mark">LL</div>
+            <div class="brand-logo">
+                <img src="https://llsamplese.github.io/llcatalogo/Layer%205.png" alt="LL Samples">
+            </div>
             <div class="brand-copy">
                 <strong>Loja LL Samples</strong>
                 <span>Samples profissionais, entrega automática e checkout direto</span>
@@ -1114,16 +1139,16 @@
         </div>
     </div>
     <div class="search-filter">
-        <div class="search-main">
-            <div class="search-box">
-                <input type="text" id="searchInput" placeholder="Buscar sample, ritmo ou instrumento">
-            </div>
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="Buscar sample, ritmo ou instrumento">
+            <button class="filters-panel-toggle" id="filtersPanelToggle" type="button" onclick="toggleFiltersPanel()">
+                Filtros <span class="arrow">▼</span>
+            </button>
+        </div>
+        <div class="filter-toolbar">
             <div class="filter-result-count" id="filterResultCount"></div>
         </div>
-        <div class="search-side">
-            <button class="filter-toggle-btn" id="toggleEstilo" onclick="toggleFilterGroup('groupEstilo','toggleEstilo')">
-                <span>Filtrar por estilo</span><span class="arrow">▼</span>
-            </button>
+        <div class="filters-panel" id="filtersPanel">
             <div class="filter-group" id="groupEstilo">
                 <div class="filter-group-label">Estilo</div>
                 <div class="filter-tags" id="filterStyle">
@@ -1143,9 +1168,6 @@
                     <div class="tag" data-style="pacote">Pacotes</div>
                 </div>
             </div>
-            <button class="filter-toggle-btn" id="toggleInstrumento" onclick="toggleFilterGroup('groupInstrumento','toggleInstrumento')">
-                <span>Filtrar por instrumento</span><span class="arrow">▼</span>
-            </button>
             <div class="filter-group" id="groupInstrumento">
                 <div class="filter-group-label">Instrumento</div>
                 <div class="filter-tags" id="filterInstrument">
@@ -1180,10 +1202,10 @@
                 <button class="btn-pay-card" onclick="iniciarCheckout('card')">Pagar com Cartão</button>
             </div>
             <div class="cart-utility-actions">
-                <button class="btn-select-all" onclick="selectAllSamples()">Selecionar todos</button>
-                <button class="btn-clear-all" onclick="clearAllSamples()">Limpar tudo</button>
                 <button class="btn-finalizar" onclick="finalizarSelecao()">Copiar pedido</button>
                 <button class="btn-copy-names" onclick="copiarNomesSamples()">Copiar nomes</button>
+                <button class="btn-select-all" onclick="selectAllSamples()">Selecionar todos</button>
+                <button class="btn-clear-all" onclick="clearAllSamples()">Limpar tudo</button>
             </div>
             <div class="checkout-status" id="checkoutStatus">Selecione os samples para liberar o checkout.</div>
         </div>
@@ -1955,6 +1977,17 @@
         cart.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
 
+    function toggleFiltersPanel(forceOpen) {
+        const panel = document.getElementById('filtersPanel');
+        const toggle = document.getElementById('filtersPanelToggle');
+        const shouldOpen = typeof forceOpen === 'boolean'
+            ? forceOpen
+            : !panel.classList.contains('open');
+        panel.classList.toggle('open', shouldOpen);
+        toggle.classList.toggle('open', shouldOpen);
+        toggle.setAttribute('aria-expanded', shouldOpen ? 'true' : 'false');
+    }
+
     function getSelectedItems() {
         return [...selectedSamples].map(index => samplesData[index]);
     }
@@ -2115,7 +2148,7 @@
         const totals = getCartTotals();
 
         if (count > 0) {
-            cartSummary.style.display = 'flex';
+            cartSummary.style.display = 'grid';
             cartInfo.textContent = `${count} sample${count > 1 ? 's' : ''} selecionado${count > 1 ? 's' : ''}`;
             cartTotal.textContent = `PIX: ${formatCurrency(totals.pix)}`;
             cartCardTotal.textContent = `Cartão: ${formatCurrency(totals.card)}`;
@@ -2255,15 +2288,6 @@
             btn.textContent = 'Comprar';
         });
         updateCart();
-    }
-
-    // ── Mobile filter toggle ──────────────────────────────────────────────────
-    function toggleFilterGroup(groupId, btnId) {
-        const group = document.getElementById(groupId);
-        const btn   = document.getElementById(btnId);
-        if (!group || !btn) return;
-        const isOpen = group.classList.toggle('open');
-        btn.classList.toggle('open', isOpen);
     }
 
         // ── Categorização de samples ──────────────────────────────────────────────
