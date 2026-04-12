@@ -19,4 +19,17 @@ const COUPONS = {
   }
 };
 
+for (let percent = 1; percent <= 99; percent += 1) {
+  const code = `TESTE${percent}`;
+  COUPONS[code] = {
+    code,
+    label: `Teste ${percent}%`,
+    active: true,
+    type: "percent",
+    value: percent,
+    minSubtotal: 0,
+    minItems: 1
+  };
+}
+
 module.exports = COUPONS;

@@ -268,6 +268,35 @@
         margin-bottom: 12px;
     }
 
+    .checkout-customer-form {
+        display: grid;
+        gap: 10px;
+        margin-bottom: 16px;
+    }
+
+    .checkout-input {
+        width: 100%;
+        min-height: 46px;
+        border-radius: 14px;
+        border: 1px solid rgba(255,255,255,0.08);
+        background: rgba(255,255,255,0.04);
+        color: #fff6d6;
+        padding: 0 14px;
+        font-size: 0.92rem;
+    }
+
+    .checkout-input:focus {
+        outline: none;
+        border-color: rgba(255, 193, 7, 0.4);
+        box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.08);
+    }
+
+    .checkout-input-help {
+        color: #9f8f61;
+        font-size: 0.82rem;
+        line-height: 1.4;
+    }
+
     .checkout-summary-list {
         display: grid;
         gap: 8px;
@@ -701,7 +730,7 @@
 
     .selected-item {
         display: grid;
-        grid-template-columns: minmax(0, 1fr) auto;
+        grid-template-columns: minmax(0, 1fr) auto auto;
         gap: 12px;
         align-items: center;
         padding: 10px 12px;
@@ -723,6 +752,20 @@
         font-size: 0.9rem;
         font-weight: 800;
         white-space: nowrap;
+    }
+
+    .selected-item-remove {
+        width: 28px;
+        height: 28px;
+        border-radius: 999px;
+        border: 1px solid rgba(255,255,255,0.12);
+        background: rgba(255,255,255,0.05);
+        color: #ffe3a1;
+        display: grid;
+        place-items: center;
+        cursor: pointer;
+        font-size: 0.9rem;
+        line-height: 1;
     }
 
     .selected-items-toggle {
@@ -1357,6 +1400,12 @@
             </div>
         </div>
         <div class="checkout-panel">
+            <div class="checkout-panel-title">Seus dados</div>
+            <div class="checkout-customer-form">
+                <input id="checkoutCustomerName" class="checkout-input" type="text" placeholder="Seu nome completo">
+                <input id="checkoutCustomerPhone" class="checkout-input" type="tel" placeholder="Seu telefone / WhatsApp">
+                <div class="checkout-input-help">Esses dados ficam registrados junto do pedido para você ter histórico e contato do cliente.</div>
+            </div>
             <div class="checkout-panel-title">Pagamento</div>
             <div id="paymentBrick_container" class="checkout-brick-host"></div>
             <div id="checkoutBrickStatus" class="checkout-brick-status">Carregue o checkout para pagar com Pix ou cartão diretamente aqui.</div>
@@ -2332,6 +2381,23 @@
         }
     }
 
+    function getCheckoutCustomer() {
+        const name = String(document.getElementById('checkoutCustomerName')?.value || '').trim();
+        const phone = String(document.getElementById('checkoutCustomerPhone')?.value || '').trim();
+        return { name, phone };
+    }
+
+    function validateCheckoutCustomer() {
+        const customer = getCheckoutCustomer();
+        if (!customer.name) {
+            throw new Error('Informe o nome do cliente antes de pagar.');
+        }
+        if (!customer.phone) {
+            throw new Error('Informe o telefone ou WhatsApp antes de pagar.');
+        }
+        return customer;
+    }
+
     async function loadTransparentCheckoutConfig() {
         if (transparentCheckoutConfig) return transparentCheckoutConfig;
         const response = await fetch(TRANSPARENT_CONFIG_ENDPOINT);
@@ -2386,6 +2452,7 @@
     }
 
     async function submitTransparentPayment(formData) {
+        const customer = validateCheckoutCustomer();
         const items = getSelectedItems();
         const totals = getCartTotals();
         const response = await fetch(TRANSPARENT_PAYMENT_ENDPOINT, {
@@ -2393,6 +2460,7 @@
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 formData,
+                customer,
                 items: items.map(item => ({
                     title: item.nome,
                     unit_price: item.valor,
@@ -2520,6 +2588,26 @@
         await destroyPaymentBrick();
     }
 
+    function removeSelectedItem(index) {
+        const numericIndex = Number(index);
+        if (!selectedSamples.has(numericIndex)) return;
+        selectedSamples.delete(numericIndex);
+
+        const cardElement = document.querySelector(`.sample-card[data-index="${numericIndex}"]`);
+        if (cardElement) {
+            cardElement.classList.remove('selected');
+            const btn = cardElement.querySelector('.btn-select');
+            if (btn) {
+                btn.classList.remove('remove');
+                btn.classList.add('add');
+                btn.textContent = 'Comprar';
+            }
+        }
+
+        invalidateCouponDueToCartChange();
+        updateCart();
+    }
+
     function setCouponFeedback(message, type = '') {
         const feedback = document.getElementById('couponFeedback');
         if (!feedback) return;
@@ -2593,7 +2681,10 @@
     }
 
     function getSelectedItems() {
-        return [...selectedSamples].map(index => samplesData[index]);
+        return [...selectedSamples].map(index => ({
+            ...samplesData[index],
+            index
+        }));
     }
 
     function getCartTotals() {
@@ -2705,6 +2796,7 @@
             row.innerHTML = `
                 <div class="selected-item-name">${item.nome}</div>
                 <div class="selected-item-price">${formatCurrency(item.valor)}</div>
+                <button class="selected-item-remove" type="button" onclick="removeSelectedItem(${item.index})" aria-label="Remover item">×</button>
             `;
             itemsList.appendChild(row);
         });

@@ -1,4 +1,5 @@
 const { validateCoupon, roundCurrency } = require("../lib/coupon-utils");
+const { appendOrderLead, isGithubLoggingConfigured } = require("../lib/github-order-log");
 
 const PAYMENT_API = "https://api.mercadopago.com/v1/payments";
 
@@ -57,7 +58,7 @@ function buildDescription(items) {
   return `Pedido LL Samples (${items.length} itens)`;
 }
 
-function buildPaymentBody(formData, items, totals) {
+function buildPaymentBody(formData, items, totals, customerData = {}) {
   const paymentMethodId = String(formData?.payment_method_id || "").trim();
   if (!paymentMethodId) {
     throw new Error("Método de pagamento não informado pelo checkout.");
@@ -70,6 +71,7 @@ function buildPaymentBody(formData, items, totals) {
 
   const payer = formData?.payer || {};
   const identification = payer?.identification || {};
+  const customer = customerData || {};
 
   const body = {
     transaction_amount: amount,
@@ -82,6 +84,8 @@ function buildPaymentBody(formData, items, totals) {
     },
     metadata: {
       store: "LL Samples",
+      customer_name: String(customer.name || "").trim(),
+      customer_phone: String(customer.phone || "").trim(),
       coupon_code: totals.coupon?.code || "",
       coupon_label: totals.coupon?.label || "",
       coupon_discount: totals.discount,
@@ -119,6 +123,28 @@ function buildPaymentBody(formData, items, totals) {
   return body;
 }
 
+function buildLeadRecord(paymentBody, items, totals) {
+  return {
+    created_at: new Date().toISOString(),
+    status: "initiated",
+    customer_name: paymentBody.metadata?.customer_name || "",
+    customer_phone: paymentBody.metadata?.customer_phone || "",
+    payer_email: paymentBody.payer?.email || "",
+    payment_method_id: paymentBody.payment_method_id || "",
+    transaction_amount: paymentBody.transaction_amount || 0,
+    subtotal: totals.subtotal,
+    discount: totals.discount,
+    total_pix: totals.pix,
+    total_card: totals.card,
+    coupon_code: totals.coupon?.code || "",
+    items: items.map((item) => ({
+      title: item.title,
+      unit_price: item.unit_price,
+      quantity: item.quantity
+    }))
+  };
+}
+
 module.exports = async (req, res) => {
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
@@ -137,7 +163,8 @@ module.exports = async (req, res) => {
     }
 
     const totals = buildTotals(items, body.coupon?.code);
-    const paymentBody = buildPaymentBody(body.formData || {}, items, totals);
+    const paymentBody = buildPaymentBody(body.formData || {}, items, totals, body.customer || {});
+    const githubLog = await appendOrderLead(buildLeadRecord(paymentBody, items, totals));
 
     const response = await fetch(PAYMENT_API, {
       method: "POST",
@@ -163,6 +190,9 @@ module.exports = async (req, res) => {
       status_detail: data.status_detail,
       payment_type_id: data.payment_type_id,
       point_of_interaction_type: data?.point_of_interaction?.type || "",
+      github_logged: githubLog.saved,
+      github_log_path: githubLog.path || "",
+      github_log_enabled: isGithubLoggingConfigured(),
       totals,
       qr_code: data?.point_of_interaction?.transaction_data?.qr_code || "",
       qr_code_base64: data?.point_of_interaction?.transaction_data?.qr_code_base64 || "",

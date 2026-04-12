@@ -1,4 +1,5 @@
 ﻿const crypto = require('node:crypto');
+const { appendOrderLead } = require('../lib/github-order-log');
 
 const PAYMENT_API_BASE = 'https://api.mercadopago.com/v1/payments';
 
@@ -154,6 +155,20 @@ module.exports = async (req, res) => {
 
     const payment = await fetchPayment(resourceId);
     const normalizedPayment = normalizePayment(payment);
+
+    await appendOrderLead({
+      created_at: new Date().toISOString(),
+      status: normalizedPayment.status,
+      status_detail: normalizedPayment.status_detail,
+      payment_id: normalizedPayment.id,
+      payment_type_id: normalizedPayment.payment_type_id,
+      transaction_amount: normalizedPayment.transaction_amount,
+      payer_email: normalizedPayment.payer?.email || '',
+      customer_name: normalizedPayment.metadata?.customer_name || '',
+      customer_phone: normalizedPayment.metadata?.customer_phone || '',
+      coupon_code: normalizedPayment.metadata?.coupon_code || '',
+      items: Array.isArray(normalizedPayment.metadata?.original_items) ? normalizedPayment.metadata.original_items : []
+    });
 
     console.log(JSON.stringify({
       source: 'mercado-pago-webhook',
