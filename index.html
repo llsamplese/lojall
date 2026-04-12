@@ -192,14 +192,15 @@
         position: fixed;
         inset: 50% auto auto 50%;
         transform: translate(-50%, -46%);
-        width: min(760px, calc(100vw - 28px));
-        max-height: calc(100vh - 32px);
-        overflow: auto;
+        width: min(980px, calc(100vw - 28px));
+        max-height: calc(100vh - 24px);
+        overflow-x: hidden;
+        overflow-y: auto;
         background: linear-gradient(180deg, rgba(14,14,14,0.98), rgba(20,20,20,0.98));
         border: 1px solid rgba(255, 193, 7, 0.14);
         border-radius: 24px;
         box-shadow: 0 30px 80px rgba(0,0,0,0.45);
-        padding: 22px;
+        padding: 24px;
         z-index: 300;
         opacity: 0;
         pointer-events: none;
@@ -247,8 +248,9 @@
 
     .checkout-modal-grid {
         display: grid;
-        grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
-        gap: 18px;
+        grid-template-columns: minmax(280px, 0.9fr) minmax(420px, 1.1fr);
+        gap: 20px;
+        align-items: start;
     }
 
     .checkout-panel {
@@ -256,6 +258,7 @@
         border-radius: 20px;
         background: rgba(255,255,255,0.03);
         border: 1px solid rgba(255,255,255,0.06);
+        overflow: hidden;
     }
 
     .checkout-panel-title {
@@ -318,7 +321,9 @@
     }
 
     .checkout-brick-host {
-        min-height: 420px;
+        min-height: 470px;
+        width: 100%;
+        overflow: hidden;
     }
 
     .checkout-brick-status {
