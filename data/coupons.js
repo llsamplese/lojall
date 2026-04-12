@@ -11,7 +11,7 @@ const COUPONS = {
   LL20OFF: {
     code: "LL20OFF",
     label: "R$ 20 OFF",
-    active: false,
+    active: true,
     type: "fixed",
     value: 20,
     minSubtotal: 140,
