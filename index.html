@@ -4,7 +4,9 @@
     
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LL Samples - Catálogo Interativo</title>
-    <link href="./LL Samples - Catálogo Interativo_files/css2" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
     /* Reset básico */
     * {
@@ -2389,6 +2391,11 @@
                     }
                 },
                 paymentMethods: {
+                    creditCard: 'all',
+                    debitCard: 'all',
+                    prepaidCard: 'all',
+                    bankTransfer: 'all',
+                    ticket: 'all',
                     maxInstallments: 12
                 }
             },
@@ -2434,6 +2441,9 @@
     async function closeTransparentCheckout() {
         const overlay = document.getElementById('checkoutOverlay');
         const modal = document.getElementById('checkoutModal');
+        if (document.activeElement && typeof document.activeElement.blur === 'function') {
+            document.activeElement.blur();
+        }
         overlay?.classList.remove('open');
         modal?.classList.remove('open');
         modal?.setAttribute('aria-hidden', 'true');
