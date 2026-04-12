@@ -729,14 +729,34 @@
 
     .sample-name {
         grid-area: name;
-        font-size: 0.98rem;
-        font-weight: 700;
+        font-size: 0.9rem;
+        font-weight: 500;
         color: #fffdf4;
         margin-bottom: 0;
         line-height: 1.1;
-        white-space: nowrap;
         overflow: hidden;
-        text-overflow: ellipsis;
+        min-width: 0;
+    }
+
+    .sample-name span {
+        display: block;
+        white-space: nowrap;
+        width: max-content;
+        max-width: none;
+    }
+
+    .sample-name.marquee span {
+        animation: sampleMarquee 7s linear infinite alternate;
+        will-change: transform;
+    }
+
+    @keyframes sampleMarquee {
+        from {
+            transform: translateX(0);
+        }
+        to {
+            transform: translateX(var(--marquee-distance, 0));
+        }
     }
 
     .sample-price {
@@ -785,10 +805,10 @@
         padding: 9px 16px;
         border: 1px solid transparent;
         border-radius: 999px;
-        font-weight: 700;
+        font-weight: 600;
         cursor: pointer;
         transition: all 0.22s ease;
-        font-size: 0.95rem;
+        font-size: 0.88rem;
         line-height: 1;
     }
 
@@ -913,7 +933,7 @@
     }
 
     .sample-name {
-        font-size: 0.9rem;
+        font-size: 0.84rem;
     }
 
     .btn-preview {
@@ -924,7 +944,7 @@
     .btn-select {
         min-width: 84px;
         padding: 8px 14px;
-        font-size: 0.9rem;
+        font-size: 0.82rem;
     }
 
     /* Se quiser ainda mais compacto, pode esconder os textos e deixar só ícones. Exemplo:
@@ -1680,8 +1700,6 @@
         {nome: "LL Drums Laercia Dantas", valor: 70, video: "https://www.youtube.com/watch?v=fhNn5la2l5Q"},
         {nome: "LL Drums Eduardinho dos Teclados", valor: 70, video: "https://www.youtube.com/watch?v=I6yIpJ5tHeM"},
         {nome: "LL Drums Toque Dez", valor: 70, video: "https://www.youtube.com/watch?v=sxXJIoUFYQ4"},
-        {nome: "LL Drums Ronny Arrocha 2025", valor: 70, video: ""},
-        {nome: "LL Guitarra Batidao Cliente", valor: 70, video: ""},
         {nome: "LL Violao Arrocha", valor: 60, video: ""},
 	    {nome: "LL Drums Diovane Severo", valor: 70, video: "https://www.youtube.com/watch?v=c7_Bj2z5tlA"},
         {nome: "LL Guitarra Forró", valor: 70, video: "https://www.youtube.com/watch?v=76wm2WOucCs"},
@@ -1703,7 +1721,6 @@
         {nome: "LL Pacote Producao Arrasta-Pe (Completo)", valor: 70, video: "https://www.youtube.com/watch?v=B-VnCfYLIj8"},
         {nome: "LL Pacote Producao Arrasta-Pe (Acomp)", valor: 70, video: "https://www.youtube.com/watch?v=B-VnCfYLIj8"},
         {nome: "LL Drums Arrasta-Pé v2", valor: 70, video: "https://www.youtube.com/watch?v=B-VnCfYLIj8"},
-        {nome: "LL Drums Ronny Arrocha 2025", valor: 70, video: null}, // Não encontrado na lista de vídeos
         {nome: "LL Drums Guilherme Silva", valor: 70, video: "https://www.youtube.com/watch?v=egMYYporhgs"},
         {nome: "LL Pacote Produção Nattan", valor: 70, video: "https://www.youtube.com/watch?v=-u2iGSJMYc8"},
         {nome: "LL Keys Pagodao", valor: 70, video: "https://www.youtube.com/watch?v=8TE-0kQYAgE"},
@@ -1711,7 +1728,6 @@
         {nome: "LL Guitarra Pagodao v3", valor: 80, video: "https://www.youtube.com/watch?v=JmGsTXqFDU8"},
         {nome: "LL Drums Marcynho Batidao", valor: 70, video: "https://youtu.be/8V3I303NcWU"},
         {nome: "LL Bass Forro Romantico", valor: 70, video: "https://youtu.be/L8wgsiVASb0?si=K_wrF7f1Y-wC6x5A"}, // Não encontrado na lista de vídeos
-        {nome: "LL Guitarra Batidao Cliente", valor: 70, video: null}, // Não encontrado na lista de vídeos
         {nome: "LL Drums Leo Foguete", valor: 70, video: "https://www.youtube.com/watch?v=oIeRu7Le_iI"},
         {nome: "LL Drums Seresta do Rasta", valor: 70, video: "https://youtu.be/Jl7dWRJVg5k?si=L8gWlKQ5LQzFmAz7"},
         {nome: "LL Drums Desejo", valor: 70, video: "https://youtu.be/edbpb1HAJpM?si=J007U-ehQcdUPUYB"},
@@ -1942,6 +1958,10 @@
         return `https://img.youtube.com/vi/${videoId}/${quality}.jpg`;
     }
 
+    function getDisplaySampleName(name) {
+        return name.startsWith('LL ') ? name.slice(3) : name;
+    }
+
     function openYoutubeVideo(url) {
         if (url) {
             window.open(url, '_blank');
@@ -1983,6 +2003,7 @@
         card.className = `sample-card ${isSelected ? 'selected' : ''}`;
         card.dataset.index = globalIndex; // Adiciona o índice como um atributo de dado
         const thumbnailUrl = await getValidThumbnailUrl(sample.video);
+        const displayName = getDisplaySampleName(sample.nome);
         const thumbnailContent = `
             <img src="${thumbnailUrl}" alt="${sample.nome}" loading="lazy">
         `;
@@ -1991,7 +2012,7 @@
                 ${thumbnailContent}
             </div>
             <div class="card-content">
-                <div class="sample-name">${sample.nome}</div>
+                <div class="sample-name"><span>${displayName}</span></div>
                 <div class="sample-price">R$ ${sample.valor.toFixed(2)}</div>
                 <div class="card-actions">
                     <button class="btn-preview" type="button" ${sample.video ? `data-video="${sample.video}"` : 'disabled'} aria-label="Ouvir prévia">▶</button>
@@ -2006,6 +2027,17 @@
             previewButton.addEventListener('click', (event) => {
                 event.stopPropagation();
                 openYoutubeVideo(sample.video);
+            });
+        }
+        const nameContainer = card.querySelector('.sample-name');
+        const nameText = nameContainer ? nameContainer.querySelector('span') : null;
+        if (nameContainer && nameText) {
+            requestAnimationFrame(() => {
+                const overflow = nameText.scrollWidth - nameContainer.clientWidth;
+                if (overflow > 8) {
+                    nameContainer.classList.add('marquee');
+                    nameContainer.style.setProperty('--marquee-distance', `-${overflow + 24}px`);
+                }
             });
         }
         // Adiciona o event listener diretamente ao botão dentro do card
