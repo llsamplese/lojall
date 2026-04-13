@@ -78,13 +78,14 @@ function buildPaymentBody(formData, items, totals, customerData = {}, customerAc
     description: buildDescription(items),
     payment_method_id: paymentMethodId,
     payer: {
-      email: String(payer.email || "").trim(),
+      email: String(customer.email || payer.email || "").trim(),
       first_name: String(payer.first_name || "").trim(),
       last_name: String(payer.last_name || "").trim()
     },
     metadata: {
       store: "LL Samples",
       customer_name: String(customer.name || "").trim(),
+      customer_email: String(customer.email || "").trim(),
       customer_phone: String(customer.phone || "").trim(),
       customer_access_code: String(customerAccessCode || "").trim(),
       coupon_code: totals.coupon?.code || "",
@@ -129,6 +130,7 @@ function buildLeadRecord(paymentBody, items, totals) {
     created_at: new Date().toISOString(),
     status: "initiated",
     customer_name: paymentBody.metadata?.customer_name || "",
+    customer_email: paymentBody.metadata?.customer_email || "",
     customer_phone: paymentBody.metadata?.customer_phone || "",
     customer_access_code: paymentBody.metadata?.customer_access_code || "",
     payer_email: paymentBody.payer?.email || "",

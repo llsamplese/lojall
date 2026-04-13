@@ -1510,8 +1510,9 @@
             <div class="checkout-panel-title">Seus dados</div>
             <div class="checkout-customer-form">
                 <input id="checkoutCustomerName" class="checkout-input" type="text" placeholder="Seu nome completo">
+                <input id="checkoutCustomerEmail" class="checkout-input" type="email" placeholder="Seu e-mail">
                 <input id="checkoutCustomerPhone" class="checkout-input" type="tel" placeholder="Seu telefone / WhatsApp">
-                <div class="checkout-input-help">Esses dados ficam registrados junto do pedido para você ter histórico e contato do cliente.</div>
+                <div class="checkout-input-help">Nome, e-mail e telefone ficam registrados junto do pedido para histórico, contato e consulta das compras.</div>
             </div>
             <div class="checkout-panel-title">Pagamento</div>
             <div id="paymentBrick_container" class="checkout-brick-host"></div>
@@ -2511,14 +2512,18 @@
 
     function getCheckoutCustomer() {
         const name = String(document.getElementById('checkoutCustomerName')?.value || '').trim();
+        const email = String(document.getElementById('checkoutCustomerEmail')?.value || '').trim();
         const phone = String(document.getElementById('checkoutCustomerPhone')?.value || '').trim();
-        return { name, phone };
+        return { name, email, phone };
     }
 
     function validateCheckoutCustomer() {
         const customer = getCheckoutCustomer();
         if (!customer.name) {
             throw new Error('Informe o nome do cliente antes de pagar.');
+        }
+        if (!customer.email) {
+            throw new Error('Informe o e-mail do cliente antes de pagar.');
         }
         if (!customer.phone) {
             throw new Error('Informe o telefone ou WhatsApp antes de pagar.');

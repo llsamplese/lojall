@@ -165,6 +165,7 @@ module.exports = async (req, res) => {
       transaction_amount: normalizedPayment.transaction_amount,
       payer_email: normalizedPayment.payer?.email || '',
       customer_name: normalizedPayment.metadata?.customer_name || '',
+      customer_email: normalizedPayment.metadata?.customer_email || normalizedPayment.payer?.email || '',
       customer_phone: normalizedPayment.metadata?.customer_phone || '',
       customer_access_code: normalizedPayment.metadata?.customer_access_code || '',
       coupon_code: normalizedPayment.metadata?.coupon_code || '',
