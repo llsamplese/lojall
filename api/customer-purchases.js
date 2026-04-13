@@ -1,5 +1,5 @@
 const DOWNLOAD_LINKS = require("../data/download-links");
-const { getAllOrderRecords, normalizeEmail, isGithubLoggingConfigured } = require("../lib/github-order-log");
+const { getAllOrderRecords, normalizeEmail, getRecordEmail, isGithubLoggingConfigured } = require("../lib/github-order-log");
 
 function normalizeName(value) {
   return String(value || "")
@@ -57,7 +57,7 @@ module.exports = async (req, res) => {
     }
 
     const records = await getAllOrderRecords();
-    const emailRecords = records.filter((record) => normalizeEmail(record?.payer_email) === email);
+    const emailRecords = records.filter((record) => getRecordEmail(record) === email);
 
     if (!emailRecords.length) {
       return res.status(404).json({ error: "Nenhuma compra foi encontrada para esse e-mail." });
