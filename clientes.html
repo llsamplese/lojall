@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel de Clientes | LL Samples</title>
+  <style>
+    :root {
+      --bg: #090909;
+      --panel: #151515;
+      --panel-2: #1d1d1d;
+      --ink: #f8f0cf;
+      --muted: #a79664;
+      --gold: #ffc107;
+      --gold-soft: rgba(255, 193, 7, .15);
+      --line: rgba(255,255,255,.07);
+      --green: #15803d;
+      --red: #9f1d1d;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(255,193,7,.12), transparent 26%),
+        radial-gradient(circle at top right, rgba(255,193,7,.08), transparent 22%),
+        linear-gradient(180deg, #111 0%, var(--bg) 28%, #060606 100%);
+      color: var(--ink);
+      padding: 28px 16px 48px;
+    }
+
+    .shell {
+      width: min(1240px, 100%);
+      margin: 0 auto;
+      display: grid;
+      gap: 18px;
+    }
+
+    .topbar,
+    .panel {
+      background: linear-gradient(180deg, rgba(18,18,18,.98), rgba(12,12,12,.98));
+      border: 1px solid rgba(255,193,7,.12);
+      border-radius: 24px;
+      box-shadow: 0 22px 50px rgba(0,0,0,.28);
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 18px 22px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand img {
+      width: 42px;
+      height: 42px;
+      object-fit: contain;
+    }
+
+    .brand strong {
+      display: block;
+      font-size: 1.15rem;
+      color: #fff6d6;
+    }
+
+    .brand span {
+      display: block;
+      color: var(--muted);
+      font-size: .92rem;
+      margin-top: 2px;
+    }
+
+    .topbar-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .button,
+    button {
+      border: none;
+      cursor: pointer;
+      border-radius: 999px;
+      padding: 12px 18px;
+      font-weight: 800;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: transform .18s ease, filter .18s ease;
+    }
+
+    .button:hover,
+    button:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.03);
+    }
+
+    .button.primary,
+    button.primary {
+      background: linear-gradient(135deg, #ffe082, #ffbf00);
+      color: #241b01;
+    }
+
+    .button.ghost,
+    button.ghost {
+      background: rgba(255,255,255,.04);
+      color: #fff3c5;
+      border: 1px solid rgba(255,255,255,.08);
+    }
+
+    .panel {
+      padding: 22px;
+    }
+
+    .panel-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .panel-head h1,
+    .panel-head h2 {
+      margin: 0;
+      color: #fff7d6;
+    }
+
+    .panel-head p {
+      margin: 8px 0 0;
+      color: var(--muted);
+    }
+
+    .filters {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 180px;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .filters input,
+    .filters select {
+      width: 100%;
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 16px;
+      color: #fff2c7;
+      padding: 13px 14px;
+      font: inherit;
+    }
+
+    .filters input::placeholder {
+      color: #897a50;
+    }
+
+    .filters input:focus,
+    .filters select:focus {
+      outline: none;
+      border-color: rgba(255,193,7,.4);
+      box-shadow: 0 0 0 4px rgba(255,193,7,.08);
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .stat {
+      padding: 16px;
+      border-radius: 18px;
+      background: rgba(255,255,255,.035);
+      border: 1px solid var(--line);
+    }
+
+    .stat-label {
+      color: var(--muted);
+      font-size: .82rem;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
+
+    .stat strong {
+      display: block;
+      margin-top: 8px;
+      font-size: 1.5rem;
+      color: #fff6d0;
+    }
+
+    .customer-list {
+      display: grid;
+      gap: 16px;
+    }
+
+    .customer-card {
+      border-radius: 22px;
+      background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.02));
+      border: 1px solid var(--line);
+      padding: 18px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .customer-head {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 14px;
+      align-items: start;
+    }
+
+    .customer-head strong {
+      display: block;
+      font-size: 1.1rem;
+      color: #fff5d2;
+    }
+
+    .customer-meta {
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: .9rem;
+      line-height: 1.55;
+    }
+
+    .customer-badges {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,193,7,.1);
+      color: #fff2bf;
+      font-size: .82rem;
+      font-weight: 700;
+    }
+
+    .badge.ok {
+      color: #d9ffd8;
+      border-color: rgba(34,197,94,.18);
+      background: rgba(34,197,94,.12);
+    }
+
+    .customer-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .purchase-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .purchase-card {
+      border-radius: 18px;
+      background: rgba(255,255,255,.03);
+      border: 1px solid var(--line);
+      padding: 14px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .purchase-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      color: #fff4c9;
+      font-weight: 700;
+    }
+
+    .purchase-meta {
+      color: var(--muted);
+      font-size: .84rem;
+      line-height: 1.5;
+    }
+
+    .sample-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .sample-item {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto auto;
+      gap: 10px;
+      align-items: center;
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: rgba(255,255,255,.03);
+      border: 1px solid rgba(255,255,255,.05);
+    }
+
+    .sample-item span {
+      min-width: 0;
+    }
+
+    .sample-item .price {
+      color: #ffd76b;
+      white-space: nowrap;
+      font-weight: 700;
+    }
+
+    .sample-item .status {
+      white-space: nowrap;
+      font-size: .78rem;
+      color: #c8ddb8;
+    }
+
+    .empty-state {
+      padding: 24px;
+      border-radius: 18px;
+      background: rgba(255,255,255,.03);
+      border: 1px dashed rgba(255,193,7,.14);
+      color: var(--muted);
+      text-align: center;
+      line-height: 1.5;
+    }
+
+    .panel-scroll {
+      max-height: calc(100vh - 290px);
+      overflow: auto;
+      padding-right: 4px;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255,193,7,.55) rgba(255,255,255,.04);
+    }
+
+    .panel-scroll::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    .panel-scroll::-webkit-scrollbar-track {
+      background: rgba(255,255,255,.04);
+      border-radius: 999px;
+    }
+
+    .panel-scroll::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, rgba(255, 224, 130, 0.9), rgba(255, 191, 0, 0.75));
+      border-radius: 999px;
+      border: 2px solid rgba(18,18,18,.96);
+    }
+
+    @media (max-width: 800px) {
+      .filters {
+        grid-template-columns: 1fr;
+      }
+
+      .customer-head {
+        grid-template-columns: 1fr;
+      }
+
+      .customer-badges {
+        justify-content: flex-start;
+      }
+
+      .sample-item {
+        grid-template-columns: 1fr;
+      }
+
+      .panel-scroll {
+        max-height: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <div class="topbar">
+      <div class="brand">
+        <img src="https://llsamplese.github.io/llcatalogo/Layer%205.png" alt="LL Samples">
+        <div>
+          <strong>Loja LL Samples</strong>
+          <span>Painel administrativo simples de clientes e entregas</span>
+        </div>
+      </div>
+      <div class="topbar-actions">
+        <a class="button ghost" href="/index.html">Voltar à loja</a>
+        <button class="button primary" type="button" onclick="loadCustomers(true)">Atualizar</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <div>
+          <h1>Clientes e compras</h1>
+          <p>Este painel usa os registros do GitHub para agrupar clientes, compras aprovadas e links liberados por cliente.</p>
+        </div>
+      </div>
+
+      <div class="filters">
+        <input id="searchInput" type="text" placeholder="Buscar por nome, e-mail, telefone, código ou sample">
+        <select id="statusFilter">
+          <option value="all">Todos os clientes</option>
+          <option value="approved">Com compras aprovadas</option>
+          <option value="empty">Sem compras aprovadas</option>
+        </select>
+      </div>
+
+      <div class="stats">
+        <div class="stat">
+          <div class="stat-label">Clientes</div>
+          <strong id="statCustomers">0</strong>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Compras aprovadas</div>
+          <strong id="statApproved">0</strong>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Samples entregáveis</div>
+          <strong id="statDelivered">0</strong>
+        </div>
+      </div>
+
+      <div id="statusBox" class="empty-state">Carregando clientes...</div>
+      <div class="panel-scroll">
+        <div id="customerList" class="customer-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const ADMIN_ENDPOINT = '/api/admin-customers';
+    let customersCache = [];
+
+    function money(value) {
+      return Number(value || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    }
+
+    function escapeHtml(value) {
+      return String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function copyText(text, label = 'Conteúdo copiado') {
+      navigator.clipboard.writeText(String(text || '')).then(() => {
+        const status = document.getElementById('statusBox');
+        status.textContent = label;
+      }).catch(() => {
+        const status = document.getElementById('statusBox');
+        status.textContent = 'Não foi possível copiar agora.';
+      });
+    }
+
+    function buildCustomerCopyText(customer) {
+      const delivered = customer.purchases.flatMap(purchase => (purchase.items || []).filter(item => item.delivered));
+      return delivered.map(item => `${item.title}\n${item.link}`).join('\n\n');
+    }
+
+    function updateStats(customers) {
+      const approved = customers.reduce((sum, customer) => sum + Number(customer.approved_orders || 0), 0);
+      const delivered = customers.reduce((sum, customer) => (
+        sum + customer.purchases.reduce((purchaseSum, purchase) => purchaseSum + purchase.items.filter(item => item.delivered).length, 0)
+      ), 0);
+
+      document.getElementById('statCustomers').textContent = customers.length;
+      document.getElementById('statApproved').textContent = approved;
+      document.getElementById('statDelivered').textContent = delivered;
+    }
+
+    function renderCustomers(customers) {
+      const list = document.getElementById('customerList');
+      if (!customers.length) {
+        list.innerHTML = '<div class="empty-state">Nenhum cliente encontrado com esse filtro.</div>';
+        updateStats([]);
+        return;
+      }
+
+      updateStats(customers);
+      list.innerHTML = customers.map((customer, customerIndex) => {
+        const copyTextValue = encodeURIComponent(buildCustomerCopyText(customer));
+        const purchasesMarkup = customer.purchases.length
+          ? customer.purchases.map((purchase) => `
+              <div class="purchase-card">
+                <div class="purchase-head">
+                  <span>${purchase.payment_type_id === 'credit_card' ? 'Cartão' : (purchase.payment_type_id || 'Pagamento')}</span>
+                  <span>${money(purchase.transaction_amount)}</span>
+                </div>
+                <div class="purchase-meta">
+                  ${purchase.created_at ? new Date(purchase.created_at).toLocaleString('pt-BR') : 'Data não informada'}<br>
+                  Payment ID: ${escapeHtml(purchase.payment_id || '-')}
+                </div>
+                <div class="sample-list">
+                  ${purchase.items.map((item) => `
+                    <div class="sample-item">
+                      <span>${escapeHtml(item.title)}</span>
+                      <span class="price">${money(item.unit_price)}</span>
+                      <span class="status">${item.delivered ? 'Link pronto' : 'Sem link'}</span>
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+            `).join('')
+          : '<div class="empty-state">Este cliente ainda não tem compras aprovadas registradas.</div>';
+
+        return `
+          <div class="customer-card">
+            <div class="customer-head">
+              <div>
+                <strong>${escapeHtml(customer.name || customer.email)}</strong>
+                <div class="customer-meta">
+                  ${escapeHtml(customer.email)}<br>
+                  ${escapeHtml(customer.phone || 'Telefone não informado')}<br>
+                  Última atividade: ${customer.last_order_at ? new Date(customer.last_order_at).toLocaleString('pt-BR') : 'Sem data'}
+                </div>
+              </div>
+              <div class="customer-badges">
+                <div class="badge">${escapeHtml(customer.access_code || 'sem código')}</div>
+                <div class="badge">${customer.total_orders} pedidos</div>
+                <div class="badge ok">${customer.approved_orders} aprovados</div>
+              </div>
+            </div>
+            <div class="customer-actions">
+              <button class="button primary" type="button" onclick="copyText(decodeURIComponent('${copyTextValue}'), 'Links do cliente copiados')">Copiar links</button>
+              <button class="button ghost" type="button" onclick="copyText('${escapeHtml(customer.access_code || '')}', 'Código do cliente copiado')">Copiar código</button>
+              <button class="button ghost" type="button" onclick="copyText('${escapeHtml(customer.email || '')}', 'E-mail copiado')">Copiar e-mail</button>
+            </div>
+            <div class="purchase-list">${purchasesMarkup}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function applyFilters() {
+      const query = String(document.getElementById('searchInput').value || '').trim().toLowerCase();
+      const status = document.getElementById('statusFilter').value;
+      const filtered = customersCache.filter((customer) => {
+        if (status === 'approved' && !customer.approved_orders) return false;
+        if (status === 'empty' && customer.approved_orders) return false;
+
+        if (!query) return true;
+
+        const haystack = [
+          customer.name,
+          customer.email,
+          customer.phone,
+          customer.access_code,
+          ...customer.purchases.flatMap((purchase) => purchase.items.map((item) => item.title))
+        ].join(' ').toLowerCase();
+
+        return haystack.includes(query);
+      });
+
+      renderCustomers(filtered);
+    }
+
+    async function loadCustomers(showMessage = false) {
+      const status = document.getElementById('statusBox');
+      status.textContent = 'Carregando clientes...';
+
+      try {
+        const response = await fetch(ADMIN_ENDPOINT);
+        const data = await response.json();
+        if (!response.ok) {
+          throw new Error(data.error || 'Não foi possível carregar o painel.');
+        }
+
+        customersCache = Array.isArray(data.customers) ? data.customers : [];
+        status.textContent = showMessage ? 'Painel atualizado.' : `Clientes carregados: ${data.total_customers}`;
+        applyFilters();
+      } catch (error) {
+        customersCache = [];
+        status.textContent = error.message || 'Erro ao carregar painel.';
+        renderCustomers([]);
+      }
+    }
+
+    document.getElementById('searchInput').addEventListener('input', applyFilters);
+    document.getElementById('statusFilter').addEventListener('change', applyFilters);
+
+    loadCustomers();
+  </script>
+</body>
+</html>
