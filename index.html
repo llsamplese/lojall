@@ -541,6 +541,86 @@
         color: #fff3c5;
     }
 
+    .purchase-history-panel {
+        display: none;
+    }
+
+    .purchase-history-panel.open {
+        display: block;
+    }
+
+    .purchase-history-list {
+        display: grid;
+        gap: 12px;
+        margin-top: 14px;
+    }
+
+    .purchase-history-empty {
+        color: #a59667;
+        font-size: 0.9rem;
+        line-height: 1.5;
+    }
+
+    .purchase-history-item {
+        padding: 14px;
+        border-radius: 16px;
+        background: rgba(255,255,255,0.04);
+        border: 1px solid rgba(255,255,255,0.06);
+        display: grid;
+        gap: 10px;
+    }
+
+    .purchase-history-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        color: #fff6cf;
+        font-weight: 700;
+    }
+
+    .purchase-history-meta {
+        color: #9f9161;
+        font-size: 0.82rem;
+        line-height: 1.45;
+    }
+
+    .purchase-history-links {
+        display: grid;
+        gap: 8px;
+    }
+
+    .purchase-history-link {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 10px 12px;
+        border-radius: 14px;
+        background: rgba(255,255,255,0.03);
+        border: 1px solid rgba(255, 193, 7, 0.08);
+        text-decoration: none;
+        color: #fff4cc;
+        font-size: 0.88rem;
+    }
+
+    .purchase-history-link span:last-child {
+        color: #ffc107;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .purchase-history-toggle {
+        width: 100%;
+        border: 1px solid rgba(255, 193, 7, 0.16);
+        background: rgba(255,255,255,0.03);
+        color: #fff2c0;
+        border-radius: 14px;
+        padding: 12px 14px;
+        font-weight: 700;
+        cursor: pointer;
+    }
+
     .search-filter {
         background:
             linear-gradient(180deg, rgba(20,20,20,0.96), rgba(11,11,11,0.96));
@@ -1351,9 +1431,9 @@
             Criar cadastro
             <span>Salve seus dados para futuras compras e entregas automáticas.</span>
         </a>
-        <a class="menu-link" href="javascript:void(0)">
+        <a class="menu-link" href="javascript:void(0)" onclick="openPurchaseHistory()">
             Minhas compras
-            <span>Área reservada para listar pagamentos aprovados.</span>
+            <span>Veja neste navegador os downloads liberados sem precisar de cadastro.</span>
         </a>
         <a class="menu-link" href="javascript:void(0)">
             Suporte
@@ -1378,6 +1458,11 @@
             <input type="password" placeholder="Criar senha">
             <button class="auth-cta secondary" type="button">Criar minha conta</button>
         </div>
+    </div>
+    <div id="purchaseHistoryPanel" class="auth-card purchase-history-panel">
+        <h3>Minhas compras</h3>
+        <p>Compras aprovadas ficam salvas neste navegador para o cliente voltar depois e reencontrar os downloads.</p>
+        <div id="purchaseHistoryContent" class="purchase-history-empty">Nenhuma compra salva neste navegador ainda.</div>
     </div>
 </aside>
 <section id="checkoutModal" class="checkout-modal" aria-hidden="true">
@@ -2093,6 +2178,8 @@
 		
     };
 
+    const PURCHASE_HISTORY_KEY = 'llsamples:purchaseHistory';
+
     // Array samplesData atualizado com a lista completa fornecida anteriormente
     // e agora com os links de vídeo preenchidos
     const samplesData = [
@@ -2651,6 +2738,98 @@
         panel.classList.toggle('open', shouldOpen);
         panel.setAttribute('aria-hidden', shouldOpen ? 'false' : 'true');
         document.body.style.overflow = shouldOpen ? 'hidden' : '';
+    }
+
+    function getStoredPurchases() {
+        try {
+            const raw = window.localStorage.getItem(PURCHASE_HISTORY_KEY);
+            const parsed = raw ? JSON.parse(raw) : [];
+            return Array.isArray(parsed) ? parsed : [];
+        } catch (error) {
+            return [];
+        }
+    }
+
+    function renderStoredPurchases() {
+        const container = document.getElementById('purchaseHistoryContent');
+        if (!container) {
+            return;
+        }
+
+        const purchases = getStoredPurchases();
+        if (!purchases.length) {
+            container.className = 'purchase-history-empty';
+            container.textContent = 'Nenhuma compra salva neste navegador ainda.';
+            return;
+        }
+
+        container.className = 'purchase-history-list';
+        container.innerHTML = purchases.map((purchase, purchaseIndex) => {
+            const deliveredItems = Array.isArray(purchase.items) ? purchase.items.filter(item => item.delivered && item.link) : [];
+            const hiddenCount = Math.max(0, deliveredItems.length - 5);
+            const visibleItems = deliveredItems.slice(0, 5).map(item => `
+                <a class="purchase-history-link" href="${item.link}" target="_blank" rel="noopener noreferrer">
+                    <span>${item.title}</span>
+                    <span>Abrir</span>
+                </a>
+            `).join('');
+            const hiddenItems = hiddenCount > 0 ? `
+                <div id="purchaseHidden_${purchaseIndex}" style="display:none;" class="purchase-history-links">
+                    ${deliveredItems.slice(5).map(item => `
+                        <a class="purchase-history-link" href="${item.link}" target="_blank" rel="noopener noreferrer">
+                            <span>${item.title}</span>
+                            <span>Abrir</span>
+                        </a>
+                    `).join('')}
+                </div>
+                <button class="purchase-history-toggle" type="button" onclick="togglePurchaseHistoryItems(${purchaseIndex})" id="purchaseToggle_${purchaseIndex}">
+                    Ver mais ${hiddenCount} ${hiddenCount > 1 ? 'itens' : 'item'}
+                </button>
+            ` : '';
+
+            return `
+                <div class="purchase-history-item">
+                    <div class="purchase-history-head">
+                        <span>${purchase.payment_type_label || 'Compra aprovada'}</span>
+                        <span>${formatCurrency(purchase.transaction_amount || 0)}</span>
+                    </div>
+                    <div class="purchase-history-meta">
+                        ${purchase.date_approved ? new Date(purchase.date_approved).toLocaleString('pt-BR') : 'Data não informada'}<br>
+                        Payment ID: ${purchase.payment_id || '-'}
+                    </div>
+                    <div class="purchase-history-links">
+                        ${visibleItems || '<div class="purchase-history-empty">Ainda não há links disponíveis para esta compra.</div>'}
+                    </div>
+                    ${hiddenItems}
+                </div>
+            `;
+        }).join('');
+    }
+
+    function togglePurchaseHistoryItems(index) {
+        const hidden = document.getElementById(`purchaseHidden_${index}`);
+        const toggle = document.getElementById(`purchaseToggle_${index}`);
+        if (!hidden || !toggle) {
+            return;
+        }
+
+        const isOpen = hidden.style.display !== 'none';
+        hidden.style.display = isOpen ? 'none' : 'grid';
+        const hiddenCount = hidden.querySelectorAll('.purchase-history-link').length;
+        toggle.textContent = isOpen
+            ? `Ver mais ${hiddenCount} ${hiddenCount > 1 ? 'itens' : 'item'}`
+            : 'Mostrar menos';
+    }
+
+    function openPurchaseHistory() {
+        const panel = document.getElementById('purchaseHistoryPanel');
+        if (!panel) {
+            return;
+        }
+
+        renderStoredPurchases();
+        panel.classList.add('open');
+        panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 
     function scrollToCart() {
@@ -3247,6 +3426,7 @@
 
     // Renderiza catálogo inicial
     renderCatalog();
+    renderStoredPurchases();
     updateCouponUI();
     setCheckoutStatus('Selecione os samples para liberar o checkout.');
 </script>
