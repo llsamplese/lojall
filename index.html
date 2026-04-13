@@ -143,6 +143,8 @@
         right: 0;
         width: min(360px, 100vw);
         height: 100vh;
+        display: flex;
+        flex-direction: column;
         background: linear-gradient(180deg, rgba(12,12,12,0.98), rgba(18,18,18,0.98));
         border-left: 1px solid rgba(255, 193, 7, 0.14);
         box-shadow: -24px 0 60px rgba(0,0,0,0.4);
@@ -474,6 +476,30 @@
         background: rgba(255,255,255,0.03);
         border: 1px solid rgba(255,255,255,0.06);
         margin-bottom: 14px;
+    }
+
+    .customer-area-card {
+        flex: 1;
+        min-height: 0;
+        overflow-y: auto;
+        overflow-x: hidden;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(255, 193, 7, 0.55) rgba(255,255,255,0.04);
+    }
+
+    .customer-area-card::-webkit-scrollbar {
+        width: 10px;
+    }
+
+    .customer-area-card::-webkit-scrollbar-track {
+        background: rgba(255,255,255,0.04);
+        border-radius: 999px;
+    }
+
+    .customer-area-card::-webkit-scrollbar-thumb {
+        background: linear-gradient(180deg, rgba(255, 224, 130, 0.9), rgba(255, 191, 0, 0.75));
+        border-radius: 999px;
+        border: 2px solid rgba(12,12,12,0.95);
     }
 
     .auth-card h3 {
@@ -1461,7 +1487,7 @@
         </div>
         <button class="icon-button" type="button" onclick="toggleMenu(false)" aria-label="Fechar menu">✕</button>
     </div>
-    <div class="auth-card">
+    <div class="auth-card customer-area-card">
         <div class="customer-tabs">
             <button id="customerTabLocal" class="customer-tab active" type="button" onclick="switchCustomerTab('local')">Compras neste navegador</button>
             <button id="customerTabEmail" class="customer-tab" type="button" onclick="switchCustomerTab('email')">Compras deste e-mail</button>
