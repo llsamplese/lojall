@@ -166,6 +166,7 @@ module.exports = async (req, res) => {
       payer_email: normalizedPayment.payer?.email || '',
       customer_name: normalizedPayment.metadata?.customer_name || '',
       customer_phone: normalizedPayment.metadata?.customer_phone || '',
+      customer_access_code: normalizedPayment.metadata?.customer_access_code || '',
       coupon_code: normalizedPayment.metadata?.coupon_code || '',
       items: Array.isArray(normalizedPayment.metadata?.original_items) ? normalizedPayment.metadata.original_items : []
     });

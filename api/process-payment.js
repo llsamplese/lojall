@@ -1,5 +1,5 @@
 const { validateCoupon, roundCurrency } = require("../lib/coupon-utils");
-const { appendOrderLead, isGithubLoggingConfigured } = require("../lib/github-order-log");
+const { appendOrderLead, assignCustomerAccessCode, isGithubLoggingConfigured } = require("../lib/github-order-log");
 
 const PAYMENT_API = "https://api.mercadopago.com/v1/payments";
 
@@ -58,7 +58,7 @@ function buildDescription(items) {
   return `Pedido LL Samples (${items.length} itens)`;
 }
 
-function buildPaymentBody(formData, items, totals, customerData = {}) {
+function buildPaymentBody(formData, items, totals, customerData = {}, customerAccessCode = "") {
   const paymentMethodId = String(formData?.payment_method_id || "").trim();
   if (!paymentMethodId) {
     throw new Error("Método de pagamento não informado pelo checkout.");
@@ -86,6 +86,7 @@ function buildPaymentBody(formData, items, totals, customerData = {}) {
       store: "LL Samples",
       customer_name: String(customer.name || "").trim(),
       customer_phone: String(customer.phone || "").trim(),
+      customer_access_code: String(customerAccessCode || "").trim(),
       coupon_code: totals.coupon?.code || "",
       coupon_label: totals.coupon?.label || "",
       coupon_discount: totals.discount,
@@ -129,6 +130,7 @@ function buildLeadRecord(paymentBody, items, totals) {
     status: "initiated",
     customer_name: paymentBody.metadata?.customer_name || "",
     customer_phone: paymentBody.metadata?.customer_phone || "",
+    customer_access_code: paymentBody.metadata?.customer_access_code || "",
     payer_email: paymentBody.payer?.email || "",
     payment_method_id: paymentBody.payment_method_id || "",
     transaction_amount: paymentBody.transaction_amount || 0,
@@ -163,7 +165,9 @@ module.exports = async (req, res) => {
     }
 
     const totals = buildTotals(items, body.coupon?.code);
-    const paymentBody = buildPaymentBody(body.formData || {}, items, totals, body.customer || {});
+    const payerEmail = String(body?.formData?.payer?.email || "").trim();
+    const customerAccess = await assignCustomerAccessCode(payerEmail);
+    const paymentBody = buildPaymentBody(body.formData || {}, items, totals, body.customer || {}, customerAccess.code);
     const githubLog = await appendOrderLead(buildLeadRecord(paymentBody, items, totals));
 
     const response = await fetch(PAYMENT_API, {
@@ -193,6 +197,7 @@ module.exports = async (req, res) => {
       github_logged: githubLog.saved,
       github_log_path: githubLog.path || "",
       github_log_enabled: isGithubLoggingConfigured(),
+      customer_access_code: customerAccess.code,
       totals,
       qr_code: data?.point_of_interaction?.transaction_data?.qr_code || "",
       qr_code_base64: data?.point_of_interaction?.transaction_data?.qr_code_base64 || "",

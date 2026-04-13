@@ -541,12 +541,41 @@
         color: #fff3c5;
     }
 
-    .purchase-history-panel {
+    .customer-tabs {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-bottom: 16px;
+    }
+
+    .customer-tab {
+        border: 1px solid rgba(255,255,255,0.08);
+        background: rgba(255,255,255,0.03);
+        color: #f2e7bf;
+        border-radius: 14px;
+        padding: 12px 14px;
+        font-weight: 700;
+        cursor: pointer;
+    }
+
+    .customer-tab.active {
+        background: linear-gradient(135deg, #ffe082, #ffbf00);
+        color: #221a01;
+        border-color: rgba(255, 193, 7, 0.35);
+    }
+
+    .customer-pane {
         display: none;
     }
 
-    .purchase-history-panel.open {
+    .customer-pane.active {
         display: block;
+    }
+
+    .customer-form-note {
+        color: #8f8259;
+        font-size: 0.84rem;
+        line-height: 1.45;
     }
 
     .purchase-history-list {
@@ -619,6 +648,16 @@
         padding: 12px 14px;
         font-weight: 700;
         cursor: pointer;
+    }
+
+    .purchase-history-status {
+        margin-top: 12px;
+        padding: 12px 14px;
+        border-radius: 14px;
+        background: rgba(255,255,255,0.04);
+        border: 1px solid rgba(255,255,255,0.06);
+        color: #d9c995;
+        font-size: 0.88rem;
     }
 
     .search-filter {
@@ -1417,52 +1456,35 @@
 <aside id="menuPanel" class="menu-panel" aria-hidden="true">
     <div class="menu-header">
         <div>
-            <div class="menu-title">Cadastro LL Samples</div>
-            <div class="menu-subtitle">Área visual preparada para conta, histórico e reenvio de downloads.</div>
+            <div class="menu-title">Área do cliente</div>
+            <div class="menu-subtitle">Consulte as compras salvas neste navegador ou entre com e-mail e código de acesso.</div>
         </div>
         <button class="icon-button" type="button" onclick="toggleMenu(false)" aria-label="Fechar menu">✕</button>
     </div>
-    <div class="menu-list">
-        <a class="menu-link" href="javascript:void(0)">
-            Minha conta
-            <span>Acesse seus downloads e acompanhe novos pedidos.</span>
-        </a>
-        <a class="menu-link" href="javascript:void(0)">
-            Criar cadastro
-            <span>Salve seus dados para futuras compras e entregas automáticas.</span>
-        </a>
-        <a class="menu-link" href="javascript:void(0)" onclick="openPurchaseHistory()">
-            Minhas compras
-            <span>Veja neste navegador os downloads liberados sem precisar de cadastro.</span>
-        </a>
-        <a class="menu-link" href="javascript:void(0)">
-            Suporte
-            <span>Atendimento e reenvio de downloads.</span>
-        </a>
-    </div>
     <div class="auth-card">
-        <h3>Entrar</h3>
-        <p>Protótipo visual da área do cliente. Depois a gente liga com login real.</p>
-        <div class="auth-form">
-            <input type="email" placeholder="Seu e-mail">
-            <input type="password" placeholder="Sua senha">
-            <button class="auth-cta primary" type="button">Entrar na conta</button>
+        <div class="customer-tabs">
+            <button id="customerTabLocal" class="customer-tab active" type="button" onclick="switchCustomerTab('local')">Compras neste navegador</button>
+            <button id="customerTabEmail" class="customer-tab" type="button" onclick="switchCustomerTab('email')">Compras deste e-mail</button>
         </div>
-    </div>
-    <div class="auth-card">
-        <h3>Criar cadastro</h3>
-        <p>Deixe tudo pronto para salvar pedidos, compras aprovadas e links liberados.</p>
-        <div class="auth-form">
-            <input type="text" placeholder="Seu nome">
-            <input type="email" placeholder="Seu e-mail">
-            <input type="password" placeholder="Criar senha">
-            <button class="auth-cta secondary" type="button">Criar minha conta</button>
+
+        <div id="customerPaneLocal" class="customer-pane active">
+            <h3>Compras neste navegador</h3>
+            <p>Sem senha. Mostra o que já foi salvo localmente depois das compras aprovadas neste dispositivo.</p>
+            <div id="purchaseHistoryContent" class="purchase-history-empty">Nenhuma compra salva neste navegador ainda.</div>
         </div>
-    </div>
-    <div id="purchaseHistoryPanel" class="auth-card purchase-history-panel">
-        <h3>Minhas compras</h3>
-        <p>Compras aprovadas ficam salvas neste navegador para o cliente voltar depois e reencontrar os downloads.</p>
-        <div id="purchaseHistoryContent" class="purchase-history-empty">Nenhuma compra salva neste navegador ainda.</div>
+
+        <div id="customerPaneEmail" class="customer-pane">
+            <h3>Entrar</h3>
+            <p>Use o e-mail da compra e o código de acesso simples do cliente para reencontrar os pedidos aprovados.</p>
+            <div class="auth-form">
+                <input id="customerLookupEmail" type="email" placeholder="E-mail da compra">
+                <input id="customerLookupCode" type="password" placeholder="Código de acesso do cliente">
+                <div class="customer-form-note">Exemplo de código: <code>llsamples1</code>. O mesmo código reaparece para novas compras do mesmo e-mail.</div>
+                <button class="auth-cta primary" type="button" onclick="lookupEmailPurchases()">Entrar</button>
+            </div>
+            <div id="emailPurchaseStatus" class="purchase-history-status">Informe o e-mail e o código para carregar as compras desse cliente.</div>
+            <div id="emailPurchaseContent" class="purchase-history-empty" style="margin-top:14px;">Nenhuma compra carregada ainda.</div>
+        </div>
     </div>
 </aside>
 <section id="checkoutModal" class="checkout-modal" aria-hidden="true">
@@ -1494,6 +1516,7 @@
             <div class="checkout-panel-title">Pagamento</div>
             <div id="paymentBrick_container" class="checkout-brick-host"></div>
             <div id="checkoutBrickStatus" class="checkout-brick-status">Carregue o checkout para pagar com Pix ou cartão diretamente aqui.</div>
+            <div id="checkoutAccessCodeNotice" class="checkout-brick-status" style="display:none;"></div>
             <div id="pixResult" class="pix-result">
                 <img id="pixQrImage" class="pix-qr" alt="QR Code Pix">
                 <textarea id="pixCode" class="pix-copy" readonly rows="4"></textarea>
@@ -2179,11 +2202,11 @@
     };
 
     const PURCHASE_HISTORY_KEY = 'llsamples:purchaseHistory';
+    const CUSTOMER_PURCHASES_ENDPOINT = '/api/customer-purchases';
 
     // Array samplesData atualizado com a lista completa fornecida anteriormente
     // e agora com os links de vídeo preenchidos
     const samplesData = [
-        {nome: "LL Teste Mercado Pago", valor: 1, video: null},
         {nome: "LL Drums Filho do Piseiro", valor: 70, video: "https://youtu.be/fQa6_yS6Zi8?si=WOVFCiuFOR0dRhh_"},
         {nome: "LL Acordeon Forró v2", valor: 70, video: "https://www.youtube.com/watch?v=9R_xmNK0M4c"},
         {nome: "LL Bass Forró", valor: 70, video: "https://www.youtube.com/watch?v=Am54KWkecBM"},
@@ -2317,6 +2340,7 @@
     let transparentCheckoutConfig = null;
     let brickController = null;
     let currentPaymentId = null;
+    let currentCustomerAccessCode = '';
     let paymentStatusPoll = null;
 
     function roundCurrency(value) {
@@ -2339,6 +2363,23 @@
         if (!status) return;
         status.className = `checkout-brick-status${type ? ` ${type}` : ''}`;
         status.textContent = message;
+    }
+
+    function setAccessCodeNotice(code) {
+        const notice = document.getElementById('checkoutAccessCodeNotice');
+        if (!notice) {
+            return;
+        }
+
+        if (!code) {
+            notice.style.display = 'none';
+            notice.textContent = '';
+            return;
+        }
+
+        notice.style.display = 'block';
+        notice.className = 'checkout-brick-status success';
+        notice.textContent = `Código de acesso do cliente: ${code}. Guarde esse código para consultar compras por e-mail depois.`;
     }
 
     function hideUnwantedPaymentOptions() {
@@ -2516,7 +2557,8 @@
             if (data.status === 'approved') {
                 stopPaymentStatusPolling();
                 setBrickStatus('Pagamento aprovado. Preparando sua entrega...', 'success');
-                window.location.href = `/sucesso.html?payment_id=${data.payment_id}`;
+                const accessParam = currentCustomerAccessCode ? `&access_code=${encodeURIComponent(currentCustomerAccessCode)}` : '';
+                window.location.href = `/sucesso.html?payment_id=${data.payment_id}${accessParam}`;
                 return;
             }
 
@@ -2562,9 +2604,13 @@
             throw new Error(data.error || 'Falha ao processar pagamento.');
         }
 
+        currentCustomerAccessCode = String(data.customer_access_code || '').trim();
+        setAccessCodeNotice(currentCustomerAccessCode);
+
         if (data.status === 'approved') {
             setBrickStatus('Pagamento aprovado. Redirecionando para sua entrega...', 'success');
-            window.location.href = `/sucesso.html?payment_id=${data.payment_id}`;
+            const accessParam = currentCustomerAccessCode ? `&access_code=${encodeURIComponent(currentCustomerAccessCode)}` : '';
+            window.location.href = `/sucesso.html?payment_id=${data.payment_id}${accessParam}`;
             return;
         }
 
@@ -2597,6 +2643,8 @@
         hidePixResult();
         stopPaymentStatusPolling();
         currentPaymentId = null;
+        currentCustomerAccessCode = '';
+        setAccessCodeNotice('');
 
         const mp = new MercadoPago(config.publicKey, { locale: 'pt-BR' });
         const bricksBuilder = mp.bricks();
@@ -2750,21 +2798,8 @@
         }
     }
 
-    function renderStoredPurchases() {
-        const container = document.getElementById('purchaseHistoryContent');
-        if (!container) {
-            return;
-        }
-
-        const purchases = getStoredPurchases();
-        if (!purchases.length) {
-            container.className = 'purchase-history-empty';
-            container.textContent = 'Nenhuma compra salva neste navegador ainda.';
-            return;
-        }
-
-        container.className = 'purchase-history-list';
-        container.innerHTML = purchases.map((purchase, purchaseIndex) => {
+    function buildPurchaseHistoryMarkup(purchases, prefix) {
+        return purchases.map((purchase, purchaseIndex) => {
             const deliveredItems = Array.isArray(purchase.items) ? purchase.items.filter(item => item.delivered && item.link) : [];
             const hiddenCount = Math.max(0, deliveredItems.length - 5);
             const visibleItems = deliveredItems.slice(0, 5).map(item => `
@@ -2774,7 +2809,7 @@
                 </a>
             `).join('');
             const hiddenItems = hiddenCount > 0 ? `
-                <div id="purchaseHidden_${purchaseIndex}" style="display:none;" class="purchase-history-links">
+                <div id="${prefix}Hidden_${purchaseIndex}" style="display:none;" class="purchase-history-links">
                     ${deliveredItems.slice(5).map(item => `
                         <a class="purchase-history-link" href="${item.link}" target="_blank" rel="noopener noreferrer">
                             <span>${item.title}</span>
@@ -2782,7 +2817,7 @@
                         </a>
                     `).join('')}
                 </div>
-                <button class="purchase-history-toggle" type="button" onclick="togglePurchaseHistoryItems(${purchaseIndex})" id="purchaseToggle_${purchaseIndex}">
+                <button class="purchase-history-toggle" type="button" onclick="togglePurchaseHistoryItems('${prefix}', ${purchaseIndex})" id="${prefix}Toggle_${purchaseIndex}">
                     Ver mais ${hiddenCount} ${hiddenCount > 1 ? 'itens' : 'item'}
                 </button>
             ` : '';
@@ -2806,9 +2841,29 @@
         }).join('');
     }
 
-    function togglePurchaseHistoryItems(index) {
-        const hidden = document.getElementById(`purchaseHidden_${index}`);
-        const toggle = document.getElementById(`purchaseToggle_${index}`);
+    function renderPurchaseCollection(containerId, purchases, emptyMessage, prefix = 'purchase') {
+        const container = document.getElementById(containerId);
+        if (!container) {
+            return;
+        }
+
+        if (!Array.isArray(purchases) || !purchases.length) {
+            container.className = 'purchase-history-empty';
+            container.textContent = emptyMessage;
+            return;
+        }
+
+        container.className = 'purchase-history-list';
+        container.innerHTML = buildPurchaseHistoryMarkup(purchases, prefix);
+    }
+
+    function renderStoredPurchases() {
+        renderPurchaseCollection('purchaseHistoryContent', getStoredPurchases(), 'Nenhuma compra salva neste navegador ainda.', 'localPurchase');
+    }
+
+    function togglePurchaseHistoryItems(prefix, index) {
+        const hidden = document.getElementById(`${prefix}Hidden_${index}`);
+        const toggle = document.getElementById(`${prefix}Toggle_${index}`);
         if (!hidden || !toggle) {
             return;
         }
@@ -2821,15 +2876,59 @@
             : 'Mostrar menos';
     }
 
-    function openPurchaseHistory() {
-        const panel = document.getElementById('purchaseHistoryPanel');
-        if (!panel) {
+    function switchCustomerTab(tab) {
+        const localTab = document.getElementById('customerTabLocal');
+        const emailTab = document.getElementById('customerTabEmail');
+        const localPane = document.getElementById('customerPaneLocal');
+        const emailPane = document.getElementById('customerPaneEmail');
+        const showLocal = tab !== 'email';
+
+        localTab?.classList.toggle('active', showLocal);
+        emailTab?.classList.toggle('active', !showLocal);
+        localPane?.classList.toggle('active', showLocal);
+        emailPane?.classList.toggle('active', !showLocal);
+        renderStoredPurchases();
+    }
+
+    async function lookupEmailPurchases() {
+        const email = String(document.getElementById('customerLookupEmail')?.value || '').trim();
+        const accessCode = String(document.getElementById('customerLookupCode')?.value || '').trim();
+        const status = document.getElementById('emailPurchaseStatus');
+
+        if (!email) {
+            status.textContent = 'Informe o e-mail usado na compra.';
+            renderPurchaseCollection('emailPurchaseContent', [], 'Nenhuma compra carregada ainda.');
             return;
         }
 
-        renderStoredPurchases();
-        panel.classList.add('open');
-        panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        if (!accessCode) {
+            status.textContent = 'Informe o código de acesso desse cliente.';
+            renderPurchaseCollection('emailPurchaseContent', [], 'Nenhuma compra carregada ainda.');
+            return;
+        }
+
+        status.textContent = 'Consultando compras desse e-mail...';
+
+        try {
+            const response = await fetch(CUSTOMER_PURCHASES_ENDPOINT, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, access_code: accessCode })
+            });
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || 'Não foi possível consultar as compras desse e-mail.');
+            }
+
+            status.textContent = data.purchases.length
+                ? `Compras aprovadas carregadas para ${data.email}.`
+                : `Nenhuma compra aprovada foi encontrada para ${data.email}.`;
+            renderPurchaseCollection('emailPurchaseContent', data.purchases, 'Nenhuma compra aprovada foi encontrada para esse e-mail.', 'emailPurchase');
+        } catch (error) {
+            status.textContent = error.message || 'Erro ao carregar compras desse e-mail.';
+            renderPurchaseCollection('emailPurchaseContent', [], 'Nenhuma compra carregada ainda.');
+        }
     }
 
     function scrollToCart() {
@@ -3424,8 +3523,18 @@
         }
     });
 
+    ['customerLookupEmail', 'customerLookupCode'].forEach(id => {
+        document.getElementById(id)?.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                lookupEmailPurchases();
+            }
+        });
+    });
+
     // Renderiza catálogo inicial
     renderCatalog();
+    switchCustomerTab('local');
     renderStoredPurchases();
     updateCouponUI();
     setCheckoutStatus('Selecione os samples para liberar o checkout.');

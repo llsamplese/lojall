@@ -122,6 +122,7 @@
   <script>
     const params = new URLSearchParams(window.location.search);
     const paymentId = params.get('payment_id') || params.get('collection_id') || '';
+    const accessCode = params.get('access_code') || '';
     const statusEl = document.getElementById('status');
     const summaryEl = document.getElementById('summary');
     const listEl = document.getElementById('deliveryList');
@@ -145,6 +146,9 @@
         ['Payment ID', String(data.payment_id)],
         ['Aprovado em', data.date_approved ? new Date(data.date_approved).toLocaleString('pt-BR') : 'Agora']
       ];
+      if (accessCode) {
+        items.push(['Código de acesso', accessCode]);
+      }
       summaryEl.innerHTML = items.map(([label, value]) => `<div class="summary-item"><strong>${label}</strong>${value}</div>`).join('');
     }
 
