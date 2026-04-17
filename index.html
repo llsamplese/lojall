@@ -1513,8 +1513,9 @@
     .mobile-cart-bar {
         left: 12px;
         right: 12px;
-        bottom: 12px;
+        bottom: calc(12px + env(safe-area-inset-bottom, 0px));
         width: auto;
+        transform: none;
     }
 
     .topbar {
@@ -1805,7 +1806,7 @@
             </div>
             <div class="brand-copy">
                 <strong>Loja LL Samples</strong>
-                <span>Samples profissionais, entrega automática e checkout direto</span>
+                <span>Samples e Loops profissionais</span>
             </div>
         </div>
         <div class="topbar-actions">
