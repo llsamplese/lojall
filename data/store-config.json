@@ -10,7 +10,7 @@
   },
   "globalPricing": {
     "active": true,
-    "type": "percent",
+    "type": "fixed",
     "value": 10
   },
   "coupons": {
