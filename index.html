@@ -851,42 +851,96 @@
         box-shadow: 0 26px 60px rgba(0,0,0,0.42);
         border: 1px solid rgba(255, 215, 0, 0.14);
         position: fixed;
-        top: 84px;
-        right: 18px;
-        bottom: 18px;
-        width: min(460px, calc(100vw - 36px));
-        max-height: calc(100vh - 102px);
+        top: 50%;
+        left: 50%;
+        right: auto;
+        bottom: auto;
+        width: min(520px, calc(100vw - 36px));
+        max-height: min(84vh, 860px);
         overflow-y: auto;
         z-index: 200;
         align-items: stretch;
-        overflow: hidden;
-        transform: translateX(calc(100% + 28px));
+        overflow-x: hidden;
+        transform: translate(-50%, calc(-50% + 32px));
         opacity: 0;
         pointer-events: none;
         transition: transform 0.24s ease, opacity 0.24s ease;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(255, 193, 7, 0.55) rgba(255,255,255,0.04);
     }
 
     .cart-summary.open-drawer {
-        transform: translateX(0);
+        transform: translate(-50%, -50%);
         opacity: 1;
         pointer-events: auto;
+    }
+
+    .cart-summary::-webkit-scrollbar {
+        width: 10px;
+    }
+
+    .cart-summary::-webkit-scrollbar-track {
+        background: rgba(255,255,255,0.04);
+        border-radius: 999px;
+    }
+
+    .cart-summary::-webkit-scrollbar-thumb {
+        background: linear-gradient(180deg, rgba(255, 224, 130, 0.9), rgba(255, 191, 0, 0.75));
+        border-radius: 999px;
+        border: 2px solid rgba(18,18,18,0.96);
     }
 
     .cart-header {
         display: flex;
         align-items: center;
-        justify-content: space-between;
+        justify-content: center;
         gap: 12px;
-        margin-bottom: 2px;
+        margin-bottom: 4px;
+        position: relative;
+        padding: 4px 42px 6px;
+        text-align: center;
+    }
+
+    .cart-header-brand {
+        display: grid;
+        justify-items: center;
+        gap: 8px;
+        width: 100%;
+    }
+
+    .cart-header-logo {
+        width: 48px;
+        height: 48px;
+        object-fit: contain;
+        filter: drop-shadow(0 6px 16px rgba(255, 193, 7, 0.14));
+    }
+
+    .cart-header-eyebrow {
+        color: #ffe082;
+        font-size: 0.78rem;
+        font-weight: 800;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
     }
 
     .cart-header-title {
-        font-size: 1rem;
+        font-size: 1.08rem;
         font-weight: 800;
         color: #fff8dc;
+        line-height: 1.15;
+    }
+
+    .cart-header-subtitle {
+        color: #b6a57a;
+        font-size: 0.84rem;
+        line-height: 1.4;
+        max-width: 290px;
     }
 
     .cart-close {
+        position: absolute;
+        top: 2px;
+        right: 0;
         width: 34px;
         height: 34px;
         border-radius: 999px;
@@ -922,8 +976,10 @@
     .mobile-cart-bar {
         display: none;
         position: fixed;
-        right: 18px;
+        left: 50%;
+        right: auto;
         bottom: 18px;
+        transform: translateX(-50%);
         z-index: 190;
         grid-template-columns: minmax(0, 1fr) auto;
         gap: 12px;
@@ -1797,7 +1853,12 @@
     </div>
     <div class="cart-summary" id="cartSummary" style="display:none;">
         <div class="cart-header">
-            <div class="cart-header-title">Seu carrinho</div>
+            <div class="cart-header-brand">
+                <img class="cart-header-logo" src="https://llsamplese.github.io/llcatalogo/Layer%205.png" alt="LL Samples">
+                <div class="cart-header-eyebrow">LL Samples</div>
+                <div class="cart-header-title">Loja LL Samples</div>
+                <div class="cart-header-subtitle">Samples profissionais, compre e receba de imediato.</div>
+            </div>
             <button class="cart-close" type="button" onclick="closeMobileCart()" aria-label="Fechar carrinho">×</button>
         </div>
         <div class="cart-main">
