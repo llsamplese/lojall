@@ -1,5 +1,6 @@
-﻿const MERCADO_PAGO_API = "https://api.mercadopago.com/checkout/preferences";
+const MERCADO_PAGO_API = "https://api.mercadopago.com/checkout/preferences";
 const { validateCoupon, roundCurrency } = require("../lib/coupon-utils");
+const { getStoreConfig } = require("../lib/store-config");
 
 function parseBody(req) {
   if (!req.body) return {};
@@ -41,22 +42,32 @@ function buildPaymentMethods(mode) {
   };
 }
 
-function sanitizeItems(items) {
+async function sanitizeItems(items) {
   if (!Array.isArray(items)) return [];
+  const config = await getStoreConfig();
+  const overrides = config?.productOverrides || {};
 
   return items
-    .map((item) => ({
-      title: String(item?.title || "").trim(),
-      unit_price: roundCurrency(item?.unit_price || 0),
-      quantity: Number(item?.quantity || 1),
-      download_url: String(item?.download_url || "").trim()
-    }))
+    .map((item) => {
+      const title = String(item?.title || "").trim();
+      const override = overrides[title] || {};
+      const effectivePrice = override.active && Number(override.promoPrice) > 0
+        ? Number(override.promoPrice)
+        : item?.unit_price || 0;
+
+      return {
+        title,
+        unit_price: roundCurrency(effectivePrice),
+        quantity: Number(item?.quantity || 1),
+        download_url: String(item?.download_url || "").trim()
+      };
+    })
     .filter((item) => item.title && item.unit_price > 0 && item.quantity > 0);
 }
 
-function buildPreference(body) {
+async function buildPreference(body) {
   const mode = normalizeMode(body.mode);
-  const items = sanitizeItems(body.items);
+  const items = await sanitizeItems(body.items);
 
   if (!items.length) {
     throw new Error("Nenhum item válido foi enviado para pagamento.");
@@ -65,7 +76,7 @@ function buildPreference(body) {
   const customer = body.customer || {};
   const subtotal = roundCurrency(items.reduce((sum, item) => sum + (item.unit_price * item.quantity), 0));
   const couponCode = String(body.coupon?.code || "").trim();
-  const couponResult = validateCoupon(body.coupon?.code, {
+  const couponResult = await validateCoupon(body.coupon?.code, {
     subtotal,
     itemsCount: items.reduce((sum, item) => sum + item.quantity, 0)
   });
@@ -163,7 +174,7 @@ module.exports = async (req, res) => {
 
   try {
     const body = parseBody(req);
-    const { preference, coupon, totals } = buildPreference(body);
+    const { preference, coupon, totals } = await buildPreference(body);
 
     const response = await fetch(MERCADO_PAGO_API, {
       method: "POST",

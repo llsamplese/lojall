@@ -1814,7 +1814,7 @@
                 🛒
                 <span id="cartBadge" class="cart-badge" style="display:none;">0</span>
             </button>
-            <button class="icon-button" type="button" onclick="toggleMenu(true)" aria-label="Abrir menu">
+            <button id="accountMenuButton" class="icon-button" type="button" onclick="toggleMenu(true)" aria-label="Abrir menu">
                 ☰
             </button>
         </div>
@@ -1891,7 +1891,7 @@
             <div class="cart-total" id="cartTotal">PIX: R$ 0,00</div>
             <div class="cart-discount-line" id="cartDiscountLine" style="display:none;">Cupom: -R$ 0,00</div>
             <div class="cart-total-note" id="cartCardTotal">Cartão: R$ 0,00</div>
-            <div class="coupon-box">
+            <div class="coupon-box" id="couponBox">
                 <div class="coupon-row">
                     <input class="coupon-input" id="couponInput" type="text" placeholder="Cupom de desconto" maxlength="24">
                     <button class="coupon-apply" id="couponApplyButton" type="button" onclick="applyCoupon()">Aplicar</button>
@@ -1904,10 +1904,10 @@
                 <button class="btn-pay-pix" onclick="openTransparentCheckout()">Finalizar compra</button>
             </div>
             <div class="cart-utility-actions">
-                <button class="btn-finalizar" onclick="finalizarSelecao()">Copiar pedido</button>
-                <button class="btn-copy-names" onclick="copiarNomesSamples()">Copiar nomes</button>
-                <button class="btn-select-all" onclick="selectAllSamples()">Selecionar todos</button>
-                <button class="btn-clear-all" onclick="clearAllSamples()">Limpar tudo</button>
+                <button id="copyOrderButton" class="btn-finalizar" onclick="finalizarSelecao()">Copiar pedido</button>
+                <button id="copyNamesButton" class="btn-copy-names" onclick="copiarNomesSamples()">Copiar nomes</button>
+                <button id="selectAllButton" class="btn-select-all" onclick="selectAllSamples()">Selecionar todos</button>
+                <button id="clearAllButton" class="btn-clear-all" onclick="clearAllSamples()">Limpar tudo</button>
             </div>
             <div class="checkout-status" id="checkoutStatus">Selecione os samples para liberar o checkout.</div>
         </div>
@@ -2615,6 +2615,7 @@
     const TRANSPARENT_CONFIG_ENDPOINT = '/api/payment-config';
     const TRANSPARENT_PAYMENT_ENDPOINT = '/api/process-payment';
     const PAYMENT_STATUS_ENDPOINT = '/api/payment-status';
+    const STORE_CONFIG_ENDPOINT = '/api/store-config';
     const CARD_SURCHARGE = 1.0524;
     let appliedCoupon = null;
     let transparentCheckoutConfig = null;
@@ -2623,9 +2624,84 @@
     let currentCustomerAccessCode = '';
     let paymentStatusPoll = null;
     let mobileCartOpen = false;
+    let storeConfig = {
+        ui: {
+            showCouponBox: true,
+            showCopyNamesButton: true,
+            showCopyOrderButton: true,
+            showSelectAllButton: true,
+            showClearAllButton: true,
+            showFiltersButton: true,
+            showCustomerMenuButton: true
+        },
+        productOverrides: {},
+        coupons: {}
+    };
 
     function roundCurrency(value) {
         return Math.round((Number(value) + Number.EPSILON) * 100) / 100;
+    }
+
+    function getStoreUi() {
+        return {
+            showCouponBox: true,
+            showCopyNamesButton: true,
+            showCopyOrderButton: true,
+            showSelectAllButton: true,
+            showClearAllButton: true,
+            showFiltersButton: true,
+            showCustomerMenuButton: true,
+            ...(storeConfig.ui || {})
+        };
+    }
+
+    function getProductOverride(sampleName) {
+        return (storeConfig.productOverrides || {})[String(sampleName || '').trim()] || {};
+    }
+
+    function getEffectiveSamplePrice(sample) {
+        const override = getProductOverride(sample?.nome);
+        if (override.active && Number(override.promoPrice) > 0) {
+            return roundCurrency(Number(override.promoPrice));
+        }
+
+        return roundCurrency(sample?.valor || 0);
+    }
+
+    function applyStoreUiConfig() {
+        const ui = getStoreUi();
+        const toggleMap = [
+            ['couponBox', ui.showCouponBox],
+            ['copyNamesButton', ui.showCopyNamesButton],
+            ['copyOrderButton', ui.showCopyOrderButton],
+            ['selectAllButton', ui.showSelectAllButton],
+            ['clearAllButton', ui.showClearAllButton],
+            ['filtersPanelToggle', ui.showFiltersButton],
+            ['accountMenuButton', ui.showCustomerMenuButton]
+        ];
+
+        toggleMap.forEach(([id, visible]) => {
+            const element = document.getElementById(id);
+            if (!element) return;
+            element.style.display = visible ? '' : 'none';
+        });
+    }
+
+    async function loadStoreConfig() {
+        try {
+            const response = await fetch(STORE_CONFIG_ENDPOINT, { cache: 'no-store' });
+            const data = await response.json();
+            if (response.ok && data?.config) {
+                storeConfig = {
+                    ...storeConfig,
+                    ...data.config
+                };
+            }
+        } catch (error) {
+            console.warn('Não foi possível carregar a configuração dinâmica da loja.', error);
+        }
+
+        applyStoreUiConfig();
     }
 
     function formatCurrency(value) {
@@ -3277,6 +3353,7 @@
     function getSelectedItems() {
         return [...selectedSamples].map(index => ({
             ...samplesData[index],
+            valor: getEffectiveSamplePrice(samplesData[index]),
             index
         }));
     }
@@ -3481,6 +3558,8 @@
     // Função para criar um único card HTML
     async function createSampleCard(sample, globalIndex) {
         const isSelected = selectedSamples.has(globalIndex);
+        const effectivePrice = getEffectiveSamplePrice(sample);
+        const hasPromo = effectivePrice !== roundCurrency(sample.valor || 0);
         const card = document.createElement('div');
         card.className = `sample-card ${isSelected ? 'selected' : ''}`;
         card.dataset.index = globalIndex; // Adiciona o índice como um atributo de dado
@@ -3495,7 +3574,7 @@
             </div>
             <div class="card-content">
                 <div class="sample-name"><span>${displayName}</span></div>
-                <div class="sample-price">R$ ${sample.valor.toFixed(2)}</div>
+                <div class="sample-price">${hasPromo ? `<s style="opacity:.45; margin-right:6px;">R$ ${Number(sample.valor || 0).toFixed(2)}</s>` : ''}R$ ${effectivePrice.toFixed(2)}</div>
                 <div class="card-actions">
                     <button class="btn-preview" type="button" ${sample.video ? `data-video="${sample.video}"` : 'disabled'} aria-label="Ouvir prévia">▶</button>
                     <button class="btn-select ${isSelected ? 'remove' : 'add'}" data-index="${globalIndex}">
@@ -3663,8 +3742,9 @@
         let total = 0;
         selectedSamples.forEach(index => {
             const s = samplesData[index];
-            mensagem += `✅ ${removerAcentos(s.nome)} - R$ ${s.valor.toFixed(2)}\n`;
-            total += s.valor;
+            const valor = getEffectiveSamplePrice(s);
+            mensagem += `✅ ${removerAcentos(s.nome)} - R$ ${valor.toFixed(2)}\n`;
+            total += valor;
         });
         mensagem += `\n💰 TOTAL: R$ ${total.toFixed(2)}\n\n`;
         mensagem += `📲 Gostaria de fechar o pedido!\n`;
@@ -3868,11 +3948,14 @@
     });
 
     // Renderiza catálogo inicial
-    renderCatalog();
-    switchCustomerTab('local');
-    renderStoredPurchases();
-    updateCouponUI();
-    setCheckoutStatus('Selecione os samples para liberar o checkout.');
+    (async function initStorefront() {
+        await loadStoreConfig();
+        renderCatalog();
+        switchCustomerTab('local');
+        renderStoredPurchases();
+        updateCouponUI();
+        setCheckoutStatus('Selecione os samples para liberar o checkout.');
+    })();
 </script>
 
 

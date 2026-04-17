@@ -3,595 +3,113 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Painel de Clientes | LL Samples</title>
+  <title>Painel da Loja | LL Samples</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
-    :root {
-      --bg: #090909;
-      --panel: #151515;
-      --panel-2: #1d1d1d;
-      --ink: #f8f0cf;
-      --muted: #a79664;
-      --gold: #ffc107;
-      --gold-soft: rgba(255, 193, 7, .15);
-      --line: rgba(255,255,255,.07);
-      --green: #15803d;
-      --red: #9f1d1d;
-    }
-
+    :root { --bg: #070707; --ink: #fbf3d3; --muted: #a69461; --line: rgba(255,255,255,.08); }
     * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      min-height: 100vh;
-      font-family: Arial, sans-serif;
-      background:
-        radial-gradient(circle at top left, rgba(255,193,7,.12), transparent 26%),
-        radial-gradient(circle at top right, rgba(255,193,7,.08), transparent 22%),
-        linear-gradient(180deg, #111 0%, var(--bg) 28%, #060606 100%);
-      color: var(--ink);
-      padding: 28px 16px 48px;
-    }
-
-    .shell {
-      width: min(1240px, 100%);
-      margin: 0 auto;
-      display: grid;
-      gap: 18px;
-    }
-
-    .topbar,
-    .panel {
-      background: linear-gradient(180deg, rgba(18,18,18,.98), rgba(12,12,12,.98));
-      border: 1px solid rgba(255,193,7,.12);
-      border-radius: 24px;
-      box-shadow: 0 22px 50px rgba(0,0,0,.28);
-    }
-
-    .topbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      padding: 18px 22px;
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .brand img {
-      width: 42px;
-      height: 42px;
-      object-fit: contain;
-    }
-
-    .brand strong {
-      display: block;
-      font-size: 1.15rem;
-      color: #fff6d6;
-    }
-
-    .brand span {
-      display: block;
-      color: var(--muted);
-      font-size: .92rem;
-      margin-top: 2px;
-    }
-
-    .topbar-actions {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    .button,
-    button {
-      border: none;
-      cursor: pointer;
-      border-radius: 999px;
-      padding: 12px 18px;
-      font-weight: 800;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      transition: transform .18s ease, filter .18s ease;
-    }
-
-    .button:hover,
-    button:hover {
-      transform: translateY(-1px);
-      filter: brightness(1.03);
-    }
-
-    .button.primary,
-    button.primary {
-      background: linear-gradient(135deg, #ffe082, #ffbf00);
-      color: #241b01;
-    }
-
-    .button.ghost,
-    button.ghost {
-      background: rgba(255,255,255,.04);
-      color: #fff3c5;
-      border: 1px solid rgba(255,255,255,.08);
-    }
-
-    .panel {
-      padding: 22px;
-    }
-
-    .panel-head {
-      display: flex;
-      align-items: end;
-      justify-content: space-between;
-      gap: 16px;
-      margin-bottom: 18px;
-    }
-
-    .panel-head h1,
-    .panel-head h2 {
-      margin: 0;
-      color: #fff7d6;
-    }
-
-    .panel-head p {
-      margin: 8px 0 0;
-      color: var(--muted);
-    }
-
-    .filters {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) 180px;
-      gap: 12px;
-      margin-bottom: 18px;
-    }
-
-    .filters input,
-    .filters select {
-      width: 100%;
-      background: rgba(255,255,255,.04);
-      border: 1px solid rgba(255,255,255,.08);
-      border-radius: 16px;
-      color: #fff2c7;
-      padding: 13px 14px;
-      font: inherit;
-    }
-
-    .filters input::placeholder {
-      color: #897a50;
-    }
-
-    .filters input:focus,
-    .filters select:focus {
-      outline: none;
-      border-color: rgba(255,193,7,.4);
-      box-shadow: 0 0 0 4px rgba(255,193,7,.08);
-    }
-
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 12px;
-      margin-bottom: 18px;
-    }
-
-    .stat {
-      padding: 16px;
-      border-radius: 18px;
-      background: rgba(255,255,255,.035);
-      border: 1px solid var(--line);
-    }
-
-    .stat-label {
-      color: var(--muted);
-      font-size: .82rem;
-      text-transform: uppercase;
-      letter-spacing: .06em;
-    }
-
-    .stat strong {
-      display: block;
-      margin-top: 8px;
-      font-size: 1.5rem;
-      color: #fff6d0;
-    }
-
-    .customer-list {
-      display: grid;
-      gap: 16px;
-    }
-
-    .customer-card {
-      border-radius: 22px;
-      background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.02));
-      border: 1px solid var(--line);
-      padding: 18px;
-      display: grid;
-      gap: 16px;
-    }
-
-    .customer-head {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) auto;
-      gap: 14px;
-      align-items: start;
-    }
-
-    .customer-head strong {
-      display: block;
-      font-size: 1.1rem;
-      color: #fff5d2;
-    }
-
-    .customer-meta {
-      margin-top: 6px;
-      color: var(--muted);
-      font-size: .9rem;
-      line-height: 1.55;
-    }
-
-    .customer-badges {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      justify-content: flex-end;
-    }
-
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 8px 12px;
-      border-radius: 999px;
-      background: rgba(255,255,255,.04);
-      border: 1px solid rgba(255,193,7,.1);
-      color: #fff2bf;
-      font-size: .82rem;
-      font-weight: 700;
-    }
-
-    .badge.ok {
-      color: #d9ffd8;
-      border-color: rgba(34,197,94,.18);
-      background: rgba(34,197,94,.12);
-    }
-
-    .customer-actions {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    .purchase-list {
-      display: grid;
-      gap: 12px;
-    }
-
-    .purchase-card {
-      border-radius: 18px;
-      background: rgba(255,255,255,.03);
-      border: 1px solid var(--line);
-      padding: 14px;
-      display: grid;
-      gap: 12px;
-    }
-
-    .purchase-head {
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      flex-wrap: wrap;
-      color: #fff4c9;
-      font-weight: 700;
-    }
-
-    .purchase-meta {
-      color: var(--muted);
-      font-size: .84rem;
-      line-height: 1.5;
-    }
-
-    .sample-list {
-      display: grid;
-      gap: 8px;
-    }
-
-    .sample-item {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) auto auto;
-      gap: 10px;
-      align-items: center;
-      padding: 10px 12px;
-      border-radius: 14px;
-      background: rgba(255,255,255,.03);
-      border: 1px solid rgba(255,255,255,.05);
-    }
-
-    .sample-item span {
-      min-width: 0;
-    }
-
-    .sample-item .price {
-      color: #ffd76b;
-      white-space: nowrap;
-      font-weight: 700;
-    }
-
-    .sample-item .status {
-      white-space: nowrap;
-      font-size: .78rem;
-      color: #c8ddb8;
-    }
-
-    .empty-state {
-      padding: 24px;
-      border-radius: 18px;
-      background: rgba(255,255,255,.03);
-      border: 1px dashed rgba(255,193,7,.14);
-      color: var(--muted);
-      text-align: center;
-      line-height: 1.5;
-    }
-
-    .panel-scroll {
-      max-height: calc(100vh - 290px);
-      overflow: auto;
-      padding-right: 4px;
-      scrollbar-width: thin;
-      scrollbar-color: rgba(255,193,7,.55) rgba(255,255,255,.04);
-    }
-
-    .panel-scroll::-webkit-scrollbar {
-      width: 10px;
-    }
-
-    .panel-scroll::-webkit-scrollbar-track {
-      background: rgba(255,255,255,.04);
-      border-radius: 999px;
-    }
-
-    .panel-scroll::-webkit-scrollbar-thumb {
-      background: linear-gradient(180deg, rgba(255, 224, 130, 0.9), rgba(255, 191, 0, 0.75));
-      border-radius: 999px;
-      border: 2px solid rgba(18,18,18,.96);
-    }
-
-    @media (max-width: 800px) {
-      .filters {
-        grid-template-columns: 1fr;
-      }
-
-      .customer-head {
-        grid-template-columns: 1fr;
-      }
-
-      .customer-badges {
-        justify-content: flex-start;
-      }
-
-      .sample-item {
-        grid-template-columns: 1fr;
-      }
-
-      .panel-scroll {
-        max-height: none;
-      }
-    }
+    body { margin: 0; min-height: 100vh; font-family: 'Inter', sans-serif; background: radial-gradient(circle at top left, rgba(255,193,7,.12), transparent 22%), radial-gradient(circle at top right, rgba(255,193,7,.08), transparent 18%), linear-gradient(180deg, #0f0f0f 0%, #080808 45%, #040404 100%); color: var(--ink); padding: 24px 14px 42px; }
+    .shell { width: min(1380px, 100%); margin: 0 auto; display: grid; gap: 18px; }
+    .card,.topbar { background: linear-gradient(180deg, rgba(18,18,18,.98), rgba(10,10,10,.98)); border: 1px solid rgba(255,193,7,.12); border-radius: 24px; box-shadow: 0 20px 50px rgba(0,0,0,.28); }
+    .topbar { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 18px 22px; position: sticky; top: 12px; z-index: 50; backdrop-filter: blur(10px); }
+    .brand { display: flex; align-items: center; gap: 14px; }
+    .brand img { width: 42px; height: 42px; object-fit: contain; }
+    .brand strong { display: block; font-size: 1.08rem; }
+    .brand span { display: block; margin-top: 2px; color: var(--muted); font-size: .9rem; }
+    .actions { display: flex; flex-wrap: wrap; gap: 10px; }
+    button,.button { border: none; cursor: pointer; border-radius: 16px; padding: 12px 16px; font: inherit; font-weight: 800; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 8px; transition: transform .18s ease, filter .18s ease; }
+    button:hover,.button:hover { transform: translateY(-1px); filter: brightness(1.03); }
+    .primary { background: linear-gradient(135deg, #ffe082, #ffbf00); color: #241b01; }
+    .ghost { background: rgba(255,255,255,.05); color: #fff0c2; border: 1px solid rgba(255,255,255,.08); }
+    .danger { background: rgba(239,68,68,.13); color: #ffd6d6; border: 1px solid rgba(239,68,68,.22); }
+    .grid { display: grid; grid-template-columns: 1.2fr .95fr; gap: 18px; }
+    .stack { display: grid; gap: 18px; }
+    .card { padding: 22px; }
+    .card-head { display: flex; justify-content: space-between; align-items: end; gap: 14px; margin-bottom: 18px; }
+    .card-head h1,.card-head h2 { margin: 0; color: #fff6d6; }
+    .card-head p { margin: 8px 0 0; color: var(--muted); line-height: 1.45; }
+    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin-bottom: 18px; }
+    .stat { border-radius: 18px; background: rgba(255,255,255,.035); border: 1px solid var(--line); padding: 16px; }
+    .stat-label { color: var(--muted); font-size: .8rem; text-transform: uppercase; letter-spacing: .06em; }
+    .stat strong { display: block; margin-top: 8px; font-size: 1.45rem; color: #fff4cc; }
+    .status-box { margin-bottom: 14px; border-radius: 16px; padding: 14px 16px; border: 1px solid rgba(255,255,255,.08); background: rgba(255,255,255,.04); color: #efe2b5; line-height: 1.45; }
+    .status-box.ok { background: rgba(34,197,94,.12); border-color: rgba(34,197,94,.22); color: #d9ffd8; }
+    .status-box.error { background: rgba(239,68,68,.12); border-color: rgba(239,68,68,.22); color: #ffd4d4; }
+    .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+    input,select { width: 100%; border-radius: 14px; border: 1px solid rgba(255,255,255,.08); background: rgba(255,255,255,.04); color: #fff2cb; padding: 12px 14px; font: inherit; }
+    .scroll { max-height: 66vh; overflow: auto; padding-right: 4px; }
+    .toggle-list,.coupon-list,.promo-list,.customer-list { display: grid; gap: 12px; }
+    .toggle-item,.coupon-item,.promo-item,details.customer-item { border-radius: 18px; background: rgba(255,255,255,.03); border: 1px solid var(--line); padding: 14px; }
+    .toggle-item { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .toggle-copy strong,.coupon-item strong,.promo-item strong { display: block; color: #fff4cc; }
+    .toggle-copy span,.coupon-item small,.promo-item small { display: block; margin-top: 4px; color: var(--muted); line-height: 1.45; }
+    .switch { width: 52px; height: 30px; border-radius: 999px; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.08); position: relative; cursor: pointer; flex-shrink: 0; }
+    .switch::after { content: ""; position: absolute; top: 3px; left: 3px; width: 22px; height: 22px; border-radius: 50%; background: #fff4c9; transition: transform .18s ease; }
+    .switch.active { background: rgba(255,193,7,.22); border-color: rgba(255,193,7,.22); }
+    .switch.active::after { transform: translateX(22px); background: #ffc107; }
+    .coupon-item,.promo-item { display: grid; gap: 12px; }
+    .row { display: flex; flex-wrap: wrap; gap: 10px; }
+    .row > * { flex: 1 1 140px; }
+    details.customer-item { padding: 0; overflow: hidden; }
+    details.customer-item summary { list-style: none; cursor: pointer; padding: 16px 18px; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: center; }
+    details.customer-item summary::-webkit-details-marker { display: none; }
+    .customer-summary-title strong { display: block; color: #fff5d3; }
+    .customer-summary-title span { display: block; margin-top: 6px; color: var(--muted); font-size: .9rem; line-height: 1.5; }
+    .customer-badges { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+    .badge { display: inline-flex; align-items: center; gap: 6px; padding: 8px 12px; border-radius: 999px; background: rgba(255,255,255,.04); border: 1px solid rgba(255,193,7,.1); color: #fff2bf; font-size: .82rem; font-weight: 700; }
+    .badge.ok { color: #d9ffd8; border-color: rgba(34,197,94,.18); background: rgba(34,197,94,.12); }
+    .customer-body { border-top: 1px solid rgba(255,255,255,.06); padding: 16px 18px 18px; display: grid; gap: 16px; }
+    .purchase-list { display: grid; gap: 10px; }
+    .purchase-card { border-radius: 16px; background: rgba(255,255,255,.025); border: 1px solid rgba(255,255,255,.05); padding: 12px; display: grid; gap: 10px; }
+    .purchase-head { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; font-weight: 700; color: #fff1c2; }
+    .purchase-meta { color: var(--muted); font-size: .85rem; line-height: 1.5; }
+    .sample-list { display: grid; gap: 8px; }
+    .sample-item { border-radius: 14px; padding: 10px 12px; background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.05); display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 8px; align-items: center; }
+    .sample-item .price { color: #ffd76b; font-weight: 700; white-space: nowrap; }
+    .sample-item .status { font-size: .8rem; white-space: nowrap; color: #d2eabf; }
+    .subhead { color: #fff4ca; font-size: .94rem; font-weight: 800; margin-bottom: 10px; }
+    .empty { padding: 18px; border-radius: 16px; border: 1px dashed rgba(255,193,7,.14); color: var(--muted); text-align: center; line-height: 1.5; }
+    @media (max-width: 1060px) { .grid { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
-  <div class="shell">
-    <div class="topbar">
-      <div class="brand">
-        <img src="https://llsamplese.github.io/llcatalogo/Layer%205.png" alt="LL Samples">
-        <div>
-          <strong>Loja LL Samples</strong>
-          <span>Painel administrativo simples de clientes e entregas</span>
-        </div>
-      </div>
-      <div class="topbar-actions">
-        <a class="button ghost" href="/index.html">Voltar à loja</a>
-        <button class="button primary" type="button" onclick="loadCustomers(true)">Atualizar</button>
-      </div>
-    </div>
-
-    <div class="panel">
-      <div class="panel-head">
-        <div>
-          <h1>Clientes e compras</h1>
-          <p>Este painel usa os registros do GitHub para agrupar clientes, compras aprovadas e links liberados por cliente.</p>
-        </div>
-      </div>
-
-      <div class="filters">
-        <input id="searchInput" type="text" placeholder="Buscar por nome, e-mail, telefone, código ou sample">
-        <select id="statusFilter">
-          <option value="all">Todos os clientes</option>
-          <option value="approved">Com compras aprovadas</option>
-          <option value="empty">Sem compras aprovadas</option>
-        </select>
-      </div>
-
-      <div class="stats">
-        <div class="stat">
-          <div class="stat-label">Clientes</div>
-          <strong id="statCustomers">0</strong>
-        </div>
-        <div class="stat">
-          <div class="stat-label">Compras aprovadas</div>
-          <strong id="statApproved">0</strong>
-        </div>
-        <div class="stat">
-          <div class="stat-label">Samples entregáveis</div>
-          <strong id="statDelivered">0</strong>
-        </div>
-      </div>
-
-      <div id="statusBox" class="empty-state">Carregando clientes...</div>
-      <div class="panel-scroll">
-        <div id="customerList" class="customer-list"></div>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    const ADMIN_ENDPOINT = '/api/admin-customers';
-    let customersCache = [];
-
-    function money(value) {
-      return Number(value || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-    }
-
-    function escapeHtml(value) {
-      return String(value || '')
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;');
-    }
-
-    function copyText(text, label = 'Conteúdo copiado') {
-      navigator.clipboard.writeText(String(text || '')).then(() => {
-        const status = document.getElementById('statusBox');
-        status.textContent = label;
-      }).catch(() => {
-        const status = document.getElementById('statusBox');
-        status.textContent = 'Não foi possível copiar agora.';
-      });
-    }
-
-    function buildCustomerCopyText(customer) {
-      const delivered = customer.purchases.flatMap(purchase => (purchase.items || []).filter(item => item.delivered));
-      return delivered.map(item => `${item.title}\n${item.link}`).join('\n\n');
-    }
-
-    function updateStats(customers) {
-      const approved = customers.reduce((sum, customer) => sum + Number(customer.approved_orders || 0), 0);
-      const delivered = customers.reduce((sum, customer) => (
-        sum + customer.purchases.reduce((purchaseSum, purchase) => purchaseSum + purchase.items.filter(item => item.delivered).length, 0)
-      ), 0);
-
-      document.getElementById('statCustomers').textContent = customers.length;
-      document.getElementById('statApproved').textContent = approved;
-      document.getElementById('statDelivered').textContent = delivered;
-    }
-
-    function renderCustomers(customers) {
-      const list = document.getElementById('customerList');
-      if (!customers.length) {
-        list.innerHTML = '<div class="empty-state">Nenhum cliente encontrado com esse filtro.</div>';
-        updateStats([]);
-        return;
-      }
-
-      updateStats(customers);
-      list.innerHTML = customers.map((customer, customerIndex) => {
-        const copyTextValue = encodeURIComponent(buildCustomerCopyText(customer));
-        const purchasesMarkup = customer.purchases.length
-          ? customer.purchases.map((purchase) => `
-              <div class="purchase-card">
-                <div class="purchase-head">
-                  <span>${purchase.payment_type_id === 'credit_card' ? 'Cartão' : (purchase.payment_type_id || 'Pagamento')}</span>
-                  <span>${money(purchase.transaction_amount)}</span>
-                </div>
-                <div class="purchase-meta">
-                  ${purchase.created_at ? new Date(purchase.created_at).toLocaleString('pt-BR') : 'Data não informada'}<br>
-                  Payment ID: ${escapeHtml(purchase.payment_id || '-')}
-                </div>
-                <div class="sample-list">
-                  ${purchase.items.map((item) => `
-                    <div class="sample-item">
-                      <span>${escapeHtml(item.title)}</span>
-                      <span class="price">${money(item.unit_price)}</span>
-                      <span class="status">${item.delivered ? 'Link pronto' : 'Sem link'}</span>
-                    </div>
-                  `).join('')}
-                </div>
-              </div>
-            `).join('')
-          : '<div class="empty-state">Este cliente ainda não tem compras aprovadas registradas.</div>';
-
-        return `
-          <div class="customer-card">
-            <div class="customer-head">
-              <div>
-                <strong>${escapeHtml(customer.name || customer.email)}</strong>
-                <div class="customer-meta">
-                  ${escapeHtml(customer.email)}<br>
-                  ${escapeHtml(customer.phone || 'Telefone não informado')}<br>
-                  Última atividade: ${customer.last_order_at ? new Date(customer.last_order_at).toLocaleString('pt-BR') : 'Sem data'}
-                </div>
-              </div>
-              <div class="customer-badges">
-                <div class="badge">${escapeHtml(customer.access_code || 'sem código')}</div>
-                <div class="badge">${customer.total_orders} pedidos</div>
-                <div class="badge ok">${customer.approved_orders} aprovados</div>
-              </div>
-            </div>
-            <div class="customer-actions">
-              <button class="button primary" type="button" onclick="copyText(decodeURIComponent('${copyTextValue}'), 'Links do cliente copiados')">Copiar links</button>
-              <button class="button ghost" type="button" onclick="copyText('${escapeHtml(customer.access_code || '')}', 'Código do cliente copiado')">Copiar código</button>
-              <button class="button ghost" type="button" onclick="copyText('${escapeHtml(customer.email || '')}', 'E-mail copiado')">Copiar e-mail</button>
-            </div>
-            <div class="purchase-list">${purchasesMarkup}</div>
-          </div>
-        `;
-      }).join('');
-    }
-
-    function applyFilters() {
-      const query = String(document.getElementById('searchInput').value || '').trim().toLowerCase();
-      const status = document.getElementById('statusFilter').value;
-      const filtered = customersCache.filter((customer) => {
-        if (status === 'approved' && !customer.approved_orders) return false;
-        if (status === 'empty' && customer.approved_orders) return false;
-
-        if (!query) return true;
-
-        const haystack = [
-          customer.name,
-          customer.email,
-          customer.phone,
-          customer.access_code,
-          ...customer.purchases.flatMap((purchase) => purchase.items.map((item) => item.title))
-        ].join(' ').toLowerCase();
-
-        return haystack.includes(query);
-      });
-
-      renderCustomers(filtered);
-    }
-
-    async function loadCustomers(showMessage = false) {
-      const status = document.getElementById('statusBox');
-      status.textContent = 'Carregando clientes...';
-
-      try {
-        const response = await fetch(ADMIN_ENDPOINT);
-        const data = await response.json();
-        if (!response.ok) {
-          throw new Error(data.error || 'Não foi possível carregar o painel.');
-        }
-
-        customersCache = Array.isArray(data.customers) ? data.customers : [];
-        status.textContent = showMessage ? 'Painel atualizado.' : `Clientes carregados: ${data.total_customers}`;
-        applyFilters();
-      } catch (error) {
-        customersCache = [];
-        status.textContent = error.message || 'Erro ao carregar painel.';
-        renderCustomers([]);
-      }
-    }
-
-    document.getElementById('searchInput').addEventListener('input', applyFilters);
-    document.getElementById('statusFilter').addEventListener('change', applyFilters);
-
-    loadCustomers();
-  </script>
+  <div class="shell"><div class="topbar"><div class="brand"><img src="https://llsamplese.github.io/llcatalogo/Layer%205.png" alt="LL Samples"><div><strong>Loja LL Samples</strong><span>Painel de controle da loja, clientes e entregas</span></div></div><div class="actions"><a class="button ghost" href="/index.html">Voltar ? loja</a><button class="primary" type="button" onclick="loadDashboard(true)">Atualizar painel</button></div></div>
+  <div class="card"><div class="card-head"><div><h1>Painel de controle</h1><p>Aqui voc? controla visibilidade da interface, cupons, promo??es por produto e os dados dos clientes j? gravados no GitHub.</p></div></div><div class="stats"><div class="stat"><div class="stat-label">Clientes</div><strong id="statCustomers">0</strong></div><div class="stat"><div class="stat-label">Compras aprovadas</div><strong id="statApproved">0</strong></div><div class="stat"><div class="stat-label">Samples entreg?veis</div><strong id="statDelivered">0</strong></div><div class="stat"><div class="stat-label">Produtos</div><strong id="statProducts">0</strong></div></div><div id="statusBox" class="status-box">Carregando painel...</div></div>
+  <div class="grid"><div class="stack"><div class="card"><div class="card-head"><div><h2>Visibilidade da interface</h2><p>Ligue e desligue blocos da loja principal sem editar o c?digo.</p></div><button class="primary" type="button" onclick="saveUiConfig()">Salvar interface</button></div><div id="uiToggleList" class="toggle-list"></div></div><div class="card"><div class="card-head"><div><h2>Cupons</h2><p>Crie, ative, desative e ajuste cupons diretamente por aqui.</p></div><div class="actions"><button class="ghost" type="button" onclick="addCoupon()">Novo cupom</button><button class="primary" type="button" onclick="saveCoupons()">Salvar cupons</button></div></div><div class="scroll"><div id="couponList" class="coupon-list"></div></div></div><div class="card"><div class="card-head"><div><h2>Promo??es por produto</h2><p>Defina um pre?o promocional por sample e ative quando quiser.</p></div><div class="actions"><input id="productSearch" type="text" placeholder="Buscar produto" oninput="renderProducts()"><button class="primary" type="button" onclick="saveProductOverrides()">Salvar promo??es</button></div></div><div class="scroll"><div id="productList" class="promo-list"></div></div></div></div><div class="card"><div class="card-head"><div><h2>Clientes</h2><p>Os clientes ficam recolhidos. Clique em cada um para abrir, editar e copiar tudo o que precisar.</p></div></div><div class="form-grid" style="margin-bottom:14px;"><input id="searchInput" type="text" placeholder="Buscar por nome, e-mail, telefone, c?digo ou sample"><select id="statusFilter"><option value="all">Todos os clientes</option><option value="approved">Com compras aprovadas</option><option value="empty">Sem compras aprovadas</option></select></div><div class="scroll"><div id="customerList" class="customer-list"></div></div></div></div></div>
+<script>
+const ADMIN_CUSTOMERS_ENDPOINT='/api/admin-customers',STORE_CONFIG_ENDPOINT='/api/store-config',STORE_PRODUCTS_ENDPOINT='/api/store-products',CUSTOMER_UPDATE_ENDPOINT='/api/admin-customer-update';
+const UI_FIELDS=[{key:'showCouponBox',label:'Mostrar caixa de cupom',help:'Exibe ou esconde o campo de cupom no carrinho.'},{key:'showCopyNamesButton',label:'Mostrar bot?o Copiar nomes',help:'Controla o bot?o para copiar s? os nomes dos samples.'},{key:'showCopyOrderButton',label:'Mostrar bot?o Copiar pedido',help:'Controla o bot?o que copia o resumo do pedido.'},{key:'showSelectAllButton',label:'Mostrar bot?o Selecionar todos',help:'Liga ou desliga a a??o de selecionar todos os cards.'},{key:'showClearAllButton',label:'Mostrar bot?o Limpar tudo',help:'Liga ou desliga a a??o de limpar a sele??o.'},{key:'showFiltersButton',label:'Mostrar bot?o Filtros',help:'Exibe ou esconde o bot?o para abrir os filtros.'},{key:'showCustomerMenuButton',label:'Mostrar menu da ?rea do cliente',help:'Exibe ou esconde o bot?o de menu/?rea do cliente no topo.'}];
+let customersCache=[],storeConfigCache={ui:{},coupons:{},productOverrides:{}},couponsCache={},productsCache=[];
+const money=v=>Number(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+const escapeHtml=v=>String(v||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+function setStatus(message,type=''){const box=document.getElementById('statusBox');box.className=`status-box${type?` ${type}`:''}`;box.textContent=message;}
+function copyText(text,label='Conte?do copiado'){navigator.clipboard.writeText(String(text||'')).then(()=>setStatus(label,'ok')).catch(()=>setStatus('N?o foi poss?vel copiar agora.','error'));}
+function buildCustomerCopyText(customer){const delivered=customer.purchases.flatMap(p=>(p.items||[]).filter(i=>i.delivered));return delivered.map(i=>`${i.title}\n${i.link}`).join('\n\n');}
+function updateStats(customers){const approved=customers.reduce((s,c)=>s+Number(c.approved_orders||0),0);const delivered=customers.reduce((s,c)=>s+c.purchases.reduce((a,p)=>a+p.items.filter(i=>i.delivered).length,0),0);document.getElementById('statCustomers').textContent=customers.length;document.getElementById('statApproved').textContent=approved;document.getElementById('statDelivered').textContent=delivered;document.getElementById('statProducts').textContent=productsCache.length;}
+function renderUiToggles(){const host=document.getElementById('uiToggleList');const ui=storeConfigCache.ui||{};host.innerHTML=UI_FIELDS.map(f=>`<div class="toggle-item"><div class="toggle-copy"><strong>${escapeHtml(f.label)}</strong><span>${escapeHtml(f.help)}</span></div><button class="switch ${ui[f.key]!==false?'active':''}" type="button" onclick="toggleUiField('${f.key}')"></button></div>`).join('');}
+function toggleUiField(key){const current=storeConfigCache.ui?.[key];storeConfigCache.ui={...(storeConfigCache.ui||{}),[key]:current===false};renderUiToggles();}
+function normalizeCouponCode(code){return String(code||'').trim().toUpperCase();}
+function addCoupon(){const seed=Date.now().toString().slice(-4);couponsCache[`NOVO${seed}`]={code:`NOVO${seed}`,label:`Novo cupom ${seed}`,active:true,type:'percent',value:10,minSubtotal:0,minItems:1};renderCoupons();}
+function removeCoupon(code){delete couponsCache[code];renderCoupons();}
+function updateCouponField(code,field,value){const nextCode=field==='code'?normalizeCouponCode(value):code;const current={...(couponsCache[code]||{})};current[field]=field==='active'?Boolean(value):['value','minSubtotal','minItems'].includes(field)?Number(value||0):value;current.code=nextCode||current.code;if(nextCode!==code) delete couponsCache[code];couponsCache[current.code]=current;renderCoupons();}
+function renderCoupons(){const host=document.getElementById('couponList');const rows=Object.values(couponsCache).sort((a,b)=>String(a.code).localeCompare(String(b.code)));if(!rows.length){host.innerHTML='<div class="empty">Nenhum cupom cadastrado.</div>';return;}host.innerHTML=rows.map(c=>`<div class="coupon-item"><div class="row"><input value="${escapeHtml(c.code||'')}" placeholder="C?digo" oninput="updateCouponField('${escapeHtml(c.code||'')}','code',this.value)"><input value="${escapeHtml(c.label||'')}" placeholder="Nome interno" oninput="updateCouponField('${escapeHtml(c.code||'')}','label',this.value)"></div><div class="row"><select onchange="updateCouponField('${escapeHtml(c.code||'')}','type',this.value)"><option value="percent" ${c.type==='percent'?'selected':''}>Percentual</option><option value="fixed" ${c.type==='fixed'?'selected':''}>Valor fixo</option></select><input type="number" min="0" step="0.01" value="${Number(c.value||0)}" placeholder="Valor" oninput="updateCouponField('${escapeHtml(c.code||'')}','value',this.value)"><input type="number" min="0" step="0.01" value="${Number(c.minSubtotal||0)}" placeholder="Pedido m?nimo" oninput="updateCouponField('${escapeHtml(c.code||'')}','minSubtotal',this.value)"><input type="number" min="1" step="1" value="${Number(c.minItems||1)}" placeholder="Itens m?nimos" oninput="updateCouponField('${escapeHtml(c.code||'')}','minItems',this.value)"></div><div class="row"><button class="${c.active?'primary':'ghost'}" type="button" onclick="updateCouponField('${escapeHtml(c.code||'')}','active',${c.active?'false':'true'})">${c.active?'Ativo':'Inativo'}</button><button class="danger" type="button" onclick="removeCoupon('${escapeHtml(c.code||'')}')">Excluir</button></div></div>`).join('');}
+function updateProductOverride(name,field,value){const next={...(storeConfigCache.productOverrides?.[name]||{})};if(field==='active') next.active=Boolean(value);if(field==='promoPrice') next.promoPrice=value===''?'':Number(value);storeConfigCache.productOverrides={...(storeConfigCache.productOverrides||{}),[name]:next};}
+function renderProducts(){const host=document.getElementById('productList');const query=String(document.getElementById('productSearch')?.value||'').trim().toLowerCase();const list=productsCache.filter(p=>!query||p.nome.toLowerCase().includes(query));if(!list.length){host.innerHTML='<div class="empty">Nenhum produto encontrado com esse filtro.</div>';return;}host.innerHTML=list.map(product=>{const o=storeConfigCache.productOverrides?.[product.nome]||{};return `<div class="promo-item"><div><strong>${escapeHtml(product.nome)}</strong><small>Pre?o atual da loja: ${money(o.active&&Number(o.promoPrice)>0?o.promoPrice:product.valor)} | Pre?o base: ${money(product.valor)}</small></div><div class="row"><input type="number" min="0" step="0.01" value="${o.promoPrice??''}" placeholder="Pre?o promocional" oninput="updateProductOverride('${escapeHtml(product.nome)}','promoPrice',this.value)"><button class="${o.active?'primary':'ghost'}" type="button" onclick="toggleProductPromo('${escapeHtml(product.nome)}')">${o.active?'Promo??o ativa':'Ativar promo??o'}</button></div></div>`;}).join('');}
+function toggleProductPromo(name){const c=storeConfigCache.productOverrides?.[name]||{};updateProductOverride(name,'active',!c.active);renderProducts();}
+function buildPurchaseMarkup(p){return `<div class="purchase-card"><div class="purchase-head"><span>${p.payment_type_id==='credit_card'?'Cart?o':(p.payment_type_id||'Pagamento')}</span><span>${money(p.transaction_amount)}</span></div><div class="purchase-meta">${p.created_at?new Date(p.created_at).toLocaleString('pt-BR'):'Data n?o informada'}<br>Payment ID: ${escapeHtml(p.payment_id||'-')}</div><div class="sample-list">${(p.items||[]).map(i=>`<div class="sample-item"><span>${escapeHtml(i.title)}</span><span class="price">${money(i.unit_price)}</span><span class="status">${i.delivered?'Link pronto':'Sem link'}</span></div>`).join('')}</div></div>`;}
+function renderCustomers(customers){const host=document.getElementById('customerList');if(!customers.length){host.innerHTML='<div class="empty">Nenhum cliente encontrado com esse filtro.</div>';updateStats([]);return;}updateStats(customers);host.innerHTML=customers.map((customer,index)=>{const deliveredCopy=encodeURIComponent(buildCustomerCopyText(customer));const purchasesMarkup=customer.purchases.length?customer.purchases.map(buildPurchaseMarkup).join(''):'<div class="empty">Este cliente ainda n?o tem compras aprovadas registradas.</div>';return `<details class="customer-item"><summary><div class="customer-summary-title"><strong>${escapeHtml(customer.name||customer.email)}</strong><span>${escapeHtml(customer.email)}<br>${escapeHtml(customer.phone||'Telefone n?o informado')}<br>?ltima atividade: ${customer.last_order_at?new Date(customer.last_order_at).toLocaleString('pt-BR'):'Sem data'}</span></div><div class="customer-badges"><div class="badge">${escapeHtml(customer.access_code||'sem c?digo')}</div><div class="badge">${customer.total_orders} pedidos</div><div class="badge ok">${customer.approved_orders} aprovados</div></div></summary><div class="customer-body"><div><div class="subhead">Editar cliente</div><div class="form-grid"><input id="customerName-${index}" value="${escapeHtml(customer.name||'')}" placeholder="Nome do cliente"><input id="customerEmail-${index}" value="${escapeHtml(customer.email||'')}" placeholder="E-mail do cliente"><input id="customerPhone-${index}" value="${escapeHtml(customer.phone||'')}" placeholder="Telefone / WhatsApp"><input id="customerCode-${index}" value="${escapeHtml(customer.access_code||'')}" placeholder="C?digo de acesso"></div><div class="actions" style="margin-top:12px;"><button class="primary" type="button" onclick="saveCustomer('${escapeHtml(customer.email)}',${index})">Salvar cliente</button><button class="ghost" type="button" onclick="copyText(decodeURIComponent('${deliveredCopy}'),'Links do cliente copiados')">Copiar links</button><button class="ghost" type="button" onclick="copyText('${escapeHtml(customer.access_code||'')}','C?digo do cliente copiado')">Copiar c?digo</button><button class="ghost" type="button" onclick="copyText('${escapeHtml(customer.email||'')}','E-mail copiado')">Copiar e-mail</button></div></div><div><div class="subhead">Compras aprovadas</div><div class="purchase-list">${purchasesMarkup}</div></div></div></details>`;}).join('');}
+function applyCustomerFilters(){const query=String(document.getElementById('searchInput').value||'').trim().toLowerCase();const status=document.getElementById('statusFilter').value;const filtered=customersCache.filter(customer=>{if(status==='approved'&&!customer.approved_orders) return false;if(status==='empty'&&customer.approved_orders) return false;if(!query) return true;const haystack=[customer.name,customer.email,customer.phone,customer.access_code,...customer.purchases.flatMap(p=>p.items.map(i=>i.title))].join(' ').toLowerCase();return haystack.includes(query);});renderCustomers(filtered);}
+async function saveUiConfig(){await saveStoreConfig({ui:storeConfigCache.ui||{}},'Interface salva.');}
+async function saveCoupons(){await saveStoreConfig({coupons:couponsCache},'Cupons salvos.');}
+async function saveProductOverrides(){const sanitized={};Object.entries(storeConfigCache.productOverrides||{}).forEach(([name,o])=>{if(!o) return;const promoPrice=Number(o.promoPrice);if(o.active||promoPrice>0) sanitized[name]={active:Boolean(o.active),promoPrice:promoPrice>0?promoPrice:''};});await saveStoreConfig({productOverrides:sanitized},'Promo??es salvas.');}
+async function saveStoreConfig(partial,successMessage){setStatus('Salvando painel...','');try{const nextConfig={...storeConfigCache,...partial,ui:{...(storeConfigCache.ui||{}),...(partial.ui||{})},coupons:partial.coupons!==undefined?partial.coupons:couponsCache,productOverrides:partial.productOverrides!==undefined?partial.productOverrides:(storeConfigCache.productOverrides||{})};const response=await fetch(STORE_CONFIG_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({config:nextConfig})});const data=await response.json();if(!response.ok) throw new Error(data.error||'N?o foi poss?vel salvar a configura??o.');storeConfigCache=data.config||nextConfig;couponsCache=data.coupons||couponsCache;renderUiToggles();renderCoupons();renderProducts();setStatus(successMessage||'Configura??o salva.','ok');}catch(error){setStatus(error.message||'Erro ao salvar configura??o.','error');}}
+async function saveCustomer(originalEmail,index){const payload={originalEmail,name:document.getElementById(`customerName-${index}`)?.value||'',email:document.getElementById(`customerEmail-${index}`)?.value||'',phone:document.getElementById(`customerPhone-${index}`)?.value||'',access_code:document.getElementById(`customerCode-${index}`)?.value||''};setStatus(`Salvando cliente ${payload.email||originalEmail}...`,'');try{const response=await fetch(CUSTOMER_UPDATE_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});const data=await response.json();if(!response.ok) throw new Error(data.error||'N?o foi poss?vel atualizar o cliente.');setStatus(`Cliente ${data.customer?.email||payload.email} atualizado com sucesso.`,'ok');await loadCustomers();}catch(error){setStatus(error.message||'Erro ao atualizar cliente.','error');}}
+async function loadCustomers(){const response=await fetch(ADMIN_CUSTOMERS_ENDPOINT,{cache:'no-store'});const data=await response.json();if(!response.ok) throw new Error(data.error||'N?o foi poss?vel carregar clientes.');customersCache=Array.isArray(data.customers)?data.customers:[];applyCustomerFilters();}
+async function loadStoreData(){const [configResponse,productsResponse]=await Promise.all([fetch(STORE_CONFIG_ENDPOINT,{cache:'no-store'}),fetch(STORE_PRODUCTS_ENDPOINT,{cache:'no-store'})]);const configData=await configResponse.json();const productsData=await productsResponse.json();if(!configResponse.ok) throw new Error(configData.error||'N?o foi poss?vel carregar a configura??o da loja.');if(!productsResponse.ok) throw new Error(productsData.error||'N?o foi poss?vel carregar os produtos.');storeConfigCache=configData.config||storeConfigCache;couponsCache=configData.coupons||{};productsCache=Array.isArray(productsData.products)?productsData.products:[];renderUiToggles();renderCoupons();renderProducts();}
+async function loadDashboard(showSuccess=false){setStatus('Carregando painel...','');try{await Promise.all([loadStoreData(),loadCustomers()]);setStatus(showSuccess?'Painel atualizado.':'Painel carregado com sucesso.','ok');}catch(error){customersCache=[];productsCache=[];renderCustomers([]);renderProducts();setStatus(error.message||'Erro ao carregar painel.','error');}}
+document.getElementById('searchInput').addEventListener('input',applyCustomerFilters);document.getElementById('statusFilter').addEventListener('change',applyCustomerFilters);loadDashboard();
+</script>
 </body>
 </html>

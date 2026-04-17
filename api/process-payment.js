@@ -1,5 +1,6 @@
 const { validateCoupon, roundCurrency } = require("../lib/coupon-utils");
 const { appendOrderLead, assignCustomerAccessCode, isGithubLoggingConfigured } = require("../lib/github-order-log");
+const { getStoreConfig } = require("../lib/store-config");
 
 const PAYMENT_API = "https://api.mercadopago.com/v1/payments";
 
@@ -15,20 +16,26 @@ function parseBody(req) {
   return req.body;
 }
 
-function sanitizeItems(items) {
+async function sanitizeItems(items) {
   if (!Array.isArray(items)) return [];
+  const config = await getStoreConfig();
+  const overrides = config?.productOverrides || {};
   return items
     .map((item) => ({
       title: String(item?.title || "").trim(),
-      unit_price: roundCurrency(item?.unit_price || 0),
+      unit_price: roundCurrency(
+        overrides[String(item?.title || "").trim()]?.active && Number(overrides[String(item?.title || "").trim()]?.promoPrice) > 0
+          ? overrides[String(item?.title || "").trim()].promoPrice
+          : item?.unit_price || 0
+      ),
       quantity: Number(item?.quantity || 1)
     }))
     .filter((item) => item.title && item.unit_price > 0 && item.quantity > 0);
 }
 
-function buildTotals(items, couponCode) {
+async function buildTotals(items, couponCode) {
   const subtotal = roundCurrency(items.reduce((sum, item) => sum + (item.unit_price * item.quantity), 0));
-  const couponResult = validateCoupon(couponCode, {
+  const couponResult = await validateCoupon(couponCode, {
     subtotal,
     itemsCount: items.reduce((sum, item) => sum + item.quantity, 0)
   });
@@ -161,12 +168,12 @@ module.exports = async (req, res) => {
 
   try {
     const body = parseBody(req);
-    const items = sanitizeItems(body.items);
+    const items = await sanitizeItems(body.items);
     if (!items.length) {
       throw new Error("Nenhum item válido foi enviado.");
     }
 
-    const totals = buildTotals(items, body.coupon?.code);
+    const totals = await buildTotals(items, body.coupon?.code);
     const payerEmail = String(body?.formData?.payer?.email || "").trim();
     const customerAccess = await assignCustomerAccessCode(payerEmail);
     const paymentBody = buildPaymentBody(body.formData || {}, items, totals, body.customer || {}, customerAccess.code);
