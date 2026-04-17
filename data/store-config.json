@@ -29,7 +29,7 @@
       "active": true,
       "type": "fixed",
       "value": 20,
-      "minSubtotal": 140,
+      "minSubtotal": 0,
       "minItems": 2
     },
     "TESTE1": {
