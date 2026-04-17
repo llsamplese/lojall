@@ -30,7 +30,7 @@
       "type": "fixed",
       "value": 20,
       "minSubtotal": 140,
-      "minItems": 0
+      "minItems": 2
     },
     "TESTE1": {
       "code": "TESTE1",
