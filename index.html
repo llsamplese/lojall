@@ -40,9 +40,9 @@
     }
 
     .topbar {
-        display: flex;
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
         align-items: center;
-        justify-content: space-between;
         gap: 16px;
         padding: 12px 16px;
         margin-bottom: 16px;
@@ -61,6 +61,9 @@
         align-items: center;
         gap: 12px;
         min-width: 0;
+        grid-column: 2;
+        justify-self: center;
+        text-align: center;
     }
 
     .brand-logo {
@@ -79,6 +82,7 @@
 
     .brand-copy {
         min-width: 0;
+        text-align: center;
     }
 
     .brand-copy strong {
@@ -98,6 +102,8 @@
         display: flex;
         align-items: center;
         gap: 10px;
+        grid-column: 3;
+        justify-self: end;
     }
 
     .icon-button {
@@ -978,13 +984,13 @@
         position: fixed;
         left: 50%;
         right: auto;
-        bottom: 18px;
+        bottom: 28px;
         transform: translateX(-50%);
         z-index: 190;
         grid-template-columns: minmax(0, 1fr) auto;
         gap: 12px;
         align-items: center;
-        width: min(380px, calc(100vw - 36px));
+        width: min(420px, calc(100vw - 36px));
         padding: 12px 14px;
         border-radius: 18px;
         background: linear-gradient(145deg, rgba(20,20,20,0.98), rgba(12,12,12,0.98));
@@ -1515,6 +1521,16 @@
         top: 8px;
         padding: 10px 12px;
         border-radius: 16px;
+        grid-template-columns: minmax(0, 1fr) auto auto;
+    }
+
+    .brand {
+        grid-column: 1 / span 2;
+        justify-self: center;
+    }
+
+    .topbar-actions {
+        grid-column: 3;
     }
 
     .brand-copy strong {
