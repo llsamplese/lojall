@@ -12,7 +12,7 @@
     * { box-sizing: border-box; }
     body { margin: 0; min-height: 100vh; font-family: 'Inter', sans-serif; background: radial-gradient(circle at top left, rgba(255,193,7,.12), transparent 22%), radial-gradient(circle at top right, rgba(255,193,7,.08), transparent 18%), linear-gradient(180deg, #0f0f0f 0%, #080808 45%, #040404 100%); color: var(--ink); padding: 24px 14px 42px; }
     .shell { width: min(1380px, 100%); margin: 0 auto; display: grid; gap: 18px; }
-    .card,.topbar { background: linear-gradient(180deg, rgba(18,18,18,.98), rgba(10,10,10,.98)); border: 1px solid rgba(255,193,7,.12); border-radius: 24px; box-shadow: 0 20px 50px rgba(0,0,0,.28); }
+    .card,.topbar,.section-card { background: linear-gradient(180deg, rgba(18,18,18,.98), rgba(10,10,10,.98)); border: 1px solid rgba(255,193,7,.12); border-radius: 24px; box-shadow: 0 20px 50px rgba(0,0,0,.28); }
     .topbar { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 18px 22px; position: sticky; top: 12px; z-index: 50; backdrop-filter: blur(10px); }
     .brand { display: flex; align-items: center; gap: 14px; }
     .brand img { width: 42px; height: 42px; object-fit: contain; }
@@ -27,6 +27,15 @@
     .grid { display: grid; grid-template-columns: 1.2fr .95fr; gap: 18px; }
     .stack { display: grid; gap: 18px; }
     .card { padding: 22px; }
+    .section-card { overflow: hidden; }
+    .section-card[open] { box-shadow: 0 20px 50px rgba(0,0,0,.28), 0 0 0 1px rgba(255,193,7,.04) inset; }
+    .section-card > summary { list-style: none; cursor: pointer; padding: 20px 22px; display: flex; align-items: center; justify-content: space-between; gap: 14px; }
+    .section-card > summary::-webkit-details-marker { display: none; }
+    .section-title strong { display: block; color: #fff6d6; font-size: 1.03rem; }
+    .section-title span { display: block; margin-top: 6px; color: var(--muted); line-height: 1.45; font-size: .92rem; }
+    .section-chevron { display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 999px; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.06); color: #ffe8a3; font-size: 1rem; transition: transform .18s ease, background .18s ease; flex-shrink: 0; }
+    .section-card[open] .section-chevron { transform: rotate(180deg); background: rgba(255,193,7,.10); }
+    .section-content { padding: 0 22px 22px; display: grid; gap: 18px; border-top: 1px solid rgba(255,255,255,.06); }
     .card-head { display: flex; justify-content: space-between; align-items: end; gap: 14px; margin-bottom: 18px; }
     .card-head h1,.card-head h2,.card-head h3 { margin: 0; color: #fff6d6; }
     .card-head p { margin: 8px 0 0; color: var(--muted); line-height: 1.45; }
@@ -106,83 +115,98 @@
     </div>
     <div class="grid">
       <div class="stack">
-        <div class="card">
-          <div class="card-head">
-            <div>
-              <h2>Visibilidade da interface</h2>
-              <p>Ligue e desligue blocos da loja principal sem editar o código.</p>
+        <details class="section-card" open>
+          <summary>
+            <div class="section-title">
+              <strong>Visibilidade da interface</strong>
+              <span>Ligue e desligue blocos da loja principal sem editar o código.</span>
             </div>
-            <button class="primary" type="button" onclick="saveUiConfig()">Salvar interface</button>
+            <span class="section-chevron">⌄</span>
+          </summary>
+          <div class="section-content">
+            <div class="actions"><button class="primary" type="button" onclick="saveUiConfig()">Salvar interface</button></div>
+            <div id="uiToggleList" class="toggle-list"></div>
           </div>
-          <div id="uiToggleList" class="toggle-list"></div>
-        </div>
-        <div class="card">
-          <div class="card-head">
-            <div>
-              <h2>Cupons</h2>
-              <p>Crie, ative, desative e ajuste cupons diretamente por aqui.</p>
+        </details>
+        <details class="section-card">
+          <summary>
+            <div class="section-title">
+              <strong>Cupons</strong>
+              <span>Crie, ative, desative e ajuste cupons diretamente por aqui.</span>
             </div>
+            <span class="section-chevron">⌄</span>
+          </summary>
+          <div class="section-content">
             <div class="actions">
               <button class="ghost" type="button" onclick="addCoupon()">Novo cupom</button>
               <button class="primary" type="button" onclick="saveCoupons()">Salvar cupons</button>
             </div>
+            <div class="scroll"><div id="couponList" class="coupon-list"></div></div>
           </div>
-          <div class="scroll"><div id="couponList" class="coupon-list"></div></div>
-        </div>
-        <div class="card">
-          <div class="card-head">
-            <div>
-              <h2>Promoção global</h2>
-              <p>Você pode aplicar desconto percentual, desconto fixo ou um preço final fixo para todos os samples. Promoções individuais continuam tendo prioridade.</p>
+        </details>
+        <details class="section-card">
+          <summary>
+            <div class="section-title">
+              <strong>Promoção global</strong>
+              <span>Aplicar desconto percentual, desconto fixo ou preço final fixo para todos os samples.</span>
             </div>
-            <button class="primary" type="button" onclick="saveGlobalPricing()">Salvar promoção global</button>
+            <span class="section-chevron">⌄</span>
+          </summary>
+          <div class="section-content">
+            <div class="actions"><button class="primary" type="button" onclick="saveGlobalPricing()">Salvar promoção global</button></div>
+            <div id="globalPricingCard" class="promo-item"></div>
           </div>
-          <div id="globalPricingCard" class="promo-item"></div>
-        </div>
-        <div class="card">
-          <div class="card-head">
-            <div>
-              <h2>Promoções por produto</h2>
-              <p>Defina um preço promocional por sample e ative quando quiser.</p>
+        </details>
+        <details class="section-card">
+          <summary>
+            <div class="section-title">
+              <strong>Promoções por produto</strong>
+              <span>Defina um preço promocional por sample e ative quando quiser.</span>
             </div>
+            <span class="section-chevron">⌄</span>
+          </summary>
+          <div class="section-content">
             <div class="actions">
               <input id="productSearch" type="text" placeholder="Buscar produto" oninput="renderProducts()">
               <button class="primary" type="button" onclick="saveProductOverrides()">Salvar promoções</button>
             </div>
+            <div class="scroll"><div id="productList" class="promo-list"></div></div>
           </div>
-          <div class="scroll"><div id="productList" class="promo-list"></div></div>
-        </div>
+        </details>
       </div>
-      <div class="card">
-        <div class="card-head">
-          <div>
-            <h2>Clientes</h2>
-            <p>Os clientes ficam recolhidos. Clique em cada um para abrir, editar, excluir ou copiar tudo o que precisar.</p>
+      <details class="section-card" open>
+        <summary>
+          <div class="section-title">
+            <strong>Clientes</strong>
+            <span>Abra só quando for gerenciar clientes, compras aprovadas, exclusão ou cadastro manual.</span>
           </div>
-        </div>
-        <div class="subcard" style="margin-bottom:14px;">
-          <strong>Adicionar cliente manualmente</strong>
-          <small>Cria um cliente no log mesmo sem compra. Útil para organizar acesso e histórico antes do cadastro real.</small>
+          <span class="section-chevron">⌄</span>
+        </summary>
+        <div class="section-content">
+          <div class="subcard">
+            <strong>Adicionar cliente manualmente</strong>
+            <small>Cria um cliente no log mesmo sem compra. Útil para organizar acesso e histórico antes do cadastro real.</small>
+            <div class="form-grid">
+              <input id="manualCustomerName" type="text" placeholder="Nome do cliente">
+              <input id="manualCustomerEmail" type="email" placeholder="E-mail do cliente">
+              <input id="manualCustomerPhone" type="text" placeholder="Telefone / WhatsApp">
+              <input id="manualCustomerCode" type="text" placeholder="Código de acesso (opcional)">
+            </div>
+            <div class="actions">
+              <button class="primary" type="button" onclick="createManualCustomer()">Adicionar cliente</button>
+            </div>
+          </div>
           <div class="form-grid">
-            <input id="manualCustomerName" type="text" placeholder="Nome do cliente">
-            <input id="manualCustomerEmail" type="email" placeholder="E-mail do cliente">
-            <input id="manualCustomerPhone" type="text" placeholder="Telefone / WhatsApp">
-            <input id="manualCustomerCode" type="text" placeholder="Código de acesso (opcional)">
+            <input id="searchInput" type="text" placeholder="Buscar por nome, e-mail, telefone, código ou sample">
+            <select id="statusFilter">
+              <option value="all">Todos os clientes</option>
+              <option value="approved">Com compras aprovadas</option>
+              <option value="empty">Sem compras aprovadas</option>
+            </select>
           </div>
-          <div class="actions">
-            <button class="primary" type="button" onclick="createManualCustomer()">Adicionar cliente</button>
-          </div>
+          <div class="scroll"><div id="customerList" class="customer-list"></div></div>
         </div>
-        <div class="form-grid" style="margin-bottom:14px;">
-          <input id="searchInput" type="text" placeholder="Buscar por nome, e-mail, telefone, código ou sample">
-          <select id="statusFilter">
-            <option value="all">Todos os clientes</option>
-            <option value="approved">Com compras aprovadas</option>
-            <option value="empty">Sem compras aprovadas</option>
-          </select>
-        </div>
-        <div class="scroll"><div id="customerList" class="customer-list"></div></div>
-      </div>
+      </details>
     </div>
   </div>
   <script>
