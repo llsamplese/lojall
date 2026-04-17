@@ -2478,6 +2478,9 @@
             }
         }
         wrapper.classList.add('open');
+        window.requestAnimationFrame(() => {
+            wrapper.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'nearest' });
+        });
     }
 
     function hidePixResult() {
