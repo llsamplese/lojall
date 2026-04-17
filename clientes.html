@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
@@ -94,7 +94,7 @@
         </div>
       </div>
       <div class="actions">
-        <a class="button ghost" href="/index.html">Voltar à loja</a>
+        <a class="button ghost" href="/index.html">Voltar Ã  loja</a>
         <button class="primary" type="button" onclick="loadDashboard(true)">Atualizar painel</button>
       </div>
     </div>
@@ -102,26 +102,26 @@
       <div class="card-head">
         <div>
           <h1>Painel de controle</h1>
-          <p>Aqui você controla visibilidade da interface, cupons, promoções por produto, promoção global e os dados dos clientes já gravados no GitHub.</p>
+          <p>Aqui vocÃª controla visibilidade da interface, cupons, promoÃ§Ãµes por produto, promoÃ§Ã£o global e os dados dos clientes jÃ¡ gravados no GitHub.</p>
         </div>
       </div>
       <div class="stats">
         <div class="stat"><div class="stat-label">Clientes</div><strong id="statCustomers">0</strong></div>
         <div class="stat"><div class="stat-label">Compras aprovadas</div><strong id="statApproved">0</strong></div>
-        <div class="stat"><div class="stat-label">Samples entregáveis</div><strong id="statDelivered">0</strong></div>
+        <div class="stat"><div class="stat-label">Samples entregÃ¡veis</div><strong id="statDelivered">0</strong></div>
         <div class="stat"><div class="stat-label">Produtos</div><strong id="statProducts">0</strong></div>
       </div>
       <div id="statusBox" class="status-box">Carregando painel...</div>
     </div>
     <div class="grid">
       <div class="stack">
-        <details class="section-card" open>
+        <details class="section-card">
           <summary>
             <div class="section-title">
               <strong>Visibilidade da interface</strong>
-              <span>Ligue e desligue blocos da loja principal sem editar o código.</span>
+              <span>Ligue e desligue blocos da loja principal sem editar o cÃ³digo.</span>
             </div>
-            <span class="section-chevron">⌄</span>
+            <span class="section-chevron">âŒ„</span>
           </summary>
           <div class="section-content">
             <div class="actions"><button class="primary" type="button" onclick="saveUiConfig()">Salvar interface</button></div>
@@ -134,7 +134,7 @@
               <strong>Cupons</strong>
               <span>Crie, ative, desative e ajuste cupons diretamente por aqui.</span>
             </div>
-            <span class="section-chevron">⌄</span>
+            <span class="section-chevron">âŒ„</span>
           </summary>
           <div class="section-content">
             <div class="actions">
@@ -147,57 +147,57 @@
         <details class="section-card">
           <summary>
             <div class="section-title">
-              <strong>Promoção global</strong>
-              <span>Aplicar desconto percentual, desconto fixo ou preço final fixo para todos os samples.</span>
+              <strong>PromoÃ§Ã£o global</strong>
+              <span>Aplicar desconto percentual, desconto fixo ou preÃ§o final fixo para todos os samples.</span>
             </div>
-            <span class="section-chevron">⌄</span>
+            <span class="section-chevron">âŒ„</span>
           </summary>
           <div class="section-content">
-            <div class="actions"><button class="primary" type="button" onclick="saveGlobalPricing()">Salvar promoção global</button></div>
+            <div class="actions"><button class="primary" type="button" onclick="saveGlobalPricing()">Salvar promoÃ§Ã£o global</button></div>
             <div id="globalPricingCard" class="promo-item"></div>
           </div>
         </details>
         <details class="section-card">
           <summary>
             <div class="section-title">
-              <strong>Promoções por produto</strong>
-              <span>Defina um preço promocional por sample e ative quando quiser.</span>
+              <strong>PromoÃ§Ãµes por produto</strong>
+              <span>Defina um preÃ§o promocional por sample e ative quando quiser.</span>
             </div>
-            <span class="section-chevron">⌄</span>
+            <span class="section-chevron">âŒ„</span>
           </summary>
           <div class="section-content">
             <div class="actions">
               <input id="productSearch" type="text" placeholder="Buscar produto" oninput="renderProducts()">
-              <button class="primary" type="button" onclick="saveProductOverrides()">Salvar promoções</button>
+              <button class="primary" type="button" onclick="saveProductOverrides()">Salvar promoÃ§Ãµes</button>
             </div>
             <div class="scroll"><div id="productList" class="promo-list"></div></div>
           </div>
         </details>
       </div>
-      <details class="section-card" open>
+      <details class="section-card">
         <summary>
           <div class="section-title">
             <strong>Clientes</strong>
-            <span>Abra só quando for gerenciar clientes, compras aprovadas, exclusão ou cadastro manual.</span>
+            <span>Abra sÃ³ quando for gerenciar clientes, compras aprovadas, exclusÃ£o ou cadastro manual.</span>
           </div>
-          <span class="section-chevron">⌄</span>
+          <span class="section-chevron">âŒ„</span>
         </summary>
         <div class="section-content">
           <div class="subcard">
             <strong>Adicionar cliente manualmente</strong>
-            <small>Cria um cliente no log mesmo sem compra. Útil para organizar acesso e histórico antes do cadastro real.</small>
+            <small>Cria um cliente no log mesmo sem compra. Ãštil para organizar acesso e histÃ³rico antes do cadastro real.</small>
             <div class="form-grid">
               <input id="manualCustomerName" type="text" placeholder="Nome do cliente">
               <input id="manualCustomerEmail" type="email" placeholder="E-mail do cliente">
               <input id="manualCustomerPhone" type="text" placeholder="Telefone / WhatsApp">
-              <input id="manualCustomerCode" type="text" placeholder="Código de acesso (opcional)">
+              <input id="manualCustomerCode" type="text" placeholder="CÃ³digo de acesso (opcional)">
             </div>
             <div class="actions">
               <button class="primary" type="button" onclick="createManualCustomer()">Adicionar cliente</button>
             </div>
           </div>
           <div class="form-grid">
-            <input id="searchInput" type="text" placeholder="Buscar por nome, e-mail, telefone, código ou sample">
+            <input id="searchInput" type="text" placeholder="Buscar por nome, e-mail, telefone, cÃ³digo ou sample">
             <select id="statusFilter">
               <option value="all">Todos os clientes</option>
               <option value="approved">Com compras aprovadas</option>
@@ -216,12 +216,12 @@ const STORE_PRODUCTS_ENDPOINT='/api/store-products';
 const CUSTOMER_UPDATE_ENDPOINT='/api/admin-customer-update';
 const UI_FIELDS=[
   {key:'showCouponBox',label:'Mostrar caixa de cupom',help:'Exibe ou esconde o campo de cupom no carrinho.'},
-  {key:'showCopyNamesButton',label:'Mostrar botão Copiar nomes',help:'Controla o botão para copiar só os nomes dos samples.'},
-  {key:'showCopyOrderButton',label:'Mostrar botão Copiar pedido',help:'Controla o botão que copia o resumo do pedido.'},
-  {key:'showSelectAllButton',label:'Mostrar botão Selecionar todos',help:'Liga ou desliga a ação de selecionar todos os cards.'},
-  {key:'showClearAllButton',label:'Mostrar botão Limpar tudo',help:'Liga ou desliga a ação de limpar a seleção.'},
-  {key:'showFiltersButton',label:'Mostrar botão Filtros',help:'Exibe ou esconde o botão para abrir os filtros.'},
-  {key:'showCustomerMenuButton',label:'Mostrar menu da área do cliente',help:'Exibe ou esconde o botão de menu/área do cliente no topo.'}
+  {key:'showCopyNamesButton',label:'Mostrar botÃ£o Copiar nomes',help:'Controla o botÃ£o para copiar sÃ³ os nomes dos samples.'},
+  {key:'showCopyOrderButton',label:'Mostrar botÃ£o Copiar pedido',help:'Controla o botÃ£o que copia o resumo do pedido.'},
+  {key:'showSelectAllButton',label:'Mostrar botÃ£o Selecionar todos',help:'Liga ou desliga a aÃ§Ã£o de selecionar todos os cards.'},
+  {key:'showClearAllButton',label:'Mostrar botÃ£o Limpar tudo',help:'Liga ou desliga a aÃ§Ã£o de limpar a seleÃ§Ã£o.'},
+  {key:'showFiltersButton',label:'Mostrar botÃ£o Filtros',help:'Exibe ou esconde o botÃ£o para abrir os filtros.'},
+  {key:'showCustomerMenuButton',label:'Mostrar menu da Ã¡rea do cliente',help:'Exibe ou esconde o botÃ£o de menu/Ã¡rea do cliente no topo.'}
 ];
 let customersCache=[];
 let storeConfigCache={ui:{},globalPricing:{active:false,type:'percent',value:0},coupons:{},productOverrides:{}};
@@ -230,35 +230,36 @@ let productsCache=[];
 const money=v=>Number(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
 const escapeHtml=v=>String(v||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 function setStatus(message,type=''){const box=document.getElementById('statusBox');box.className=`status-box${type?` ${type}`:''}`;box.textContent=message;}
-function copyText(text,label='Conteúdo copiado'){navigator.clipboard.writeText(String(text||'')).then(()=>setStatus(label,'ok')).catch(()=>setStatus('Não foi possível copiar agora.','error'));}
+function copyText(text,label='ConteÃºdo copiado'){navigator.clipboard.writeText(String(text||'')).then(()=>setStatus(label,'ok')).catch(()=>setStatus('NÃ£o foi possÃ­vel copiar agora.','error'));}
 function buildCustomerCopyText(customer){const delivered=customer.purchases.flatMap(p=>(p.items||[]).filter(i=>i.delivered));return delivered.map(i=>`${i.title}\n${i.link}`).join('\n\n');}
 function updateStats(customers){const approved=customers.reduce((s,c)=>s+Number(c.approved_orders||0),0);const delivered=customers.reduce((s,c)=>s+c.purchases.reduce((a,p)=>a+p.items.filter(i=>i.delivered).length,0),0);document.getElementById('statCustomers').textContent=customers.length;document.getElementById('statApproved').textContent=approved;document.getElementById('statDelivered').textContent=delivered;document.getElementById('statProducts').textContent=productsCache.length;}
 function renderUiToggles(){const host=document.getElementById('uiToggleList');const ui=storeConfigCache.ui||{};host.innerHTML=UI_FIELDS.map(f=>`<div class="toggle-item"><div class="toggle-copy"><strong>${escapeHtml(f.label)}</strong><span>${escapeHtml(f.help)}</span></div><button class="switch ${ui[f.key]!==false?'active':''}" type="button" onclick="toggleUiField('${f.key}')"></button></div>`).join('');}
 function toggleUiField(key){const current=storeConfigCache.ui?.[key];storeConfigCache.ui={...(storeConfigCache.ui||{}),[key]:current===false};renderUiToggles();}
-function renderGlobalPricing(){const host=document.getElementById('globalPricingCard');const pricing=storeConfigCache.globalPricing||{active:false,type:'percent',value:0};const activeText=pricing.active?'Promoção global ativa':'Promoção global inativa';const helpText=pricing.type==='fixed_price'?'Define o mesmo preço final para todos, sem aumentar itens que já são mais baratos.' : pricing.type==='fixed'?'Desconta um valor fixo de cada sample.' : 'Aplica um percentual de desconto em cada sample.';host.innerHTML=`<div><strong>${escapeHtml(activeText)}</strong><small>${escapeHtml(helpText)}</small></div><div class="row"><select onchange="updateGlobalPricingField('type',this.value)"><option value="percent" ${pricing.type==='percent'?'selected':''}>Percentual</option><option value="fixed" ${pricing.type==='fixed'?'selected':''}>Desconto fixo</option><option value="fixed_price" ${pricing.type==='fixed_price'?'selected':''}>Preço final fixo</option></select><input type="number" min="0" step="0.01" value="${Number(pricing.value||0)}" placeholder="${pricing.type==='fixed_price'?'Preço final para todos':'Valor do desconto'}" oninput="updateGlobalPricingField('value',this.value)"><button class="${pricing.active?'primary':'ghost'}" type="button" onclick="toggleGlobalPricing()">${pricing.active?'Desativar promoção':'Ativar promoção'}</button></div>`;}
-function updateGlobalPricingField(field,value){const current=storeConfigCache.globalPricing||{active:false,type:'percent',value:0};storeConfigCache.globalPricing={...current,[field]:field==='value'?Number(value||0):value};if(field!=='value'){renderGlobalPricing();}}
+function renderGlobalPricing(){const host=document.getElementById('globalPricingCard');const pricing=storeConfigCache.globalPricing||{active:false,type:'percent',value:0};const activeText=pricing.active?'PromoÃ§Ã£o global ativa':'PromoÃ§Ã£o global inativa';const helpText=pricing.type==='fixed_price'?'Define o mesmo preÃ§o final para todos, sem aumentar itens que jÃ¡ sÃ£o mais baratos.' : pricing.type==='fixed'?'Desconta um valor fixo de cada sample.' : 'Aplica um percentual de desconto em cada sample.';host.innerHTML=`<div><strong>${escapeHtml(activeText)}</strong><small>${escapeHtml(helpText)}</small></div><div class="row"><select onchange="updateGlobalPricingField('type',this.value)"><option value="percent" ${pricing.type==='percent'?'selected':''}>Percentual</option><option value="fixed" ${pricing.type==='fixed'?'selected':''}>Desconto fixo</option><option value="fixed_price" ${pricing.type==='fixed_price'?'selected':''}>PreÃ§o final fixo</option></select><input type="text" inputmode="decimal" value="${escapeHtml(pricing.value??'')}" placeholder="${pricing.type==='fixed_price'?'PreÃ§o final para todos':'Valor do desconto'}" oninput="updateGlobalPricingField('value',this.value)"><button class="${pricing.active?'primary':'ghost'}" type="button" onclick="toggleGlobalPricing()">${pricing.active?'Desativar promoÃ§Ã£o':'Ativar promoÃ§Ã£o'}</button></div>`;}
+function updateGlobalPricingField(field,value){const current=storeConfigCache.globalPricing||{active:false,type:'percent',value:0};storeConfigCache.globalPricing={...current,[field]:value};if(field!=='value'){renderGlobalPricing();}}
 function toggleGlobalPricing(){const current=storeConfigCache.globalPricing||{active:false,type:'percent',value:0};storeConfigCache.globalPricing={...current,active:!current.active};renderGlobalPricing();}
 function normalizeCouponCode(code){return String(code||'').trim().toUpperCase();}
 function addCoupon(){const seed=Date.now().toString().slice(-4);couponsCache[`NOVO${seed}`]={code:`NOVO${seed}`,label:`Novo cupom ${seed}`,active:true,type:'percent',value:10,minSubtotal:0,minItems:1};renderCoupons();}
 function removeCoupon(code){delete couponsCache[code];renderCoupons();}
-function updateCouponField(code,field,value){const nextCode=field==='code'?normalizeCouponCode(value):code;const current={...(couponsCache[code]||{})};current[field]=field==='active'?Boolean(value):['value','minSubtotal','minItems'].includes(field)?Number(value||0):value;current.code=nextCode||current.code;if(nextCode!==code) delete couponsCache[code];couponsCache[current.code]=current;if(field==='active'||field==='type'||field==='code'){renderCoupons();}}
-function renderCoupons(){const host=document.getElementById('couponList');const rows=Object.values(couponsCache).sort((a,b)=>String(a.code).localeCompare(String(b.code)));if(!rows.length){host.innerHTML='<div class="empty">Nenhum cupom cadastrado.</div>';return;}host.innerHTML=rows.map(c=>`<div class="coupon-item"><div class="row"><input value="${escapeHtml(c.code||'')}" placeholder="Código" oninput="updateCouponField('${escapeHtml(c.code||'')}','code',this.value)"><input value="${escapeHtml(c.label||'')}" placeholder="Nome interno" oninput="updateCouponField('${escapeHtml(c.code||'')}','label',this.value)"></div><div class="row"><select onchange="updateCouponField('${escapeHtml(c.code||'')}','type',this.value)"><option value="percent" ${c.type==='percent'?'selected':''}>Percentual</option><option value="fixed" ${c.type==='fixed'?'selected':''}>Valor fixo</option></select><input type="number" min="0" step="0.01" value="${Number(c.value||0)}" placeholder="Valor" oninput="updateCouponField('${escapeHtml(c.code||'')}','value',this.value)"><input type="number" min="0" step="0.01" value="${Number(c.minSubtotal||0)}" placeholder="Pedido mínimo" oninput="updateCouponField('${escapeHtml(c.code||'')}','minSubtotal',this.value)"><input type="number" min="1" step="1" value="${Number(c.minItems||1)}" placeholder="Itens mínimos" oninput="updateCouponField('${escapeHtml(c.code||'')}','minItems',this.value)"></div><div class="row"><button class="${c.active?'primary':'ghost'}" type="button" onclick="updateCouponField('${escapeHtml(c.code||'')}','active',${c.active?'false':'true'})">${c.active?'Ativo':'Inativo'}</button><button class="danger" type="button" onclick="removeCoupon('${escapeHtml(c.code||'')}')">Excluir</button></div></div>`).join('');}
+function updateCouponField(code,field,value){const nextCode=field==='code'?normalizeCouponCode(value):code;const current={...(couponsCache[code]||{})};if(field==='code'){current.codeDraft=value;couponsCache[code]=current;return;}current[field]=field==='active'?Boolean(value):value;current.code=nextCode||current.code;if(nextCode!==code) delete couponsCache[code];couponsCache[current.code]=current;if(field==='active'||field==='type'){renderCoupons();}}
+function commitCouponCode(code,value){const nextCode=normalizeCouponCode(value)||code;const current={...(couponsCache[code]||{})};current.code=nextCode;delete current.codeDraft;if(nextCode!==code) delete couponsCache[code];couponsCache[nextCode]=current;renderCoupons();}
+function renderCoupons(){const host=document.getElementById('couponList');const rows=Object.values(couponsCache).sort((a,b)=>String(a.code).localeCompare(String(b.code)));if(!rows.length){host.innerHTML='<div class="empty">Nenhum cupom cadastrado.</div>';return;}host.innerHTML=rows.map(c=>`<div class="coupon-item"><div class="row"><input value="${escapeHtml(c.codeDraft??c.code??'')}" placeholder="CÃ³digo" oninput="updateCouponField('${escapeHtml(c.code||'')}','code',this.value)" onblur="commitCouponCode('${escapeHtml(c.code||'')}',this.value)"><input value="${escapeHtml(c.label||'')}" placeholder="Nome interno" oninput="updateCouponField('${escapeHtml(c.code||'')}','label',this.value)"></div><div class="row"><select onchange="updateCouponField('${escapeHtml(c.code||'')}','type',this.value)"><option value="percent" ${c.type==='percent'?'selected':''}>Percentual</option><option value="fixed" ${c.type==='fixed'?'selected':''}>Valor fixo</option></select><input type="text" inputmode="decimal" value="${escapeHtml(c.value??'')}" placeholder="Valor" oninput="updateCouponField('${escapeHtml(c.code||'')}','value',this.value)"><input type="text" inputmode="decimal" value="${escapeHtml(c.minSubtotal??'')}" placeholder="Pedido mÃ­nimo" oninput="updateCouponField('${escapeHtml(c.code||'')}','minSubtotal',this.value)"><input type="text" inputmode="numeric" value="${escapeHtml(c.minItems??1)}" placeholder="Itens mÃ­nimos" oninput="updateCouponField('${escapeHtml(c.code||'')}','minItems',this.value)"></div><div class="row"><button class="${c.active?'primary':'ghost'}" type="button" onclick="updateCouponField('${escapeHtml(c.code||'')}','active',${c.active?'false':'true'})">${c.active?'Ativo':'Inativo'}</button><button class="danger" type="button" onclick="removeCoupon('${escapeHtml(c.code||'')}')">Excluir</button></div></div>`).join('');}
 function updateProductOverride(name,field,value){const next={...(storeConfigCache.productOverrides?.[name]||{})};if(field==='active') next.active=Boolean(value);if(field==='promoPrice') next.promoPrice=value===''?'':Number(value);storeConfigCache.productOverrides={...(storeConfigCache.productOverrides||{}),[name]:next};}
-function renderProducts(){const host=document.getElementById('productList');const query=String(document.getElementById('productSearch')?.value||'').trim().toLowerCase();const list=productsCache.filter(p=>!query||p.nome.toLowerCase().includes(query));if(!list.length){host.innerHTML='<div class="empty">Nenhum produto encontrado com esse filtro.</div>';return;}host.innerHTML=list.map(product=>{const o=storeConfigCache.productOverrides?.[product.nome]||{};return `<div class="promo-item"><div><strong>${escapeHtml(product.nome)}</strong><small>Preço atual da loja: ${money(o.active&&Number(o.promoPrice)>0?o.promoPrice:product.valor)} | Preço base: ${money(product.valor)}</small></div><div class="row"><input type="number" min="0" step="0.01" value="${o.promoPrice??''}" placeholder="Preço promocional" oninput="updateProductOverride('${escapeHtml(product.nome)}','promoPrice',this.value)"><button class="${o.active?'primary':'ghost'}" type="button" onclick="toggleProductPromo('${escapeHtml(product.nome)}')">${o.active?'Promoção ativa':'Ativar promoção'}</button></div></div>`;}).join('');}
+function renderProducts(){const host=document.getElementById('productList');const query=String(document.getElementById('productSearch')?.value||'').trim().toLowerCase();const list=productsCache.filter(p=>!query||p.nome.toLowerCase().includes(query));if(!list.length){host.innerHTML='<div class="empty">Nenhum produto encontrado com esse filtro.</div>';return;}host.innerHTML=list.map(product=>{const o=storeConfigCache.productOverrides?.[product.nome]||{};return `<div class="promo-item"><div><strong>${escapeHtml(product.nome)}</strong><small>PreÃ§o atual da loja: ${money(o.active&&Number(o.promoPrice)>0?o.promoPrice:product.valor)} | PreÃ§o base: ${money(product.valor)}</small></div><div class="row"><input type="number" min="0" step="0.01" value="${o.promoPrice??''}" placeholder="PreÃ§o promocional" oninput="updateProductOverride('${escapeHtml(product.nome)}','promoPrice',this.value)"><button class="${o.active?'primary':'ghost'}" type="button" onclick="toggleProductPromo('${escapeHtml(product.nome)}')">${o.active?'PromoÃ§Ã£o ativa':'Ativar promoÃ§Ã£o'}</button></div></div>`;}).join('');}
 function toggleProductPromo(name){const c=storeConfigCache.productOverrides?.[name]||{};updateProductOverride(name,'active',!c.active);renderProducts();}
-function buildPurchaseMarkup(p){return `<div class="purchase-card"><div class="purchase-head"><span>${p.payment_type_id==='credit_card'?'Cartão':(p.payment_type_id||'Pagamento')}</span><span>${money(p.transaction_amount)}</span></div><div class="purchase-meta">${p.created_at?new Date(p.created_at).toLocaleString('pt-BR'):'Data não informada'}<br>Payment ID: ${escapeHtml(p.payment_id||'-')}</div><div class="sample-list">${(p.items||[]).map(i=>`<div class="sample-item"><span>${escapeHtml(i.title)}</span><span class="price">${money(i.unit_price)}</span><span class="status">${i.delivered?'Link pronto':'Sem link'}</span></div>`).join('')}</div></div>`;}
-function renderCustomers(customers){const host=document.getElementById('customerList');if(!customers.length){host.innerHTML='<div class="empty">Nenhum cliente encontrado com esse filtro.</div>';updateStats([]);return;}updateStats(customers);host.innerHTML=customers.map((customer,index)=>{const deliveredCopy=encodeURIComponent(buildCustomerCopyText(customer));const purchasesMarkup=customer.purchases.length?customer.purchases.map(buildPurchaseMarkup).join(''):'<div class="empty">Este cliente ainda não tem compras aprovadas registradas.</div>';return `<details class="customer-item"><summary><div class="customer-summary-title"><strong>${escapeHtml(customer.name||customer.email)}</strong><span>${escapeHtml(customer.email)}<br>${escapeHtml(customer.phone||'Telefone não informado')}<br>Última atividade: ${customer.last_order_at?new Date(customer.last_order_at).toLocaleString('pt-BR'):'Sem data'}</span></div><div class="customer-badges"><div class="badge">${escapeHtml(customer.access_code||'sem código')}</div><div class="badge">${customer.total_orders} pedidos</div><div class="badge ok">${customer.approved_orders} aprovados</div></div></summary><div class="customer-body"><div><div class="subhead">Editar cliente</div><div class="form-grid"><input id="customerName-${index}" value="${escapeHtml(customer.name||'')}" placeholder="Nome do cliente"><input id="customerEmail-${index}" value="${escapeHtml(customer.email||'')}" placeholder="E-mail do cliente"><input id="customerPhone-${index}" value="${escapeHtml(customer.phone||'')}" placeholder="Telefone / WhatsApp"><input id="customerCode-${index}" value="${escapeHtml(customer.access_code||'')}" placeholder="Código de acesso"></div><div class="actions" style="margin-top:12px;"><button class="primary" type="button" onclick="saveCustomer('${escapeHtml(customer.email)}',${index})">Salvar cliente</button><button class="danger" type="button" onclick="deleteCustomer('${escapeHtml(customer.email)}')">Excluir cliente</button><button class="ghost" type="button" onclick="copyText(decodeURIComponent('${deliveredCopy}'),'Links do cliente copiados')">Copiar links</button><button class="ghost" type="button" onclick="copyText('${escapeHtml(customer.access_code||'')}','Código do cliente copiado')">Copiar código</button><button class="ghost" type="button" onclick="copyText('${escapeHtml(customer.email||'')}','E-mail copiado')">Copiar e-mail</button></div></div><div><div class="subhead">Compras aprovadas</div><div class="purchase-list">${purchasesMarkup}</div></div></div></details>`;}).join('');}
+function buildPurchaseMarkup(p){return `<div class="purchase-card"><div class="purchase-head"><span>${p.payment_type_id==='credit_card'?'CartÃ£o':(p.payment_type_id||'Pagamento')}</span><span>${money(p.transaction_amount)}</span></div><div class="purchase-meta">${p.created_at?new Date(p.created_at).toLocaleString('pt-BR'):'Data nÃ£o informada'}<br>Payment ID: ${escapeHtml(p.payment_id||'-')}</div><div class="sample-list">${(p.items||[]).map(i=>`<div class="sample-item"><span>${escapeHtml(i.title)}</span><span class="price">${money(i.unit_price)}</span><span class="status">${i.delivered?'Link pronto':'Sem link'}</span></div>`).join('')}</div></div>`;}
+function renderCustomers(customers){const host=document.getElementById('customerList');if(!customers.length){host.innerHTML='<div class="empty">Nenhum cliente encontrado com esse filtro.</div>';updateStats([]);return;}updateStats(customers);host.innerHTML=customers.map((customer,index)=>{const deliveredCopy=encodeURIComponent(buildCustomerCopyText(customer));const purchasesMarkup=customer.purchases.length?customer.purchases.map(buildPurchaseMarkup).join(''):'<div class="empty">Este cliente ainda nÃ£o tem compras aprovadas registradas.</div>';return `<details class="customer-item"><summary><div class="customer-summary-title"><strong>${escapeHtml(customer.name||customer.email)}</strong><span>${escapeHtml(customer.email)}<br>${escapeHtml(customer.phone||'Telefone nÃ£o informado')}<br>Ãšltima atividade: ${customer.last_order_at?new Date(customer.last_order_at).toLocaleString('pt-BR'):'Sem data'}</span></div><div class="customer-badges"><div class="badge">${escapeHtml(customer.access_code||'sem cÃ³digo')}</div><div class="badge">${customer.total_orders} pedidos</div><div class="badge ok">${customer.approved_orders} aprovados</div></div></summary><div class="customer-body"><div><div class="subhead">Editar cliente</div><div class="form-grid"><input id="customerName-${index}" value="${escapeHtml(customer.name||'')}" placeholder="Nome do cliente"><input id="customerEmail-${index}" value="${escapeHtml(customer.email||'')}" placeholder="E-mail do cliente"><input id="customerPhone-${index}" value="${escapeHtml(customer.phone||'')}" placeholder="Telefone / WhatsApp"><input id="customerCode-${index}" value="${escapeHtml(customer.access_code||'')}" placeholder="CÃ³digo de acesso"></div><div class="actions" style="margin-top:12px;"><button class="primary" type="button" onclick="saveCustomer('${escapeHtml(customer.email)}',${index})">Salvar cliente</button><button class="danger" type="button" onclick="deleteCustomer('${escapeHtml(customer.email)}')">Excluir cliente</button><button class="ghost" type="button" onclick="copyText(decodeURIComponent('${deliveredCopy}'),'Links do cliente copiados')">Copiar links</button><button class="ghost" type="button" onclick="copyText('${escapeHtml(customer.access_code||'')}','CÃ³digo do cliente copiado')">Copiar cÃ³digo</button><button class="ghost" type="button" onclick="copyText('${escapeHtml(customer.email||'')}','E-mail copiado')">Copiar e-mail</button></div></div><div><div class="subhead">Compras aprovadas</div><div class="purchase-list">${purchasesMarkup}</div></div></div></details>`;}).join('');}
 function applyCustomerFilters(){const query=String(document.getElementById('searchInput').value||'').trim().toLowerCase();const status=document.getElementById('statusFilter').value;const filtered=customersCache.filter(customer=>{if(status==='approved'&&!customer.approved_orders) return false;if(status==='empty'&&customer.approved_orders) return false;if(!query) return true;const haystack=[customer.name,customer.email,customer.phone,customer.access_code,...customer.purchases.flatMap(p=>p.items.map(i=>i.title))].join(' ').toLowerCase();return haystack.includes(query);});renderCustomers(filtered);}
 async function saveUiConfig(){await saveStoreConfig({ui:storeConfigCache.ui||{}},'Interface salva.');}
-async function saveGlobalPricing(){await saveStoreConfig({globalPricing:storeConfigCache.globalPricing||{active:false,type:'percent',value:0}},'Promoção global salva.');}
-async function saveCoupons(){await saveStoreConfig({coupons:couponsCache},'Cupons salvos.');}
-async function saveProductOverrides(){const sanitized={};Object.entries(storeConfigCache.productOverrides||{}).forEach(([name,o])=>{if(!o) return;const promoPrice=Number(o.promoPrice);if(o.active||promoPrice>0) sanitized[name]={active:Boolean(o.active),promoPrice:promoPrice>0?promoPrice:''};});await saveStoreConfig({productOverrides:sanitized},'Promoções salvas.');}
-async function saveStoreConfig(partial,successMessage){setStatus('Salvando painel...','');try{const nextConfig={...storeConfigCache,...partial,ui:{...(storeConfigCache.ui||{}),...(partial.ui||{})},globalPricing:partial.globalPricing!==undefined?partial.globalPricing:(storeConfigCache.globalPricing||{}),coupons:partial.coupons!==undefined?partial.coupons:couponsCache,productOverrides:partial.productOverrides!==undefined?partial.productOverrides:(storeConfigCache.productOverrides||{})};const response=await fetch(STORE_CONFIG_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({config:nextConfig})});const data=await response.json();if(!response.ok) throw new Error(data.error||'Não foi possível salvar a configuração.');storeConfigCache=data.config||nextConfig;couponsCache=data.coupons||couponsCache;renderUiToggles();renderGlobalPricing();renderCoupons();renderProducts();setStatus(successMessage||'Configuração salva.','ok');}catch(error){setStatus(error.message||'Erro ao salvar configuração.','error');}}
-async function saveCustomer(originalEmail,index){const payload={action:'update',originalEmail,name:document.getElementById(`customerName-${index}`)?.value||'',email:document.getElementById(`customerEmail-${index}`)?.value||'',phone:document.getElementById(`customerPhone-${index}`)?.value||'',access_code:document.getElementById(`customerCode-${index}`)?.value||''};setStatus(`Salvando cliente ${payload.email||originalEmail}...`,'');try{const response=await fetch(CUSTOMER_UPDATE_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});const data=await response.json();if(!response.ok) throw new Error(data.error||'Não foi possível atualizar o cliente.');setStatus(`Cliente ${data.customer?.email||payload.email} atualizado com sucesso.`,'ok');await loadCustomers();}catch(error){setStatus(error.message||'Erro ao atualizar cliente.','error');}}
-async function createManualCustomer(){const payload={action:'create',name:document.getElementById('manualCustomerName')?.value||'',email:document.getElementById('manualCustomerEmail')?.value||'',phone:document.getElementById('manualCustomerPhone')?.value||'',access_code:document.getElementById('manualCustomerCode')?.value||''};setStatus(`Criando cliente ${payload.email||''}...`,'');try{const response=await fetch(CUSTOMER_UPDATE_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});const data=await response.json();if(!response.ok) throw new Error(data.error||'Não foi possível criar o cliente.');['manualCustomerName','manualCustomerEmail','manualCustomerPhone','manualCustomerCode'].forEach(id=>{const field=document.getElementById(id);if(field) field.value='';});setStatus(`Cliente ${data.customer?.email||payload.email} criado com sucesso.`,'ok');await loadCustomers();}catch(error){setStatus(error.message||'Erro ao criar cliente.','error');}}
-async function deleteCustomer(email){if(!confirm(`Excluir o cliente ${email} e todos os registros dele?`)) return;setStatus(`Excluindo cliente ${email}...`,'');try{const response=await fetch(CUSTOMER_UPDATE_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'delete',email})});const data=await response.json();if(!response.ok) throw new Error(data.error||'Não foi possível excluir o cliente.');setStatus(`Cliente ${email} excluído com sucesso.`,`ok`);await loadCustomers();}catch(error){setStatus(error.message||'Erro ao excluir cliente.','error');}}
-async function loadCustomers(){const response=await fetch(ADMIN_CUSTOMERS_ENDPOINT,{cache:'no-store'});const data=await response.json();if(!response.ok) throw new Error(data.error||'Não foi possível carregar clientes.');customersCache=Array.isArray(data.customers)?data.customers:[];applyCustomerFilters();}
-async function loadStoreData(){const [configResponse,productsResponse]=await Promise.all([fetch(STORE_CONFIG_ENDPOINT,{cache:'no-store'}),fetch(STORE_PRODUCTS_ENDPOINT,{cache:'no-store'})]);const configData=await configResponse.json();const productsData=await productsResponse.json();if(!configResponse.ok) throw new Error(configData.error||'Não foi possível carregar a configuração da loja.');if(!productsResponse.ok) throw new Error(productsData.error||'Não foi possível carregar os produtos.');storeConfigCache=configData.config||storeConfigCache;couponsCache=configData.coupons||{};productsCache=Array.isArray(productsData.products)?productsData.products:[];renderUiToggles();renderGlobalPricing();renderCoupons();renderProducts();}
+async function saveGlobalPricing(){const current=storeConfigCache.globalPricing||{active:false,type:'percent',value:0};await saveStoreConfig({globalPricing:{...current,value:Number(String(current.value||0).replace(',', '.'))||0}},'PromoÃ§Ã£o global salva.');}
+async function saveCoupons(){const sanitized={};Object.values(couponsCache).forEach(coupon=>{const code=normalizeCouponCode(coupon.code||coupon.codeDraft);if(!code) return;const parseDecimal=value=>Number(String(value||0).replace(',', '.'))||0;const parseInteger=value=>parseInt(String(value||1),10)||1;sanitized[code]={...coupon,code,label:coupon.label||code,active:Boolean(coupon.active),value:parseDecimal(coupon.value),minSubtotal:parseDecimal(coupon.minSubtotal),minItems:parseInteger(coupon.minItems)};delete sanitized[code].codeDraft;});couponsCache=sanitized;await saveStoreConfig({coupons:couponsCache},'Cupons salvos.');}
+async function saveProductOverrides(){const sanitized={};Object.entries(storeConfigCache.productOverrides||{}).forEach(([name,o])=>{if(!o) return;const promoPrice=Number(o.promoPrice);if(o.active||promoPrice>0) sanitized[name]={active:Boolean(o.active),promoPrice:promoPrice>0?promoPrice:''};});await saveStoreConfig({productOverrides:sanitized},'PromoÃ§Ãµes salvas.');}
+async function saveStoreConfig(partial,successMessage){setStatus('Salvando painel...','');try{const nextConfig={...storeConfigCache,...partial,ui:{...(storeConfigCache.ui||{}),...(partial.ui||{})},globalPricing:partial.globalPricing!==undefined?partial.globalPricing:(storeConfigCache.globalPricing||{}),coupons:partial.coupons!==undefined?partial.coupons:couponsCache,productOverrides:partial.productOverrides!==undefined?partial.productOverrides:(storeConfigCache.productOverrides||{})};const response=await fetch(STORE_CONFIG_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({config:nextConfig})});const data=await response.json();if(!response.ok) throw new Error(data.error||'NÃ£o foi possÃ­vel salvar a configuraÃ§Ã£o.');storeConfigCache=data.config||nextConfig;couponsCache=data.coupons||couponsCache;renderUiToggles();renderGlobalPricing();renderCoupons();renderProducts();setStatus(successMessage||'ConfiguraÃ§Ã£o salva.','ok');}catch(error){setStatus(error.message||'Erro ao salvar configuraÃ§Ã£o.','error');}}
+async function saveCustomer(originalEmail,index){const payload={action:'update',originalEmail,name:document.getElementById(`customerName-${index}`)?.value||'',email:document.getElementById(`customerEmail-${index}`)?.value||'',phone:document.getElementById(`customerPhone-${index}`)?.value||'',access_code:document.getElementById(`customerCode-${index}`)?.value||''};setStatus(`Salvando cliente ${payload.email||originalEmail}...`,'');try{const response=await fetch(CUSTOMER_UPDATE_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});const data=await response.json();if(!response.ok) throw new Error(data.error||'NÃ£o foi possÃ­vel atualizar o cliente.');setStatus(`Cliente ${data.customer?.email||payload.email} atualizado com sucesso.`,'ok');await loadCustomers();}catch(error){setStatus(error.message||'Erro ao atualizar cliente.','error');}}
+async function createManualCustomer(){const payload={action:'create',name:document.getElementById('manualCustomerName')?.value||'',email:document.getElementById('manualCustomerEmail')?.value||'',phone:document.getElementById('manualCustomerPhone')?.value||'',access_code:document.getElementById('manualCustomerCode')?.value||''};setStatus(`Criando cliente ${payload.email||''}...`,'');try{const response=await fetch(CUSTOMER_UPDATE_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});const data=await response.json();if(!response.ok) throw new Error(data.error||'NÃ£o foi possÃ­vel criar o cliente.');['manualCustomerName','manualCustomerEmail','manualCustomerPhone','manualCustomerCode'].forEach(id=>{const field=document.getElementById(id);if(field) field.value='';});setStatus(`Cliente ${data.customer?.email||payload.email} criado com sucesso.`,'ok');await loadCustomers();}catch(error){setStatus(error.message||'Erro ao criar cliente.','error');}}
+async function deleteCustomer(email){if(!confirm(`Excluir o cliente ${email} e todos os registros dele?`)) return;setStatus(`Excluindo cliente ${email}...`,'');try{const response=await fetch(CUSTOMER_UPDATE_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'delete',email})});const data=await response.json();if(!response.ok) throw new Error(data.error||'NÃ£o foi possÃ­vel excluir o cliente.');setStatus(`Cliente ${email} excluÃ­do com sucesso.`,`ok`);await loadCustomers();}catch(error){setStatus(error.message||'Erro ao excluir cliente.','error');}}
+async function loadCustomers(){const response=await fetch(ADMIN_CUSTOMERS_ENDPOINT,{cache:'no-store'});const data=await response.json();if(!response.ok) throw new Error(data.error||'NÃ£o foi possÃ­vel carregar clientes.');customersCache=Array.isArray(data.customers)?data.customers:[];applyCustomerFilters();}
+async function loadStoreData(){const [configResponse,productsResponse]=await Promise.all([fetch(STORE_CONFIG_ENDPOINT,{cache:'no-store'}),fetch(STORE_PRODUCTS_ENDPOINT,{cache:'no-store'})]);const configData=await configResponse.json();const productsData=await productsResponse.json();if(!configResponse.ok) throw new Error(configData.error||'NÃ£o foi possÃ­vel carregar a configuraÃ§Ã£o da loja.');if(!productsResponse.ok) throw new Error(productsData.error||'NÃ£o foi possÃ­vel carregar os produtos.');storeConfigCache=configData.config||storeConfigCache;couponsCache=configData.coupons||{};productsCache=Array.isArray(productsData.products)?productsData.products:[];renderUiToggles();renderGlobalPricing();renderCoupons();renderProducts();}
 async function loadDashboard(showSuccess=false){setStatus('Carregando painel...','');try{await Promise.all([loadStoreData(),loadCustomers()]);setStatus(showSuccess?'Painel atualizado.':'Painel carregado com sucesso.','ok');}catch(error){customersCache=[];productsCache=[];renderCustomers([]);renderProducts();setStatus(error.message||'Erro ao carregar painel.','error');}}
 document.getElementById('searchInput').addEventListener('input',applyCustomerFilters);
 document.getElementById('statusFilter').addEventListener('change',applyCustomerFilters);
@@ -266,3 +267,4 @@ loadDashboard();
   </script>
 </body>
 </html>
+
