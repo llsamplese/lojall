@@ -9,9 +9,9 @@
     "showCustomerMenuButton": true
   },
   "globalPricing": {
-    "active": false,
-    "type": "percent",
-    "value": 0
+    "active": true,
+    "type": "fixed_price",
+    "value": 50
   },
   "coupons": {
     "BEMVINDO10": {
@@ -29,6 +29,15 @@
       "active": true,
       "type": "fixed",
       "value": 20,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE1": {
+      "code": "TESTE1",
+      "label": "Teste 1%",
+      "active": true,
+      "type": "percent",
+      "value": 1,
       "minSubtotal": 0,
       "minItems": 1
     },
@@ -911,15 +920,6 @@
       "active": true,
       "type": "percent",
       "value": 99,
-      "minSubtotal": 0,
-      "minItems": 1
-    },
-    "TESTE1": {
-      "code": "TESTE1",
-      "label": "Teste 1%",
-      "active": true,
-      "type": "percent",
-      "value": 1,
       "minSubtotal": 0,
       "minItems": 1
     }
