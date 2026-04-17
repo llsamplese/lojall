@@ -8,6 +8,11 @@
     "showFiltersButton": false,
     "showCustomerMenuButton": true
   },
+  "globalPricing": {
+    "active": false,
+    "type": "percent",
+    "value": 0
+  },
   "coupons": {
     "BEMVINDO10": {
       "code": "BEMVINDO10",
@@ -922,7 +927,7 @@
   "productOverrides": {
     "LL Drums Filho do Piseiro": {
       "active": true,
-      "promoPrice": 50
+      "promoPrice": ""
     }
   }
 }
