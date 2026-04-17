@@ -27,6 +27,10 @@ function applyGlobalPricing(basePrice, globalPricing = {}) {
     return numericBase;
   }
 
+  if (globalPricing.type === "fixed_price") {
+    return roundCurrency(numericBase <= value ? numericBase : value);
+  }
+
   if (globalPricing.type === "fixed") {
     return roundCurrency(Math.max(0, numericBase - value));
   }
