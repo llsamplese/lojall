@@ -17,8 +17,8 @@
     "BEMVINDO10": {
       "code": "BEMVINDO10",
       "label": "Bem-vindo 10%",
-      "active": false,
-      "type": "percent",
+      "active": true,
+      "type": "fixed",
       "value": 10,
       "minSubtotal": 0,
       "minItems": 1
