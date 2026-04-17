@@ -10,8 +10,8 @@
   },
   "globalPricing": {
     "active": true,
-    "type": "fixed_price",
-    "value": 50
+    "type": "percent",
+    "value": 10
   },
   "coupons": {
     "BEMVINDO10": {
@@ -20,8 +20,8 @@
       "active": true,
       "type": "percent",
       "value": 10,
-      "minSubtotal": 0,
-      "minItems": 1
+      "minSubtotal": "",
+      "minItems": ""
     },
     "LL20OFF": {
       "code": "LL20OFF",
