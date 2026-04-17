@@ -857,6 +857,37 @@
         overflow: hidden;
     }
 
+    .cart-header {
+        display: none;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 2px;
+    }
+
+    .cart-header-title {
+        font-size: 1rem;
+        font-weight: 800;
+        color: #fff8dc;
+    }
+
+    .cart-close {
+        width: 34px;
+        height: 34px;
+        border-radius: 999px;
+        border: 1px solid rgba(255,255,255,0.1);
+        background: rgba(255,255,255,0.05);
+        color: #ffe3a1;
+        display: grid;
+        place-items: center;
+        cursor: pointer;
+    }
+
+    .mobile-cart-bar,
+    .mobile-cart-overlay {
+        display: none;
+    }
+
     .cart-main {
         display: grid;
         gap: 12px;
@@ -1347,6 +1378,62 @@
     }
 
 @media (max-width: 768px) {
+    .mobile-cart-overlay {
+        display: block;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.56);
+        backdrop-filter: blur(6px);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.22s ease;
+        z-index: 180;
+    }
+
+    .mobile-cart-overlay.open {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .mobile-cart-bar {
+        display: none;
+        position: fixed;
+        left: 12px;
+        right: 12px;
+        bottom: 12px;
+        z-index: 190;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 12px;
+        align-items: center;
+        padding: 12px 14px;
+        border-radius: 18px;
+        background: linear-gradient(145deg, rgba(20,20,20,0.98), rgba(12,12,12,0.98));
+        border: 1px solid rgba(255, 193, 7, 0.16);
+        box-shadow: 0 18px 40px rgba(0,0,0,0.35);
+    }
+
+    .mobile-cart-bar.open {
+        display: grid;
+    }
+
+    .mobile-cart-bar-info {
+        min-width: 0;
+        display: grid;
+        gap: 2px;
+    }
+
+    .mobile-cart-bar-count {
+        color: #fff6d3;
+        font-size: 0.92rem;
+        font-weight: 700;
+    }
+
+    .mobile-cart-bar-total {
+        color: #ffd54f;
+        font-size: 1rem;
+        font-weight: 900;
+    }
+
     .topbar {
         top: 8px;
         padding: 10px 12px;
@@ -1385,12 +1472,33 @@
 
     /* Deixar o resumo bem compacto no celular */
     .cart-summary {
-        position: static;          /* tira o sticky pra não "grudar" e ocupar muito */
-        padding: 14px;        /* menos espaço interno */
-        margin-bottom: 15px;
+        position: fixed;
+        left: 10px;
+        right: 10px;
+        bottom: 10px;
+        top: auto;
+        max-height: min(78vh, 760px);
+        overflow-y: auto;
+        padding: 14px;
+        margin-bottom: 0;
         gap: 12px;
-        border-radius: 18px;
+        border-radius: 22px;
         grid-template-columns: 1fr;
+        transform: translateY(calc(100% + 20px));
+        opacity: 0;
+        pointer-events: none;
+        transition: transform 0.24s ease, opacity 0.24s ease;
+        z-index: 200;
+    }
+
+    .cart-summary.open-mobile {
+        transform: translateY(0);
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .cart-header {
+        display: flex;
     }
 
     .cart-primary-actions,
@@ -1513,6 +1621,7 @@
 <body>
 <div id="menuOverlay" class="menu-overlay" onclick="toggleMenu(false)"></div>
 <div id="checkoutOverlay" class="checkout-overlay" onclick="closeTransparentCheckout()"></div>
+<div id="mobileCartOverlay" class="mobile-cart-overlay" onclick="closeMobileCart()"></div>
 <aside id="menuPanel" class="menu-panel" aria-hidden="true">
     <div class="menu-header">
         <div>
@@ -1588,6 +1697,13 @@
         </div>
     </div>
 </section>
+<div id="mobileCartBar" class="mobile-cart-bar" style="display:none;">
+    <div class="mobile-cart-bar-info">
+        <div id="mobileCartBarCount" class="mobile-cart-bar-count">0 items</div>
+        <div id="mobileCartBarTotal" class="mobile-cart-bar-total">R$ 0,00</div>
+    </div>
+    <button class="btn-pay-pix" type="button" onclick="openMobileCart()">Ver carrinho</button>
+</div>
 <div class="container">
     <div class="topbar">
         <div class="brand">
@@ -1659,6 +1775,10 @@
         </div>
     </div>
     <div class="cart-summary" id="cartSummary" style="display:none;">
+        <div class="cart-header">
+            <div class="cart-header-title">Seu carrinho</div>
+            <button class="cart-close" type="button" onclick="closeMobileCart()" aria-label="Fechar carrinho">×</button>
+        </div>
         <div class="cart-main">
             <span class="cart-info" id="cartInfo">0 samples selecionados</span>
             <div class="cart-total-note">Checkout com PIX ou cartão direto no Mercado Pago</div>
@@ -2403,6 +2523,7 @@
     let currentPaymentId = null;
     let currentCustomerAccessCode = '';
     let paymentStatusPoll = null;
+    let mobileCartOpen = false;
 
     function roundCurrency(value) {
         return Math.round((Number(value) + Number.EPSILON) * 100) / 100;
@@ -2441,6 +2562,41 @@
         notice.style.display = 'block';
         notice.className = 'checkout-brick-status success';
         notice.textContent = `Código de acesso do cliente: ${code}. Guarde esse código para consultar compras por e-mail depois.`;
+    }
+
+    function isMobileLayout() {
+        return window.matchMedia('(max-width: 768px)').matches;
+    }
+
+    function syncMobileCartState() {
+        const cart = document.getElementById('cartSummary');
+        const overlay = document.getElementById('mobileCartOverlay');
+        if (!cart || !overlay) {
+            return;
+        }
+
+        const shouldOpen = isMobileLayout() && mobileCartOpen && cart.style.display !== 'none';
+        cart.classList.toggle('open-mobile', shouldOpen);
+        overlay.classList.toggle('open', shouldOpen);
+        if (!isMobileLayout()) {
+            overlay.classList.remove('open');
+        }
+        document.body.style.overflow = shouldOpen ? 'hidden' : '';
+    }
+
+    function openMobileCart() {
+        if (!isMobileLayout()) {
+            scrollToCart();
+            return;
+        }
+
+        mobileCartOpen = true;
+        syncMobileCartState();
+    }
+
+    function closeMobileCart() {
+        mobileCartOpen = false;
+        syncMobileCartState();
     }
 
     function hideUnwantedPaymentOptions() {
@@ -2759,6 +2915,7 @@
             return;
         }
 
+        closeMobileCart();
         const overlay = document.getElementById('checkoutOverlay');
         const modal = document.getElementById('checkoutModal');
         overlay?.classList.add('open');
@@ -3003,6 +3160,10 @@
         const cart = document.getElementById('cartSummary');
         if (!cart || cart.style.display === 'none') {
             window.scrollTo({ top: 0, behavior: 'smooth' });
+            return;
+        }
+        if (isMobileLayout()) {
+            openMobileCart();
             return;
         }
         cart.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -3311,6 +3472,9 @@
         const cartTotal = document.getElementById('cartTotal');
         const cartCardTotal = document.getElementById('cartCardTotal');
         const cartBadge = document.getElementById('cartBadge');
+        const mobileCartBar = document.getElementById('mobileCartBar');
+        const mobileCartBarCount = document.getElementById('mobileCartBarCount');
+        const mobileCartBarTotal = document.getElementById('mobileCartBarTotal');
         const count = selectedSamples.size;
         const totals = getCartTotals();
 
@@ -3323,12 +3487,28 @@
             setCheckoutStatus(`Pedido pronto para checkout. PIX: ${formatCurrency(totals.pix)} | Cartão: ${formatCurrency(totals.card)}${discountMessage}`, 'success');
             cartBadge.style.display = 'grid';
             cartBadge.textContent = count;
+            if (mobileCartBar) {
+                mobileCartBar.style.display = isMobileLayout() ? 'grid' : 'none';
+                mobileCartBar.classList.toggle('open', isMobileLayout());
+            }
+            if (mobileCartBarCount) {
+                mobileCartBarCount.textContent = `${count} sample${count > 1 ? 's' : ''} selecionado${count > 1 ? 's' : ''}`;
+            }
+            if (mobileCartBarTotal) {
+                mobileCartBarTotal.textContent = formatCurrency(totals.pix);
+            }
             updateSelectedItemsList();
+            syncMobileCartState();
         } else {
             cartSummary.style.display = 'none';
             setCheckoutStatus('Selecione os samples para liberar o checkout.');
             cartBadge.style.display = 'none';
             cartBadge.textContent = '0';
+            if (mobileCartBar) {
+                mobileCartBar.style.display = 'none';
+                mobileCartBar.classList.remove('open');
+            }
+            closeMobileCart();
             selectedItemsExpanded = false;
             if (appliedCoupon) {
                 removeCoupon();
