@@ -1,4 +1,4 @@
-const MERCADO_PAGO_API = "https://api.mercadopago.com/checkout/preferences";
+﻿const MERCADO_PAGO_API = "https://api.mercadopago.com/checkout/preferences";
 const { validateCoupon, roundCurrency } = require("../lib/coupon-utils");
 const { getStoreConfig } = require("../lib/store-config");
 
@@ -16,6 +16,24 @@ function parseBody(req) {
 
 function normalizeMode(mode) {
   return mode === "card" ? "card" : "pix";
+}
+
+function applyGlobalPricing(basePrice, globalPricing = {}) {
+  const numericBase = roundCurrency(basePrice || 0);
+  if (!globalPricing?.active || numericBase <= 0) {
+    return numericBase;
+  }
+
+  const value = Number(globalPricing.value || 0);
+  if (value <= 0) {
+    return numericBase;
+  }
+
+  if (globalPricing.type === "fixed") {
+    return roundCurrency(Math.max(0, numericBase - value));
+  }
+
+  return roundCurrency(Math.max(0, numericBase - (numericBase * value / 100)));
 }
 
 function buildPaymentMethods(mode) {
@@ -46,6 +64,7 @@ async function sanitizeItems(items) {
   if (!Array.isArray(items)) return [];
   const config = await getStoreConfig();
   const overrides = config?.productOverrides || {};
+  const globalPricing = config?.globalPricing || {};
 
   return items
     .map((item) => {
@@ -53,7 +72,7 @@ async function sanitizeItems(items) {
       const override = overrides[title] || {};
       const effectivePrice = override.active && Number(override.promoPrice) > 0
         ? Number(override.promoPrice)
-        : item?.unit_price || 0;
+        : applyGlobalPricing(item?.unit_price || 0, globalPricing);
 
       return {
         title,
@@ -208,3 +227,4 @@ module.exports = async (req, res) => {
     });
   }
 };
+

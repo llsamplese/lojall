@@ -16,18 +16,40 @@ function parseBody(req) {
   return req.body;
 }
 
+function applyGlobalPricing(basePrice, globalPricing = {}) {
+  const numericBase = roundCurrency(basePrice || 0);
+  if (!globalPricing?.active || numericBase <= 0) {
+    return numericBase;
+  }
+
+  const value = Number(globalPricing.value || 0);
+  if (value <= 0) {
+    return numericBase;
+  }
+
+  if (globalPricing.type === "fixed") {
+    return roundCurrency(Math.max(0, numericBase - value));
+  }
+
+  return roundCurrency(Math.max(0, numericBase - (numericBase * value / 100)));
+}
+
 async function sanitizeItems(items) {
   if (!Array.isArray(items)) return [];
   const config = await getStoreConfig();
   const overrides = config?.productOverrides || {};
+  const globalPricing = config?.globalPricing || {};
   return items
     .map((item) => ({
       title: String(item?.title || "").trim(),
-      unit_price: roundCurrency(
-        overrides[String(item?.title || "").trim()]?.active && Number(overrides[String(item?.title || "").trim()]?.promoPrice) > 0
-          ? overrides[String(item?.title || "").trim()].promoPrice
-          : item?.unit_price || 0
-      ),
+      unit_price: roundCurrency((() => {
+        const title = String(item?.title || "").trim();
+        const override = overrides[title] || {};
+        if (override.active && Number(override.promoPrice) > 0) {
+          return override.promoPrice;
+        }
+        return applyGlobalPricing(item?.unit_price || 0, globalPricing);
+      })()),
       quantity: Number(item?.quantity || 1)
     }))
     .filter((item) => item.title && item.unit_price > 0 && item.quantity > 0);
@@ -218,3 +240,4 @@ module.exports = async (req, res) => {
     });
   }
 };
+

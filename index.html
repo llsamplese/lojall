@@ -2634,6 +2634,11 @@
             showFiltersButton: true,
             showCustomerMenuButton: true
         },
+        globalPricing: {
+            active: false,
+            type: 'percent',
+            value: 0
+        },
         productOverrides: {},
         coupons: {}
     };
@@ -2659,13 +2664,32 @@
         return (storeConfig.productOverrides || {})[String(sampleName || '').trim()] || {};
     }
 
+    function applyGlobalPricing(basePrice) {
+        const globalPricing = storeConfig.globalPricing || {};
+        const numericBase = roundCurrency(basePrice || 0);
+        if (!globalPricing.active || numericBase <= 0) {
+            return numericBase;
+        }
+
+        const value = Number(globalPricing.value || 0);
+        if (value <= 0) {
+            return numericBase;
+        }
+
+        if (globalPricing.type === 'fixed') {
+            return roundCurrency(Math.max(0, numericBase - value));
+        }
+
+        return roundCurrency(Math.max(0, numericBase - ((numericBase * value) / 100)));
+    }
+
     function getEffectiveSamplePrice(sample) {
         const override = getProductOverride(sample?.nome);
         if (override.active && Number(override.promoPrice) > 0) {
             return roundCurrency(Number(override.promoPrice));
         }
 
-        return roundCurrency(sample?.valor || 0);
+        return applyGlobalPricing(sample?.valor || 0);
     }
 
     function applyStoreUiConfig() {
