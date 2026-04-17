@@ -10,8 +10,8 @@
   },
   "globalPricing": {
     "active": true,
-    "type": "fixed",
-    "value": 10
+    "type": "fixed_price",
+    "value": 40
   },
   "coupons": {
     "BEMVINDO10": {
