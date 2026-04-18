@@ -9,7 +9,7 @@
     "showCustomerMenuButton": true
   },
   "globalPricing": {
-    "active": false,
+    "active": true,
     "type": "percent",
     "value": 50
   },
