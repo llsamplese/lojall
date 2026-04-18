@@ -922,6 +922,15 @@
       "value": 99,
       "minSubtotal": 0,
       "minItems": 1
+    },
+    "LLOFF": {
+      "code": "LLOFF",
+      "label": "CUPOM 1804",
+      "active": true,
+      "type": "percent",
+      "value": 10,
+      "minSubtotal": 0,
+      "minItems": 1
     }
   },
   "productOverrides": {
