@@ -393,39 +393,49 @@
           </div>
         </details>
       </div>
-      <details class="section-card">
-        <summary>
-          <div class="section-title">
-            <strong>Clientes</strong>
-            <span>Abra só quando for gerenciar clientes, compras aprovadas, exclusão ou cadastro manual.</span>
-          </div>
-          <span class="section-chevron">v</span>
-        </summary>
-        <div class="section-content">
-          <div class="subcard">
-            <strong>Adicionar cliente manualmente</strong>
-            <small>Cria um cliente no log mesmo sem compra. Útil para organizar acesso e histórico antes do cadastro real.</small>
-            <div class="form-grid">
-              <input id="manualCustomerName" type="text" placeholder="Nome do cliente">
-              <input id="manualCustomerEmail" type="email" placeholder="E-mail do cliente">
-              <input id="manualCustomerPhone" type="text" placeholder="Telefone / WhatsApp">
-              <input id="manualCustomerCode" type="text" placeholder="Código de acesso (opcional)">
+      <div class="stack">
+        <details class="section-card">
+          <summary>
+            <div class="section-title">
+              <strong>Clientes</strong>
+              <span>Abra só quando for gerenciar clientes, compras aprovadas, exclusão ou cadastro manual.</span>
             </div>
-            <div class="actions compact">
-              <button class="primary" type="button" onclick="createManualCustomer()">Adicionar cliente</button>
+            <span class="section-chevron">v</span>
+          </summary>
+          <div class="section-content">
+            <div class="subcard">
+              <strong>Adicionar cliente manualmente</strong>
+              <small>Cria um cliente no log mesmo sem compra. Útil para organizar acesso e histórico antes do cadastro real.</small>
+              <div class="form-grid">
+                <input id="manualCustomerName" type="text" placeholder="Nome do cliente">
+                <input id="manualCustomerEmail" type="email" placeholder="E-mail do cliente">
+                <input id="manualCustomerPhone" type="text" placeholder="Telefone / WhatsApp">
+                <input id="manualCustomerCode" type="text" placeholder="Código de acesso (opcional)">
+              </div>
+              <div class="actions compact">
+                <button class="primary" type="button" onclick="createManualCustomer()">Adicionar cliente</button>
+              </div>
+            </div>
+            <div class="subcard">
+              <strong>Buscar e filtrar</strong>
+              <small>Encontre clientes por nome, e-mail, telefone, código ou sample entregue.</small>
+              <div class="form-grid">
+                <input id="searchInput" type="text" placeholder="Buscar por nome, e-mail, telefone, código ou sample">
+                <select id="statusFilter">
+                  <option value="all">Todos os clientes</option>
+                  <option value="approved">Com compras aprovadas</option>
+                  <option value="empty">Sem compras aprovadas</option>
+                </select>
+              </div>
+            </div>
+            <div class="subcard">
+              <strong>Lista de clientes</strong>
+              <small>Abra cada cliente para editar dados, revisar compras aprovadas e copiar links.</small>
+              <div class="scroll"><div id="customerList" class="customer-list"></div></div>
             </div>
           </div>
-          <div class="form-grid">
-            <input id="searchInput" type="text" placeholder="Buscar por nome, e-mail, telefone, código ou sample">
-            <select id="statusFilter">
-              <option value="all">Todos os clientes</option>
-              <option value="approved">Com compras aprovadas</option>
-              <option value="empty">Sem compras aprovadas</option>
-            </select>
-          </div>
-          <div class="scroll"><div id="customerList" class="customer-list"></div></div>
-        </div>
-      </details>
+        </details>
+      </div>
     </div>
   </div>
   <script>
