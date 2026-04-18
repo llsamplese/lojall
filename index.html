@@ -1827,8 +1827,8 @@
 
         <div id="customerPaneLocal" class="customer-pane active">
             <h3>Compras neste navegador</h3>
-            <p>Sem senha. Mostra o que já foi salvo localmente depois das compras aprovadas neste dispositivo.</p>
-            <div id="purchaseHistoryContent" class="purchase-history-empty">Nenhuma compra salva neste navegador ainda.</div>
+            <p>Histórico local desativado por segurança. Para consultar links e entregas, use a aba de e-mail com o código de acesso do cliente.</p>
+            <div id="purchaseHistoryContent" class="purchase-history-empty">Nenhum link de compra é salvo neste navegador.</div>
         </div>
 
         <div id="customerPaneEmail" class="customer-pane">
@@ -3303,9 +3303,8 @@
 
     function getStoredPurchases() {
         try {
-            const raw = window.localStorage.getItem(PURCHASE_HISTORY_KEY);
-            const parsed = raw ? JSON.parse(raw) : [];
-            return Array.isArray(parsed) ? parsed : [];
+            window.localStorage.removeItem(PURCHASE_HISTORY_KEY);
+            return [];
         } catch (error) {
             return [];
         }
@@ -3371,7 +3370,7 @@
     }
 
     function renderStoredPurchases() {
-        renderPurchaseCollection('purchaseHistoryContent', getStoredPurchases(), 'Nenhuma compra salva neste navegador ainda.', 'localPurchase');
+        renderPurchaseCollection('purchaseHistoryContent', getStoredPurchases(), 'Nenhum link de compra é salvo neste navegador.', 'localPurchase');
     }
 
     function togglePurchaseHistoryItems(prefix, index) {

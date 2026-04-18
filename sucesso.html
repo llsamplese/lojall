@@ -189,26 +189,9 @@
       }
     }
 
-    function persistPurchaseHistory(data) {
+    function clearPurchaseHistoryCache() {
       try {
-        const current = JSON.parse(window.localStorage.getItem(PURCHASE_HISTORY_KEY) || '[]');
-        const list = Array.isArray(current) ? current : [];
-        const filtered = list.filter(entry => String(entry.payment_id) !== String(data.payment_id));
-        filtered.unshift({
-          payment_id: data.payment_id,
-          payment_type_id: data.payment_type_id || '',
-          payment_type_label: data.payment_type_id === 'credit_card' ? 'Cartão' : data.payment_type_id === 'pix' ? 'Pix' : (data.payment_type_id || 'Pagamento'),
-          transaction_amount: Number(data.transaction_amount || 0),
-          date_approved: data.date_approved || '',
-          saved_at: new Date().toISOString(),
-          items: Array.isArray(data.items) ? data.items.map(item => ({
-            title: item.title,
-            unit_price: Number(item.unit_price || 0),
-            link: item.link || '',
-            delivered: Boolean(item.delivered)
-          })) : []
-        });
-        window.localStorage.setItem(PURCHASE_HISTORY_KEY, JSON.stringify(filtered.slice(0, 20)));
+        window.localStorage.removeItem(PURCHASE_HISTORY_KEY);
       } catch (error) {
       }
     }
@@ -233,7 +216,7 @@
 
         renderSummary(data);
         renderLinks(data);
-        persistPurchaseHistory(data);
+        clearPurchaseHistoryCache();
         setStatus('Pagamento confirmado. Seus links de download foram liberados abaixo.', 'ok');
       } catch (error) {
         setStatus(error.message || 'Erro ao validar entrega.', 'error');
