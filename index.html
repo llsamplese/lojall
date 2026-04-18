@@ -196,6 +196,83 @@
         pointer-events: auto;
     }
 
+    .image-preview-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.82);
+        backdrop-filter: blur(8px);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.22s ease;
+        z-index: 290;
+    }
+
+    .image-preview-overlay.open {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .image-preview-modal {
+        position: fixed;
+        inset: 50% auto auto 50%;
+        transform: translate(-50%, -48%);
+        width: min(920px, calc(100vw - 28px));
+        max-height: calc(100vh - 28px);
+        padding: 18px;
+        border-radius: 24px;
+        border: 1px solid rgba(255, 193, 7, 0.16);
+        background: linear-gradient(180deg, rgba(14,14,14,0.98), rgba(20,20,20,0.98));
+        box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+        z-index: 295;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.22s ease, transform 0.22s ease;
+        display: grid;
+        gap: 14px;
+    }
+
+    .image-preview-modal.open {
+        opacity: 1;
+        pointer-events: auto;
+        transform: translate(-50%, -50%);
+    }
+
+    .image-preview-topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+    }
+
+    .image-preview-title {
+        color: #fff4c8;
+        font-size: 0.95rem;
+        font-weight: 700;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .image-preview-frame {
+        display: grid;
+        place-items: center;
+        min-height: 280px;
+        max-height: calc(100vh - 140px);
+        overflow: auto;
+        border-radius: 18px;
+        background: rgba(255,255,255,0.03);
+        border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .image-preview-frame img {
+        display: block;
+        width: auto;
+        max-width: 100%;
+        max-height: calc(100vh - 180px);
+        object-fit: contain;
+        border-radius: 14px;
+    }
+
     .checkout-modal {
         position: fixed;
         inset: 50% auto auto 50%;
@@ -1037,6 +1114,11 @@
         margin-top: 6px;
     }
 
+    .selected-items-tools {
+        display: flex;
+        justify-content: flex-start;
+    }
+
     .selected-items-list {
         display: grid;
         gap: 8px;
@@ -1715,7 +1797,17 @@
 <body>
 <div id="menuOverlay" class="menu-overlay" onclick="toggleMenu(false)"></div>
 <div id="checkoutOverlay" class="checkout-overlay" onclick="closeTransparentCheckout()"></div>
+<div id="imagePreviewOverlay" class="image-preview-overlay" onclick="closeImagePreview()"></div>
 <div id="mobileCartOverlay" class="mobile-cart-overlay" onclick="closeMobileCart()"></div>
+<section id="imagePreviewModal" class="image-preview-modal" aria-hidden="true">
+    <div class="image-preview-topbar">
+        <div id="imagePreviewTitle" class="image-preview-title">Pré-visualização</div>
+        <button class="checkout-close" type="button" onclick="closeImagePreview()">×</button>
+    </div>
+    <div class="image-preview-frame">
+        <img id="imagePreviewContent" src="" alt="Pré-visualização do sample">
+    </div>
+</section>
 <aside id="menuPanel" class="menu-panel" aria-hidden="true">
     <div class="menu-header">
         <div>
@@ -1753,8 +1845,7 @@
 <section id="checkoutModal" class="checkout-modal" aria-hidden="true">
     <div class="checkout-modal-header">
         <div>
-            <div class="checkout-modal-title">Finalizar compra no site</div>
-            <div class="checkout-modal-subtitle">Escolha Pix ou cartão sem sair da loja. O pagamento continua vinculado ao seu webhook e à entrega automática.</div>
+            <div class="checkout-modal-title">Escolha Pix ou cartão</div>
         </div>
         <button class="checkout-close" type="button" onclick="closeTransparentCheckout()">×</button>
     </div>
@@ -1872,9 +1963,7 @@
         <div class="cart-header">
             <div class="cart-header-brand">
                 <img class="cart-header-logo" src="https://llsamplese.github.io/llcatalogo/Layer%205.png" alt="LL Samples">
-                <div class="cart-header-eyebrow">LL Samples</div>
-                <div class="cart-header-title">Loja LL Samples</div>
-                <div class="cart-header-subtitle">Samples profissionais, compre e receba de imediato.</div>
+                <div class="cart-header-subtitle">Compre e receba de imediato.</div>
             </div>
             <button class="cart-close" type="button" onclick="closeMobileCart()" aria-label="Fechar carrinho">×</button>
         </div>
@@ -1885,6 +1974,9 @@
                 <div class="selected-items-list" id="selectedItemsList"></div>
                 <button class="selected-items-toggle" id="selectedItemsToggle" type="button" style="display:none;" onclick="toggleSelectedItems()"></button>
                 <div class="selected-items-empty" id="selectedItemsEmpty">Selecione os samples para ver o resumo aqui.</div>
+                <div class="selected-items-tools">
+                    <button id="clearAllButton" class="btn-clear-all" onclick="clearAllSamples()">Limpar tudo</button>
+                </div>
             </div>
         </div>
         <div class="cart-totals">
@@ -1896,7 +1988,7 @@
                     <input class="coupon-input" id="couponInput" type="text" placeholder="Cupom de desconto" maxlength="24">
                     <button class="coupon-apply" id="couponApplyButton" type="button" onclick="applyCoupon()">Aplicar</button>
                 </div>
-                <div class="coupon-feedback" id="couponFeedback">Você pode ativar ou desativar cupons no cadastro do projeto.</div>
+                <div class="coupon-feedback" id="couponFeedback"></div>
             </div>
         </div>
         <div class="cart-actions-group">
@@ -1907,7 +1999,6 @@
                 <button id="copyOrderButton" class="btn-finalizar" onclick="finalizarSelecao()">Copiar pedido</button>
                 <button id="copyNamesButton" class="btn-copy-names" onclick="copiarNomesSamples()">Copiar nomes</button>
                 <button id="selectAllButton" class="btn-select-all" onclick="selectAllSamples()">Selecionar todos</button>
-                <button id="clearAllButton" class="btn-clear-all" onclick="clearAllSamples()">Limpar tudo</button>
             </div>
             <div class="checkout-status" id="checkoutStatus">Selecione os samples para liberar o checkout.</div>
         </div>
@@ -3167,7 +3258,7 @@
         const feedback = document.getElementById('couponFeedback');
         if (!feedback) return;
         feedback.className = `coupon-feedback${type ? ` ${type}` : ''}`;
-        feedback.textContent = message;
+        feedback.textContent = message || '';
     }
 
     function updateCouponUI() {
@@ -3192,7 +3283,7 @@
             couponApplyButton.onclick = applyCoupon;
             discountLine.style.display = 'none';
             discountLine.textContent = 'Cupom: -R$ 0,00';
-            setCouponFeedback('Você pode ativar ou desativar cupons no cadastro do projeto.');
+            setCouponFeedback('');
         }
     }
 
@@ -3567,10 +3658,34 @@
         return thumbnailUrl;
     }
 
-    function openSampleImage(url) {
-        if (url) {
-            window.open(url, '_blank');
+    function openSampleImage(url, title = '') {
+        const overlay = document.getElementById('imagePreviewOverlay');
+        const modal = document.getElementById('imagePreviewModal');
+        const image = document.getElementById('imagePreviewContent');
+        const label = document.getElementById('imagePreviewTitle');
+        if (!overlay || !modal || !image) return;
+        image.src = url || FALLBACK_THUMBNAIL_URL;
+        image.alt = title || 'Pré-visualização do sample';
+        if (label) {
+            label.textContent = title || 'Pré-visualização';
         }
+        overlay.classList.add('open');
+        modal.classList.add('open');
+        modal.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeImagePreview() {
+        const overlay = document.getElementById('imagePreviewOverlay');
+        const modal = document.getElementById('imagePreviewModal');
+        const image = document.getElementById('imagePreviewContent');
+        overlay?.classList.remove('open');
+        modal?.classList.remove('open');
+        modal?.setAttribute('aria-hidden', 'true');
+        if (image) {
+            image.src = '';
+        }
+        document.body.style.overflow = '';
     }
 
     // Função para criar um único card HTML
@@ -3612,7 +3727,7 @@
         if (thumbnailImage) {
             thumbnailImage.addEventListener('click', (event) => {
                 event.stopPropagation();
-                openSampleImage(thumbnailImage.src);
+                openSampleImage(thumbnailImage.src, sample.nome);
             });
             thumbnailImage.addEventListener('error', () => {
                 thumbnailImage.src = FALLBACK_THUMBNAIL_URL;
