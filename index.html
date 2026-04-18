@@ -3557,47 +3557,37 @@
 
     const FALLBACK_THUMBNAIL_URL = 'https://llsamplese.github.io/llcatalogo/Layer%205.png';
 
-    async function getValidThumbnailUrl(videoUrl) {
+    function getFastThumbnailUrl(videoUrl) {
         if (thumbnailCache.has(videoUrl)) {
-            return thumbnailCache.get(videoUrl); // Retorna do cache se já verificada
+            return thumbnailCache.get(videoUrl);
         }
         const videoId = getYoutubeVideoId(videoUrl);
-        if (!videoId) {
-            thumbnailCache.set(videoUrl, FALLBACK_THUMBNAIL_URL);
-            return FALLBACK_THUMBNAIL_URL;
+        const thumbnailUrl = videoId ? getYoutubeThumbnailUrl(videoId, 'hqdefault') : FALLBACK_THUMBNAIL_URL;
+        thumbnailCache.set(videoUrl, thumbnailUrl);
+        return thumbnailUrl;
+    }
+
+    function openSampleImage(url) {
+        if (url) {
+            window.open(url, '_blank');
         }
-        const qualities = ['maxresdefault', 'hqdefault', 'sddefault', 'mqdefault'];
-        for (const quality of qualities) {
-            const url = getYoutubeThumbnailUrl(videoId, quality);
-            try {
-                const response = await fetch(url, { method: 'HEAD' });
-                if (response.ok) {
-                    thumbnailCache.set(videoUrl, url); // Armazena no cache
-                    return url;
-                }
-            } catch (error) {
-                // Ignora erros e tenta a próxima qualidade
-            }
-        }
-        thumbnailCache.set(videoUrl, FALLBACK_THUMBNAIL_URL); // Armazena o fallback no cache
-        return FALLBACK_THUMBNAIL_URL;
     }
 
     // Função para criar um único card HTML
-    async function createSampleCard(sample, globalIndex) {
+    function createSampleCard(sample, globalIndex) {
         const isSelected = selectedSamples.has(globalIndex);
         const effectivePrice = getEffectiveSamplePrice(sample);
         const hasPromo = effectivePrice !== roundCurrency(sample.valor || 0);
         const card = document.createElement('div');
         card.className = `sample-card ${isSelected ? 'selected' : ''}`;
         card.dataset.index = globalIndex; // Adiciona o índice como um atributo de dado
-        const thumbnailUrl = await getValidThumbnailUrl(sample.video);
+        const thumbnailUrl = getFastThumbnailUrl(sample.video);
         const displayName = getDisplaySampleName(sample.nome);
         const thumbnailContent = `
             <img src="${thumbnailUrl}" alt="${sample.nome}" loading="lazy">
         `;
         card.innerHTML = `
-            <div class="video-thumbnail ${sample.video ? '' : 'no-video'}" onclick="${sample.video ? `openYoutubeVideo('${sample.video}')` : ''}">
+            <div class="video-thumbnail ${sample.video ? '' : 'no-video'}">
                 ${thumbnailContent}
             </div>
             <div class="card-content">
@@ -3617,6 +3607,16 @@
                 event.stopPropagation();
                 openYoutubeVideo(sample.video);
             });
+        }
+        const thumbnailImage = card.querySelector('.video-thumbnail img');
+        if (thumbnailImage) {
+            thumbnailImage.addEventListener('click', (event) => {
+                event.stopPropagation();
+                openSampleImage(thumbnailImage.src);
+            });
+            thumbnailImage.addEventListener('error', () => {
+                thumbnailImage.src = FALLBACK_THUMBNAIL_URL;
+            }, { once: true });
         }
         const nameContainer = card.querySelector('.sample-name');
         const nameText = nameContainer ? nameContainer.querySelector('span') : null;
@@ -3891,7 +3891,7 @@
     let activeInstrument = 'all';
 
     // ── Render ─────────────────────────────────────────────────────────────────
-    async function renderCatalog(searchTerm = '') {
+    function renderCatalog(searchTerm = '') {
         const grid = document.getElementById('catalogGrid');
         grid.innerHTML = '';
 
@@ -3919,10 +3919,11 @@
             return;
         }
 
+        const fragment = document.createDocumentFragment();
         for (const sample of filtered) {
             const globalIndex = samplesData.indexOf(sample);
-            const card = await createSampleCard(sample, globalIndex);
-            grid.appendChild(card);
+            const card = createSampleCard(sample, globalIndex);
+            fragment.appendChild(card);
             if (selectedSamples.has(globalIndex)) {
                 card.classList.add('selected');
                 card.querySelector('.btn-select').classList.remove('add');
@@ -3930,6 +3931,7 @@
                 card.querySelector('.btn-select').textContent = 'Remover';
             }
         }
+        grid.appendChild(fragment);
     }
 
     // ── Event Listeners ────────────────────────────────────────────────────────
