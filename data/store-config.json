@@ -10,7 +10,7 @@
   },
   "globalPricing": {
     "active": false,
-    "type": "fixed_price",
+    "type": "percent",
     "value": 50
   },
   "coupons": {
@@ -933,10 +933,5 @@
       "minItems": 1
     }
   },
-  "productOverrides": {
-    "LL Drums Filho do Piseiro": {
-      "active": true,
-      "promoPrice": ""
-    }
-  }
+  "productOverrides": {}
 }
