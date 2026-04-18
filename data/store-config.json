@@ -50,8 +50,8 @@
       "minSubtotal": 0,
       "minItems": 1
     },
-    "LLOFF": {
-      "code": "LLOFF",
+    "LLOFF30": {
+      "code": "LLOFF30",
       "label": "CUPOM 1804",
       "active": true,
       "type": "fixed",
