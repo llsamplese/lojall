@@ -16,20 +16,25 @@ const COUPONS = {
     value: 20,
     minSubtotal: 140,
     minItems: 2
-  }
-};
-
-for (let percent = 1; percent <= 99; percent += 1) {
-  const code = `TESTE${percent}`;
-  COUPONS[code] = {
-    code,
-    label: `Teste ${percent}%`,
+  },
+  TESTE98: {
+    code: "TESTE98",
+    label: "Teste 98%",
     active: true,
     type: "percent",
-    value: percent,
+    value: 98,
     minSubtotal: 0,
     minItems: 1
-  };
-}
+  },
+  TESTE99: {
+    code: "TESTE99",
+    label: "Teste 99%",
+    active: true,
+    type: "percent",
+    value: 99,
+    minSubtotal: 0,
+    minItems: 1
+  }
+};
 
 module.exports = COUPONS;
