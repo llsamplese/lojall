@@ -60,10 +60,5 @@
       "minItems": 1
     }
   },
-  "productOverrides": {
-    "LL Drums Filho do Piseiro": {
-      "active": true,
-      "promoPrice": 50
-    }
-  }
+  "productOverrides": {}
 }
