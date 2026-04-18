@@ -11,6 +11,7 @@ const {
   assignCustomerAccessCode
 } = require("../lib/github-order-log");
 const { getRepo, writeFile } = require("../lib/github-repo");
+const { buildCatalogMap } = require("../lib/product-catalog");
 
 function parseBody(req) {
   if (!req.body) return {};
@@ -26,6 +27,22 @@ function parseBody(req) {
 
 function normalizeEmail(email) {
   return String(email || "").trim().toLowerCase();
+}
+
+function normalizeItems(items) {
+  return Array.isArray(items) ? items.map((item) => String(item || "").trim()).filter(Boolean) : [];
+}
+
+function buildOrderItems(itemNames) {
+  const catalog = buildCatalogMap();
+  return normalizeItems(itemNames).map((name) => {
+    const match = catalog[name];
+    return {
+      title: name,
+      quantity: 1,
+      unit_price: Number(match?.valor || 0)
+    };
+  });
 }
 
 async function updateCustomer(body) {
@@ -105,6 +122,7 @@ async function createCustomer(body) {
   const name = String(body.name || "").trim();
   const phone = String(body.phone || "").trim();
   const requestedCode = String(body.access_code || "").trim();
+  const items = buildOrderItems(body.items);
 
   if (!email) {
     throw new Error("Informe o e-mail do cliente.");
@@ -116,18 +134,21 @@ async function createCustomer(body) {
   }
 
   const accessCode = requestedCode || (await assignCustomerAccessCode(email)).code;
+  const createdAt = new Date().toISOString();
+  const hasItems = items.length > 0;
   await appendOrderLead({
-    created_at: new Date().toISOString(),
-    status: "manual_profile",
+    created_at: createdAt,
+    status: hasItems ? "approved" : "manual_profile",
     customer_name: name,
     customer_email: email,
     customer_phone: phone,
     customer_access_code: accessCode,
     payer_email: email,
-    payment_id: "",
-    payment_method_id: "",
-    transaction_amount: 0,
-    items: []
+    payment_id: hasItems ? `manual-${Date.now()}` : "",
+    payment_method_id: hasItems ? "manual" : "",
+    payment_type_id: hasItems ? "manual" : "",
+    transaction_amount: hasItems ? items.reduce((sum, item) => sum + Number(item.unit_price || 0), 0) : 0,
+    items
   });
 
   return {
@@ -137,7 +158,120 @@ async function createCustomer(body) {
       access_code: accessCode,
       name,
       phone,
+      items_added: items.length,
       last_file_hint: getLogFilePath()
+    }
+  };
+}
+
+async function addSamplesToCustomer(body) {
+  const email = normalizeEmail(body.email || body.originalEmail);
+  const itemNames = normalizeItems(body.items);
+  if (!email) {
+    throw new Error("Informe o e-mail do cliente.");
+  }
+  if (!itemNames.length) {
+    throw new Error("Selecione pelo menos um sample para adicionar.");
+  }
+
+  const records = await getAllOrderRecords();
+  const existingCustomer = records.find((record) => getRecordEmail(record) === email);
+  if (!existingCustomer) {
+    throw new Error("Cliente não encontrado para adicionar samples.");
+  }
+
+  const items = buildOrderItems(itemNames);
+  await appendOrderLead({
+    created_at: new Date().toISOString(),
+    status: "approved",
+    customer_name: String(body.name || existingCustomer.customer_name || "").trim(),
+    customer_email: email,
+    customer_phone: String(body.phone || existingCustomer.customer_phone || "").trim(),
+    customer_access_code: String(body.access_code || existingCustomer.customer_access_code || "").trim(),
+    payer_email: email,
+    payment_id: `manual-${Date.now()}`,
+    payment_method_id: "manual",
+    payment_type_id: "manual",
+    transaction_amount: items.reduce((sum, item) => sum + Number(item.unit_price || 0), 0),
+    items
+  });
+
+  return {
+    updated: true,
+    customer: {
+      email,
+      items_added: items.length
+    }
+  };
+}
+
+async function removeSampleFromCustomer(body) {
+  const email = normalizeEmail(body.email || body.originalEmail);
+  const paymentId = String(body.payment_id || "").trim();
+  const title = String(body.title || "").trim();
+
+  if (!email) {
+    throw new Error("Informe o e-mail do cliente.");
+  }
+  if (!paymentId) {
+    throw new Error("Informe o pagamento do sample que será removido.");
+  }
+  if (!title) {
+    throw new Error("Informe o sample que será removido.");
+  }
+
+  const repo = getRepo();
+  const branch = getBranch();
+  const paths = await listOrderLogPaths();
+  let removed = false;
+
+  for (const path of paths) {
+    const existing = await getExistingFile(repo, path, branch);
+    const records = parseJsonl(existing.content);
+    let changed = false;
+
+    const nextRecords = records.flatMap((record) => {
+      if (removed || getRecordEmail(record) !== email || String(record?.payment_id || "").trim() !== paymentId) {
+        return [record];
+      }
+
+      const nextItems = (Array.isArray(record.items) ? record.items : []).filter((item) => String(item?.title || "").trim() !== title);
+      if (nextItems.length === (Array.isArray(record.items) ? record.items.length : 0)) {
+        return [record];
+      }
+
+      removed = true;
+      changed = true;
+
+      if (paymentId.startsWith("manual-") && nextItems.length === 0) {
+        return [];
+      }
+
+      return [{
+        ...record,
+        transaction_amount: nextItems.reduce((sum, item) => sum + Number(item?.unit_price || 0), 0),
+        items: nextItems
+      }];
+    });
+
+    if (changed) {
+      const content = nextRecords.length
+        ? `${nextRecords.map((record) => JSON.stringify(record)).join("\n")}\n`
+        : "";
+      await writeFile(repo, path, branch, content, existing.sha, `Remove sample ${title} from ${email}`);
+    }
+  }
+
+  if (!removed) {
+    throw new Error("Não foi possível encontrar esse sample no histórico do cliente.");
+  }
+
+  return {
+    updated: true,
+    customer: {
+      email,
+      removed_title: title,
+      payment_id: paymentId
     }
   };
 }
@@ -202,6 +336,10 @@ module.exports = async (req, res) => {
     let result;
     if (action === "create") {
       result = await createCustomer(body);
+    } else if (action === "add_sample") {
+      result = await addSamplesToCustomer(body);
+    } else if (action === "remove_sample") {
+      result = await removeSampleFromCustomer(body);
     } else if (action === "delete") {
       result = await deleteCustomer(body);
     } else {
