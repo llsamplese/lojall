@@ -58,6 +58,15 @@
       "value": 10,
       "minSubtotal": 0,
       "minItems": 1
+    },
+    "LL30OFF": {
+      "code": "LL30OFF",
+      "label": "LL 30 DESCONTO",
+      "active": true,
+      "type": "fixed",
+      "value": 30,
+      "minSubtotal": 70,
+      "minItems": 1
     }
   },
   "productOverrides": {}
