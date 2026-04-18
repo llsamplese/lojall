@@ -3,7 +3,7 @@
     "showCouponBox": true,
     "showCopyNamesButton": false,
     "showCopyOrderButton": false,
-    "showSelectAllButton": true,
+    "showSelectAllButton": false,
     "showClearAllButton": true,
     "showFiltersButton": false,
     "showCustomerMenuButton": true
