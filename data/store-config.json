@@ -32,6 +32,879 @@
       "minSubtotal": 0,
       "minItems": 1
     },
+    "TESTE1": {
+      "code": "TESTE1",
+      "label": "Teste 1%",
+      "active": true,
+      "type": "percent",
+      "value": 1,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE2": {
+      "code": "TESTE2",
+      "label": "Teste 2%",
+      "active": true,
+      "type": "percent",
+      "value": 2,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE3": {
+      "code": "TESTE3",
+      "label": "Teste 3%",
+      "active": true,
+      "type": "percent",
+      "value": 3,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE4": {
+      "code": "TESTE4",
+      "label": "Teste 4%",
+      "active": true,
+      "type": "percent",
+      "value": 4,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE5": {
+      "code": "TESTE5",
+      "label": "Teste 5%",
+      "active": true,
+      "type": "percent",
+      "value": 5,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE6": {
+      "code": "TESTE6",
+      "label": "Teste 6%",
+      "active": true,
+      "type": "percent",
+      "value": 6,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE7": {
+      "code": "TESTE7",
+      "label": "Teste 7%",
+      "active": true,
+      "type": "percent",
+      "value": 7,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE8": {
+      "code": "TESTE8",
+      "label": "Teste 8%",
+      "active": true,
+      "type": "percent",
+      "value": 8,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE9": {
+      "code": "TESTE9",
+      "label": "Teste 9%",
+      "active": true,
+      "type": "percent",
+      "value": 9,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE10": {
+      "code": "TESTE10",
+      "label": "Teste 10%",
+      "active": true,
+      "type": "percent",
+      "value": 10,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE11": {
+      "code": "TESTE11",
+      "label": "Teste 11%",
+      "active": true,
+      "type": "percent",
+      "value": 11,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE12": {
+      "code": "TESTE12",
+      "label": "Teste 12%",
+      "active": true,
+      "type": "percent",
+      "value": 12,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE13": {
+      "code": "TESTE13",
+      "label": "Teste 13%",
+      "active": true,
+      "type": "percent",
+      "value": 13,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE14": {
+      "code": "TESTE14",
+      "label": "Teste 14%",
+      "active": true,
+      "type": "percent",
+      "value": 14,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE15": {
+      "code": "TESTE15",
+      "label": "Teste 15%",
+      "active": true,
+      "type": "percent",
+      "value": 15,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE16": {
+      "code": "TESTE16",
+      "label": "Teste 16%",
+      "active": true,
+      "type": "percent",
+      "value": 16,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE17": {
+      "code": "TESTE17",
+      "label": "Teste 17%",
+      "active": true,
+      "type": "percent",
+      "value": 17,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE18": {
+      "code": "TESTE18",
+      "label": "Teste 18%",
+      "active": true,
+      "type": "percent",
+      "value": 18,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE19": {
+      "code": "TESTE19",
+      "label": "Teste 19%",
+      "active": true,
+      "type": "percent",
+      "value": 19,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE20": {
+      "code": "TESTE20",
+      "label": "Teste 20%",
+      "active": true,
+      "type": "percent",
+      "value": 20,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE21": {
+      "code": "TESTE21",
+      "label": "Teste 21%",
+      "active": true,
+      "type": "percent",
+      "value": 21,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE22": {
+      "code": "TESTE22",
+      "label": "Teste 22%",
+      "active": true,
+      "type": "percent",
+      "value": 22,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE23": {
+      "code": "TESTE23",
+      "label": "Teste 23%",
+      "active": true,
+      "type": "percent",
+      "value": 23,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE24": {
+      "code": "TESTE24",
+      "label": "Teste 24%",
+      "active": true,
+      "type": "percent",
+      "value": 24,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE25": {
+      "code": "TESTE25",
+      "label": "Teste 25%",
+      "active": true,
+      "type": "percent",
+      "value": 25,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE26": {
+      "code": "TESTE26",
+      "label": "Teste 26%",
+      "active": true,
+      "type": "percent",
+      "value": 26,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE27": {
+      "code": "TESTE27",
+      "label": "Teste 27%",
+      "active": true,
+      "type": "percent",
+      "value": 27,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE28": {
+      "code": "TESTE28",
+      "label": "Teste 28%",
+      "active": true,
+      "type": "percent",
+      "value": 28,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE29": {
+      "code": "TESTE29",
+      "label": "Teste 29%",
+      "active": true,
+      "type": "percent",
+      "value": 29,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE30": {
+      "code": "TESTE30",
+      "label": "Teste 30%",
+      "active": true,
+      "type": "percent",
+      "value": 30,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE31": {
+      "code": "TESTE31",
+      "label": "Teste 31%",
+      "active": true,
+      "type": "percent",
+      "value": 31,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE32": {
+      "code": "TESTE32",
+      "label": "Teste 32%",
+      "active": true,
+      "type": "percent",
+      "value": 32,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE33": {
+      "code": "TESTE33",
+      "label": "Teste 33%",
+      "active": true,
+      "type": "percent",
+      "value": 33,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE34": {
+      "code": "TESTE34",
+      "label": "Teste 34%",
+      "active": true,
+      "type": "percent",
+      "value": 34,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE35": {
+      "code": "TESTE35",
+      "label": "Teste 35%",
+      "active": true,
+      "type": "percent",
+      "value": 35,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE36": {
+      "code": "TESTE36",
+      "label": "Teste 36%",
+      "active": true,
+      "type": "percent",
+      "value": 36,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE37": {
+      "code": "TESTE37",
+      "label": "Teste 37%",
+      "active": true,
+      "type": "percent",
+      "value": 37,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE38": {
+      "code": "TESTE38",
+      "label": "Teste 38%",
+      "active": true,
+      "type": "percent",
+      "value": 38,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE39": {
+      "code": "TESTE39",
+      "label": "Teste 39%",
+      "active": true,
+      "type": "percent",
+      "value": 39,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE40": {
+      "code": "TESTE40",
+      "label": "Teste 40%",
+      "active": true,
+      "type": "percent",
+      "value": 40,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE41": {
+      "code": "TESTE41",
+      "label": "Teste 41%",
+      "active": true,
+      "type": "percent",
+      "value": 41,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE42": {
+      "code": "TESTE42",
+      "label": "Teste 42%",
+      "active": true,
+      "type": "percent",
+      "value": 42,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE43": {
+      "code": "TESTE43",
+      "label": "Teste 43%",
+      "active": true,
+      "type": "percent",
+      "value": 43,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE44": {
+      "code": "TESTE44",
+      "label": "Teste 44%",
+      "active": true,
+      "type": "percent",
+      "value": 44,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE45": {
+      "code": "TESTE45",
+      "label": "Teste 45%",
+      "active": true,
+      "type": "percent",
+      "value": 45,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE46": {
+      "code": "TESTE46",
+      "label": "Teste 46%",
+      "active": true,
+      "type": "percent",
+      "value": 46,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE47": {
+      "code": "TESTE47",
+      "label": "Teste 47%",
+      "active": true,
+      "type": "percent",
+      "value": 47,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE48": {
+      "code": "TESTE48",
+      "label": "Teste 48%",
+      "active": true,
+      "type": "percent",
+      "value": 48,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE49": {
+      "code": "TESTE49",
+      "label": "Teste 49%",
+      "active": true,
+      "type": "percent",
+      "value": 49,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE50": {
+      "code": "TESTE50",
+      "label": "Teste 50%",
+      "active": true,
+      "type": "percent",
+      "value": 50,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE51": {
+      "code": "TESTE51",
+      "label": "Teste 51%",
+      "active": true,
+      "type": "percent",
+      "value": 51,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE52": {
+      "code": "TESTE52",
+      "label": "Teste 52%",
+      "active": true,
+      "type": "percent",
+      "value": 52,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE53": {
+      "code": "TESTE53",
+      "label": "Teste 53%",
+      "active": true,
+      "type": "percent",
+      "value": 53,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE54": {
+      "code": "TESTE54",
+      "label": "Teste 54%",
+      "active": true,
+      "type": "percent",
+      "value": 54,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE55": {
+      "code": "TESTE55",
+      "label": "Teste 55%",
+      "active": true,
+      "type": "percent",
+      "value": 55,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE56": {
+      "code": "TESTE56",
+      "label": "Teste 56%",
+      "active": true,
+      "type": "percent",
+      "value": 56,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE57": {
+      "code": "TESTE57",
+      "label": "Teste 57%",
+      "active": true,
+      "type": "percent",
+      "value": 57,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE58": {
+      "code": "TESTE58",
+      "label": "Teste 58%",
+      "active": true,
+      "type": "percent",
+      "value": 58,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE59": {
+      "code": "TESTE59",
+      "label": "Teste 59%",
+      "active": true,
+      "type": "percent",
+      "value": 59,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE60": {
+      "code": "TESTE60",
+      "label": "Teste 60%",
+      "active": true,
+      "type": "percent",
+      "value": 60,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE61": {
+      "code": "TESTE61",
+      "label": "Teste 61%",
+      "active": true,
+      "type": "percent",
+      "value": 61,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE62": {
+      "code": "TESTE62",
+      "label": "Teste 62%",
+      "active": true,
+      "type": "percent",
+      "value": 62,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE63": {
+      "code": "TESTE63",
+      "label": "Teste 63%",
+      "active": true,
+      "type": "percent",
+      "value": 63,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE64": {
+      "code": "TESTE64",
+      "label": "Teste 64%",
+      "active": true,
+      "type": "percent",
+      "value": 64,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE65": {
+      "code": "TESTE65",
+      "label": "Teste 65%",
+      "active": true,
+      "type": "percent",
+      "value": 65,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE66": {
+      "code": "TESTE66",
+      "label": "Teste 66%",
+      "active": true,
+      "type": "percent",
+      "value": 66,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE67": {
+      "code": "TESTE67",
+      "label": "Teste 67%",
+      "active": true,
+      "type": "percent",
+      "value": 67,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE68": {
+      "code": "TESTE68",
+      "label": "Teste 68%",
+      "active": true,
+      "type": "percent",
+      "value": 68,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE69": {
+      "code": "TESTE69",
+      "label": "Teste 69%",
+      "active": true,
+      "type": "percent",
+      "value": 69,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE70": {
+      "code": "TESTE70",
+      "label": "Teste 70%",
+      "active": true,
+      "type": "percent",
+      "value": 70,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE71": {
+      "code": "TESTE71",
+      "label": "Teste 71%",
+      "active": true,
+      "type": "percent",
+      "value": 71,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE72": {
+      "code": "TESTE72",
+      "label": "Teste 72%",
+      "active": true,
+      "type": "percent",
+      "value": 72,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE73": {
+      "code": "TESTE73",
+      "label": "Teste 73%",
+      "active": true,
+      "type": "percent",
+      "value": 73,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE74": {
+      "code": "TESTE74",
+      "label": "Teste 74%",
+      "active": true,
+      "type": "percent",
+      "value": 74,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE75": {
+      "code": "TESTE75",
+      "label": "Teste 75%",
+      "active": true,
+      "type": "percent",
+      "value": 75,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE76": {
+      "code": "TESTE76",
+      "label": "Teste 76%",
+      "active": true,
+      "type": "percent",
+      "value": 76,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE77": {
+      "code": "TESTE77",
+      "label": "Teste 77%",
+      "active": true,
+      "type": "percent",
+      "value": 77,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE78": {
+      "code": "TESTE78",
+      "label": "Teste 78%",
+      "active": true,
+      "type": "percent",
+      "value": 78,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE79": {
+      "code": "TESTE79",
+      "label": "Teste 79%",
+      "active": true,
+      "type": "percent",
+      "value": 79,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE80": {
+      "code": "TESTE80",
+      "label": "Teste 80%",
+      "active": true,
+      "type": "percent",
+      "value": 80,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE81": {
+      "code": "TESTE81",
+      "label": "Teste 81%",
+      "active": true,
+      "type": "percent",
+      "value": 81,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE82": {
+      "code": "TESTE82",
+      "label": "Teste 82%",
+      "active": true,
+      "type": "percent",
+      "value": 82,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE83": {
+      "code": "TESTE83",
+      "label": "Teste 83%",
+      "active": true,
+      "type": "percent",
+      "value": 83,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE84": {
+      "code": "TESTE84",
+      "label": "Teste 84%",
+      "active": true,
+      "type": "percent",
+      "value": 84,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE85": {
+      "code": "TESTE85",
+      "label": "Teste 85%",
+      "active": true,
+      "type": "percent",
+      "value": 85,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE86": {
+      "code": "TESTE86",
+      "label": "Teste 86%",
+      "active": true,
+      "type": "percent",
+      "value": 86,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE87": {
+      "code": "TESTE87",
+      "label": "Teste 87%",
+      "active": true,
+      "type": "percent",
+      "value": 87,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE88": {
+      "code": "TESTE88",
+      "label": "Teste 88%",
+      "active": true,
+      "type": "percent",
+      "value": 88,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE89": {
+      "code": "TESTE89",
+      "label": "Teste 89%",
+      "active": true,
+      "type": "percent",
+      "value": 89,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE90": {
+      "code": "TESTE90",
+      "label": "Teste 90%",
+      "active": true,
+      "type": "percent",
+      "value": 90,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE91": {
+      "code": "TESTE91",
+      "label": "Teste 91%",
+      "active": true,
+      "type": "percent",
+      "value": 91,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE92": {
+      "code": "TESTE92",
+      "label": "Teste 92%",
+      "active": true,
+      "type": "percent",
+      "value": 92,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE93": {
+      "code": "TESTE93",
+      "label": "Teste 93%",
+      "active": true,
+      "type": "percent",
+      "value": 93,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE94": {
+      "code": "TESTE94",
+      "label": "Teste 94%",
+      "active": true,
+      "type": "percent",
+      "value": 94,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE95": {
+      "code": "TESTE95",
+      "label": "Teste 95%",
+      "active": true,
+      "type": "percent",
+      "value": 95,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE96": {
+      "code": "TESTE96",
+      "label": "Teste 96%",
+      "active": true,
+      "type": "percent",
+      "value": 96,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
+    "TESTE97": {
+      "code": "TESTE97",
+      "label": "Teste 97%",
+      "active": true,
+      "type": "percent",
+      "value": 97,
+      "minSubtotal": 0,
+      "minItems": 1
+    },
     "TESTE98": {
       "code": "TESTE98",
       "label": "Teste 98%",
