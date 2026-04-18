@@ -1815,23 +1815,12 @@
     <div class="menu-header">
         <div>
             <div class="menu-title">Área do cliente</div>
-            <div class="menu-subtitle">Consulte as compras salvas neste navegador ou entre com e-mail e código de acesso.</div>
+            <div class="menu-subtitle">Consulte as compras do cliente com e-mail e código de acesso.</div>
         </div>
         <button class="icon-button" type="button" onclick="toggleMenu(false)" aria-label="Fechar menu">✕</button>
     </div>
     <div class="auth-card customer-area-card">
-        <div class="customer-tabs">
-            <button id="customerTabLocal" class="customer-tab active" type="button" onclick="switchCustomerTab('local')">Compras neste navegador</button>
-            <button id="customerTabEmail" class="customer-tab" type="button" onclick="switchCustomerTab('email')">Compras deste e-mail</button>
-        </div>
-
-        <div id="customerPaneLocal" class="customer-pane active">
-            <h3>Compras neste navegador</h3>
-            <p>Histórico local desativado por segurança. Para consultar links e entregas, use a aba de e-mail com o código de acesso do cliente.</p>
-            <div id="purchaseHistoryContent" class="purchase-history-empty">Nenhum link de compra é salvo neste navegador.</div>
-        </div>
-
-        <div id="customerPaneEmail" class="customer-pane">
+        <div id="customerPaneEmail" class="customer-pane active">
             <h3>Entrar</h3>
             <p>Use o e-mail da compra e o código de acesso simples do cliente para reencontrar os pedidos aprovados.</p>
             <div class="auth-form">
@@ -3301,15 +3290,6 @@
         document.body.style.overflow = shouldOpen ? 'hidden' : '';
     }
 
-    function getStoredPurchases() {
-        try {
-            window.localStorage.removeItem(PURCHASE_HISTORY_KEY);
-            return [];
-        } catch (error) {
-            return [];
-        }
-    }
-
     function buildPurchaseHistoryMarkup(purchases, prefix) {
         return purchases.map((purchase, purchaseIndex) => {
             const deliveredItems = Array.isArray(purchase.items) ? purchase.items.filter(item => item.delivered && item.link) : [];
@@ -3369,10 +3349,6 @@
         container.innerHTML = buildPurchaseHistoryMarkup(purchases, prefix);
     }
 
-    function renderStoredPurchases() {
-        renderPurchaseCollection('purchaseHistoryContent', getStoredPurchases(), 'Nenhum link de compra é salvo neste navegador.', 'localPurchase');
-    }
-
     function togglePurchaseHistoryItems(prefix, index) {
         const hidden = document.getElementById(`${prefix}Hidden_${index}`);
         const toggle = document.getElementById(`${prefix}Toggle_${index}`);
@@ -3386,20 +3362,6 @@
         toggle.textContent = isOpen
             ? `Ver mais ${hiddenCount} ${hiddenCount > 1 ? 'itens' : 'item'}`
             : 'Mostrar menos';
-    }
-
-    function switchCustomerTab(tab) {
-        const localTab = document.getElementById('customerTabLocal');
-        const emailTab = document.getElementById('customerTabEmail');
-        const localPane = document.getElementById('customerPaneLocal');
-        const emailPane = document.getElementById('customerPaneEmail');
-        const showLocal = tab !== 'email';
-
-        localTab?.classList.toggle('active', showLocal);
-        emailTab?.classList.toggle('active', !showLocal);
-        localPane?.classList.toggle('active', showLocal);
-        emailPane?.classList.toggle('active', !showLocal);
-        renderStoredPurchases();
     }
 
     async function lookupEmailPurchases() {
@@ -4097,8 +4059,6 @@
     (async function initStorefront() {
         await loadStoreConfig();
         renderCatalog();
-        switchCustomerTab('local');
-        renderStoredPurchases();
         updateCouponUI();
         setCheckoutStatus('Selecione os samples para liberar o checkout.');
     })();
