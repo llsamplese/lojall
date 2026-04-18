@@ -1,6 +1,6 @@
 {
   "ui": {
-    "showCouponBox": true,
+    "showCouponBox": false,
     "showCopyNamesButton": false,
     "showCopyOrderButton": false,
     "showSelectAllButton": false,
