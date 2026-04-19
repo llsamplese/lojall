@@ -13,6 +13,7 @@
     "type": "percent",
     "value": 50
   },
+  "deletedCoupons": [],
   "coupons": {
     "BEMVINDO10": {
       "code": "BEMVINDO10",
@@ -21,7 +22,8 @@
       "type": "percent",
       "value": 10,
       "minSubtotal": 0,
-      "minItems": 1
+      "minItems": 1,
+      "validUntil": ""
     },
     "LL20OFF": {
       "code": "LL20OFF",
@@ -30,7 +32,8 @@
       "type": "fixed",
       "value": 20,
       "minSubtotal": 0,
-      "minItems": 1
+      "minItems": 1,
+      "validUntil": ""
     },
     "TESTE98": {
       "code": "TESTE98",
@@ -39,7 +42,8 @@
       "type": "percent",
       "value": 98,
       "minSubtotal": 0,
-      "minItems": 1
+      "minItems": 1,
+      "validUntil": ""
     },
     "TESTE99": {
       "code": "TESTE99",
@@ -48,7 +52,8 @@
       "type": "percent",
       "value": 99,
       "minSubtotal": 0,
-      "minItems": 1
+      "minItems": 1,
+      "validUntil": ""
     },
     "LLOFF30": {
       "code": "LLOFF30",
@@ -57,7 +62,8 @@
       "type": "fixed",
       "value": 30,
       "minSubtotal": 60,
-      "minItems": 1
+      "minItems": 1,
+      "validUntil": "2026-04-19T23:59"
     }
   },
   "productOverrides": {}
