@@ -784,6 +784,51 @@
         gap: 14px;
         align-items: start;
     }
+    .product-focus-banner {
+        display: none;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 14px;
+        padding: 16px 18px;
+        border-radius: 18px;
+        border: 1px solid rgba(255, 193, 7, 0.2);
+        background: linear-gradient(135deg, rgba(255, 193, 7, 0.12), rgba(255, 193, 7, 0.04));
+        box-shadow: 0 16px 34px rgba(0,0,0,0.24);
+    }
+    .product-focus-copy {
+        display: grid;
+        gap: 4px;
+    }
+    .product-focus-label {
+        font-size: 12px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: rgba(255, 219, 138, 0.78);
+    }
+    .product-focus-title {
+        font-size: 24px;
+        font-weight: 800;
+        color: #fff0c6;
+    }
+    .product-focus-text {
+        color: #d3c18f;
+        font-size: 14px;
+    }
+    .product-focus-button {
+        border: 1px solid rgba(255, 193, 7, 0.26);
+        background: rgba(24, 24, 24, 0.9);
+        color: #fff0c6;
+        border-radius: 999px;
+        padding: 12px 18px;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+        white-space: nowrap;
+    }
+    .product-focus-button:hover {
+        background: rgba(255, 193, 7, 0.12);
+    }
 
     .search-box {
         display: flex;
@@ -1661,6 +1706,11 @@
         padding: 14px;
     }
 
+    .product-focus-banner {
+        grid-template-columns: 1fr;
+        align-items: flex-start;
+    }
+
     /* Deixar o resumo bem compacto no celular */
     .cart-summary {
         position: fixed;
@@ -1913,6 +1963,14 @@
                 ☰
             </button>
         </div>
+    </div>
+    <div id="productFocusBanner" class="product-focus-banner" style="display:none;">
+        <div class="product-focus-copy">
+            <div class="product-focus-label">Link direto do produto</div>
+            <div id="productFocusTitle" class="product-focus-title">Produto selecionado</div>
+            <div class="product-focus-text">Você está vendo um sample específico da loja. Se quiser, pode abrir o catálogo completo a qualquer momento.</div>
+        </div>
+        <button class="product-focus-button" type="button" onclick="openFullCatalog()">Ver catálogo completo</button>
     </div>
     <div class="search-filter">
         <div class="search-box">
@@ -3720,6 +3778,32 @@
         card.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
 
+    function isProductMode() {
+        return linkedProductIndex >= 0 && Boolean(samplesData[linkedProductIndex]);
+    }
+
+    function updateProductFocusBanner() {
+        const banner = document.getElementById('productFocusBanner');
+        const title = document.getElementById('productFocusTitle');
+        if (!banner) return;
+        if (!isProductMode()) {
+            banner.style.display = 'none';
+            return;
+        }
+        if (title) {
+            title.textContent = getDisplaySampleName(samplesData[linkedProductIndex].nome);
+        }
+        banner.style.display = 'grid';
+    }
+
+    function openFullCatalog() {
+        const url = new URL(window.location.href);
+        url.searchParams.delete('produto');
+        url.searchParams.delete('product');
+        url.searchParams.delete('sample');
+        window.location.href = url.toString();
+    }
+
     // Função para criar um único card HTML
     function createSampleCard(sample, globalIndex) {
         const isSelected = selectedSamples.has(globalIndex);
@@ -4046,26 +4130,29 @@
         grid.innerHTML = '';
 
         const search = normalizeForComparison(searchTerm);
-
-        let filtered = samplesData.filter((s, idx) => {
-            // Filtro de estilo
-            if (activeStyle !== 'all' && getStyle(s.nome) !== activeStyle) return false;
-            // Filtro de instrumento
-            if (activeInstrument !== 'all' && getInstrument(s.nome) !== activeInstrument) return false;
-            // Filtro de busca
-            if (search && !normalizeForComparison(s.nome).includes(search)) return false;
-            return true;
-        });
+        const productMode = isProductMode();
+        let filtered = productMode
+            ? [samplesData[linkedProductIndex]].filter(Boolean)
+            : samplesData.filter((s) => {
+                if (activeStyle !== 'all' && getStyle(s.nome) !== activeStyle) return false;
+                if (activeInstrument !== 'all' && getInstrument(s.nome) !== activeInstrument) return false;
+                if (search && !normalizeForComparison(s.nome).includes(search)) return false;
+                return true;
+            });
 
         const countEl = document.getElementById('filterResultCount');
-        if (activeStyle !== 'all' || activeInstrument !== 'all' || search) {
+        if (productMode) {
+            countEl.textContent = 'Exibindo apenas o produto do link';
+        } else if (activeStyle !== 'all' || activeInstrument !== 'all' || search) {
             countEl.textContent = `${filtered.length} sample${filtered.length !== 1 ? 's' : ''} encontrado${filtered.length !== 1 ? 's' : ''}`;
         } else {
             countEl.textContent = '';
         }
 
         if (filtered.length === 0) {
-            grid.innerHTML = '<div class="no-results">😔 Nenhum sample encontrado</div>';
+            grid.innerHTML = productMode
+                ? '<div class="no-results">😔 Não encontramos esse sample no link informado.</div>'
+                : '<div class="no-results">😔 Nenhum sample encontrado</div>';
             return;
         }
 
@@ -4131,6 +4218,7 @@
     (async function initStorefront() {
         await loadStoreConfig();
         applyLinkedProductFromUrl();
+        updateProductFocusBanner();
         renderCatalog(document.getElementById('searchInput')?.value || '');
         requestAnimationFrame(() => {
             focusLinkedProductCard();
