@@ -9,9 +9,9 @@
     "showCustomerMenuButton": true
   },
   "globalPricing": {
-    "active": false,
-    "type": "percent",
-    "value": 50
+    "active": true,
+    "type": "fixed_price",
+    "value": 40
   },
   "deletedCoupons": [],
   "coupons": {
