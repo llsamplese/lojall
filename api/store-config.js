@@ -1,5 +1,6 @@
 const { getStoreConfig, saveStoreConfig } = require("../lib/store-config");
 const { getCouponsMap } = require("../lib/coupon-utils");
+const BASE_COUPONS = require("../data/coupons");
 
 function parseBody(req) {
   if (!req.body) return {};
@@ -27,7 +28,12 @@ module.exports = async (req, res) => {
   if (req.method === "POST") {
     try {
       const body = parseBody(req);
-      const config = await saveStoreConfig(body.config || body);
+      const nextConfig = body.config || body;
+      if (nextConfig && nextConfig.coupons && typeof nextConfig.coupons === "object") {
+        const currentCodes = new Set(Object.keys(nextConfig.coupons).map((code) => String(code || "").trim().toUpperCase()).filter(Boolean));
+        nextConfig.deletedCoupons = Object.keys(BASE_COUPONS).filter((code) => !currentCodes.has(String(code || "").trim().toUpperCase()));
+      }
+      const config = await saveStoreConfig(nextConfig);
       const coupons = await getCouponsMap();
       return res.status(200).json({ ok: true, config, coupons });
     } catch (error) {

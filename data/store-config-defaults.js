@@ -13,6 +13,7 @@ module.exports = {
     type: "percent",
     value: 0
   },
+  deletedCoupons: [],
   coupons: {},
   productOverrides: {}
 };
