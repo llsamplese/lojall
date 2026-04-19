@@ -3745,8 +3745,17 @@
         const slugTarget = slugifyProductName(target);
         return samplesData.findIndex((sample) => {
             const normalizedName = normalizeForComparison(sample.nome);
+            const normalizedDisplayName = normalizeForComparison(getDisplaySampleName(sample.nome));
+            const fullSlug = slugifyProductName(sample.nome);
+            const displaySlug = slugifyProductName(getDisplaySampleName(sample.nome));
             return normalizedName === normalizedTarget
-                || slugifyProductName(sample.nome) === slugTarget;
+                || normalizedDisplayName === normalizedTarget
+                || fullSlug === slugTarget
+                || displaySlug === slugTarget
+                || normalizedName.includes(normalizedTarget)
+                || normalizedDisplayName.includes(normalizedTarget)
+                || fullSlug.includes(slugTarget)
+                || displaySlug.includes(slugTarget);
         });
     }
 
