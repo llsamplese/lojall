@@ -1445,6 +1445,18 @@
         border: 1px solid rgba(255, 193, 7, 0.82);
         box-shadow: 0 0 0 2px rgba(255, 193, 7, 0.16), 0 18px 36px rgba(0,0,0,0.26);
     }
+    .sample-card.deep-linked {
+        border: 1px solid rgba(255, 214, 110, 0.98);
+        box-shadow:
+            0 0 0 2px rgba(255, 214, 110, 0.16),
+            0 0 0 6px rgba(255, 193, 7, 0.08),
+            0 18px 36px rgba(0,0,0,0.28);
+        animation: deepLinkPulse 1.6s ease-in-out 3;
+    }
+    @keyframes deepLinkPulse {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-3px); }
+    }
 
     .video-thumbnail {
         position: relative;
@@ -2457,6 +2469,12 @@
     // Função auxiliar para normalizar nomes para comparação (acentos e versões)
     function normalizeForComparison(name) {
         return padronizarVersao(removerAcentos(name)).toLowerCase();
+    }
+
+    function slugifyProductName(name) {
+        return normalizeForComparison(name)
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/^-+|-+$/g, '');
     }
 
     // NOVO: Lista de vídeos fornecida
@@ -3586,6 +3604,7 @@
 
     let selectedSamples = new Set();
     const thumbnailCache = new Map(); // Cache para armazenar URLs de thumbnails já verificadas
+    let linkedProductIndex = -1;
 
     function getYoutubeVideoId(url) {
         if (!url) return null;
@@ -3651,6 +3670,56 @@
         document.body.style.overflow = '';
     }
 
+    function getRequestedProductValue() {
+        const params = new URLSearchParams(window.location.search);
+        return String(
+            params.get('produto')
+            || params.get('product')
+            || params.get('sample')
+            || ''
+        ).trim();
+    }
+
+    function findLinkedProductIndex(rawValue) {
+        const target = String(rawValue || '').trim();
+        if (!target) return -1;
+        const normalizedTarget = normalizeForComparison(target);
+        const slugTarget = slugifyProductName(target);
+        return samplesData.findIndex((sample) => {
+            const normalizedName = normalizeForComparison(sample.nome);
+            return normalizedName === normalizedTarget
+                || slugifyProductName(sample.nome) === slugTarget;
+        });
+    }
+
+    function applyLinkedProductFromUrl() {
+        const rawValue = getRequestedProductValue();
+        linkedProductIndex = findLinkedProductIndex(rawValue);
+        if (linkedProductIndex < 0) return;
+
+        activeStyle = 'all';
+        activeInstrument = 'all';
+        document.querySelectorAll('#filterStyle .tag').forEach((tag) => {
+            tag.classList.toggle('active-style', tag.dataset.style === 'all');
+        });
+        document.querySelectorAll('#filterInstrument .tag').forEach((tag) => {
+            tag.classList.toggle('active-instrument', tag.dataset.instrument === 'all');
+        });
+
+        const searchInput = document.getElementById('searchInput');
+        if (searchInput) {
+            searchInput.value = samplesData[linkedProductIndex].nome;
+        }
+    }
+
+    function focusLinkedProductCard() {
+        if (linkedProductIndex < 0) return;
+        const card = document.querySelector(`.sample-card[data-index="${linkedProductIndex}"]`);
+        if (!card) return;
+        card.classList.add('deep-linked');
+        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
     // Função para criar um único card HTML
     function createSampleCard(sample, globalIndex) {
         const isSelected = selectedSamples.has(globalIndex);
@@ -3659,6 +3728,9 @@
         const card = document.createElement('div');
         card.className = `sample-card ${isSelected ? 'selected' : ''}`;
         card.dataset.index = globalIndex; // Adiciona o índice como um atributo de dado
+        if (globalIndex === linkedProductIndex) {
+            card.classList.add('deep-linked');
+        }
         const thumbnailUrl = getFastThumbnailUrl(sample.video);
         const displayName = getDisplaySampleName(sample.nome);
         const thumbnailContent = `
@@ -4058,7 +4130,11 @@
     // Renderiza catálogo inicial
     (async function initStorefront() {
         await loadStoreConfig();
-        renderCatalog();
+        applyLinkedProductFromUrl();
+        renderCatalog(document.getElementById('searchInput')?.value || '');
+        requestAnimationFrame(() => {
+            focusLinkedProductCard();
+        });
         updateCouponUI();
         setCheckoutStatus('Selecione os samples para liberar o checkout.');
     })();
