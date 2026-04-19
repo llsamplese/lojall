@@ -23,6 +23,9 @@ Cadastre em `Settings > Environment Variables`:
 - `MP_FAILURE_URL`
 - `MP_NOTIFICATION_URL`
 - `MP_WEBHOOK_SECRET` (opcional, mas recomendado)
+- `RESEND_API_KEY` (para envio automático de e-mail após pagamento aprovado)
+- `EMAIL_FROM` (ex.: `LL Samples <entrega@llsamples.com>`)
+- `SITE_BASE_URL` (ex.: `https://llsamples.com`)
 
 ## Webhook
 
@@ -34,7 +37,8 @@ Quando a notificação for do tipo `payment`, o backend:
 
 1. valida a assinatura se `MP_WEBHOOK_SECRET` estiver configurado;
 2. consulta `GET /v1/payments/{id}` no Mercado Pago;
-3. registra no log da Vercel um JSON normalizado com status, valor, payer e metadata.
+3. registra no log da Vercel/GitHub um JSON normalizado com status, valor, payer e metadata;
+4. quando o pagamento chega como `approved`, envia o e-mail de compra automaticamente via Resend.
 
 ## Próximo passo para entrega automática
 

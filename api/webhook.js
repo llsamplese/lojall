@@ -1,5 +1,6 @@
-﻿const crypto = require('node:crypto');
-const { appendOrderLead } = require('../lib/github-order-log');
+const crypto = require('node:crypto');
+const { appendOrderLead, hasSuccessfulEmailLog } = require('../lib/github-order-log');
+const { sendPurchaseApprovedEmail } = require('../lib/email-delivery');
 
 const PAYMENT_API_BASE = 'https://api.mercadopago.com/v1/payments';
 
@@ -172,19 +173,60 @@ module.exports = async (req, res) => {
       items: Array.isArray(normalizedPayment.metadata?.original_items) ? normalizedPayment.metadata.original_items : []
     });
 
+    let email = { sent: false, skipped: true, reason: 'payment_not_approved' };
+    if (normalizedPayment.status === 'approved') {
+      const alreadySent = await hasSuccessfulEmailLog(normalizedPayment.id);
+      if (alreadySent) {
+        email = { sent: false, skipped: true, reason: 'already_sent' };
+      } else {
+        try {
+          email = await sendPurchaseApprovedEmail(normalizedPayment);
+          if (email.sent) {
+            await appendOrderLead({
+              created_at: new Date().toISOString(),
+              event: 'email_sent',
+              payment_id: normalizedPayment.id,
+              customer_email: normalizedPayment.metadata?.customer_email || normalizedPayment.payer?.email || '',
+              customer_name: normalizedPayment.metadata?.customer_name || '',
+              customer_access_code: normalizedPayment.metadata?.customer_access_code || '',
+              resend_email_id: email.id || '',
+              delivery_url: email.delivery_url || ''
+            });
+          }
+        } catch (emailError) {
+          email = {
+            sent: false,
+            skipped: false,
+            reason: emailError.message || 'email_send_failed'
+          };
+          await appendOrderLead({
+            created_at: new Date().toISOString(),
+            event: 'email_error',
+            payment_id: normalizedPayment.id,
+            customer_email: normalizedPayment.metadata?.customer_email || normalizedPayment.payer?.email || '',
+            customer_name: normalizedPayment.metadata?.customer_name || '',
+            error: email.reason
+          });
+          console.error('[purchase-email]', emailError);
+        }
+      }
+    }
+
     console.log(JSON.stringify({
       source: 'mercado-pago-webhook',
       received_at: new Date().toISOString(),
       notificationType,
       resourceId,
       signature,
-      payment: normalizedPayment
+      payment: normalizedPayment,
+      email
     }));
 
     return res.status(200).json({
       ok: true,
       notificationType,
-      payment: normalizedPayment
+      payment: normalizedPayment,
+      email
     });
   } catch (error) {
     console.error('[mercado-pago-webhook]', error);
