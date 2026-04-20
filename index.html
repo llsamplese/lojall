@@ -3873,7 +3873,7 @@
         const thumbnailUrl = getFastThumbnailUrl(sample.video);
         const displayName = getDisplaySampleName(sample.nome);
         const thumbnailContent = `
-            <img src="${thumbnailUrl}" alt="${sample.nome}" loading="lazy">
+            <img src="${FALLBACK_THUMBNAIL_URL}" data-target-src="${thumbnailUrl}" alt="${sample.nome}" loading="lazy">
         `;
         card.innerHTML = `
             <div class="video-thumbnail ${sample.video ? '' : 'no-video'}">
@@ -3906,6 +3906,17 @@
             thumbnailImage.addEventListener('error', () => {
                 thumbnailImage.src = FALLBACK_THUMBNAIL_URL;
             }, { once: true });
+            const targetSrc = thumbnailImage.dataset.targetSrc;
+            if (targetSrc && targetSrc !== FALLBACK_THUMBNAIL_URL) {
+                const preloadImage = new Image();
+                preloadImage.onload = () => {
+                    thumbnailImage.src = targetSrc;
+                };
+                preloadImage.onerror = () => {
+                    thumbnailImage.src = FALLBACK_THUMBNAIL_URL;
+                };
+                preloadImage.src = targetSrc;
+            }
         }
         const nameContainer = card.querySelector('.sample-name');
         const nameText = nameContainer ? nameContainer.querySelector('span') : null;
