@@ -2535,6 +2535,14 @@
             .replace(/^-+|-+$/g, '');
     }
 
+    function slugifyRawProductName(name) {
+        return removerAcentos(String(name || ''))
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/^-+|-+$/g, '')
+            .replace(/^ll-/, '');
+    }
+
     // NOVO: Lista de vídeos fornecida
     const videosList = {
         "LL Metais": "https://youtu.be/KuUTx8NzAr4?si=lbaaAjGnjUO9IpJc",
@@ -3742,20 +3750,34 @@
         const target = String(rawValue || '').trim();
         if (!target) return -1;
         const normalizedTarget = normalizeForComparison(target);
+        const normalizedRawTarget = removerAcentos(target).toLowerCase();
         const slugTarget = slugifyProductName(target);
+        const rawSlugTarget = slugifyRawProductName(target);
         return samplesData.findIndex((sample) => {
             const normalizedName = normalizeForComparison(sample.nome);
             const normalizedDisplayName = normalizeForComparison(getDisplaySampleName(sample.nome));
+            const normalizedRawName = removerAcentos(sample.nome).toLowerCase();
+            const normalizedRawDisplayName = removerAcentos(getDisplaySampleName(sample.nome)).toLowerCase();
             const fullSlug = slugifyProductName(sample.nome);
             const displaySlug = slugifyProductName(getDisplaySampleName(sample.nome));
+            const fullRawSlug = slugifyRawProductName(sample.nome);
+            const displayRawSlug = slugifyRawProductName(getDisplaySampleName(sample.nome));
             return normalizedName === normalizedTarget
                 || normalizedDisplayName === normalizedTarget
+                || normalizedRawName === normalizedRawTarget
+                || normalizedRawDisplayName === normalizedRawTarget
                 || fullSlug === slugTarget
                 || displaySlug === slugTarget
+                || fullRawSlug === rawSlugTarget
+                || displayRawSlug === rawSlugTarget
                 || normalizedName.includes(normalizedTarget)
                 || normalizedDisplayName.includes(normalizedTarget)
+                || normalizedRawName.includes(normalizedRawTarget)
+                || normalizedRawDisplayName.includes(normalizedRawTarget)
                 || fullSlug.includes(slugTarget)
-                || displaySlug.includes(slugTarget);
+                || displaySlug.includes(slugTarget)
+                || fullRawSlug.includes(rawSlugTarget)
+                || displayRawSlug.includes(rawSlugTarget);
         });
     }
 
