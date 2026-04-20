@@ -3753,32 +3753,53 @@
         const normalizedRawTarget = removerAcentos(target).toLowerCase();
         const slugTarget = slugifyProductName(target);
         const rawSlugTarget = slugifyRawProductName(target);
-        return samplesData.findIndex((sample) => {
-            const normalizedName = normalizeForComparison(sample.nome);
-            const normalizedDisplayName = normalizeForComparison(getDisplaySampleName(sample.nome));
-            const normalizedRawName = removerAcentos(sample.nome).toLowerCase();
-            const normalizedRawDisplayName = removerAcentos(getDisplaySampleName(sample.nome)).toLowerCase();
-            const fullSlug = slugifyProductName(sample.nome);
-            const displaySlug = slugifyProductName(getDisplaySampleName(sample.nome));
-            const fullRawSlug = slugifyRawProductName(sample.nome);
-            const displayRawSlug = slugifyRawProductName(getDisplaySampleName(sample.nome));
-            return normalizedName === normalizedTarget
-                || normalizedDisplayName === normalizedTarget
-                || normalizedRawName === normalizedRawTarget
-                || normalizedRawDisplayName === normalizedRawTarget
-                || fullSlug === slugTarget
-                || displaySlug === slugTarget
-                || fullRawSlug === rawSlugTarget
-                || displayRawSlug === rawSlugTarget
-                || normalizedName.includes(normalizedTarget)
-                || normalizedDisplayName.includes(normalizedTarget)
-                || normalizedRawName.includes(normalizedRawTarget)
-                || normalizedRawDisplayName.includes(normalizedRawTarget)
-                || fullSlug.includes(slugTarget)
-                || displaySlug.includes(slugTarget)
-                || fullRawSlug.includes(rawSlugTarget)
-                || displayRawSlug.includes(rawSlugTarget);
-        });
+        const productEntries = samplesData.map((sample, index) => ({
+            index,
+            normalizedName: normalizeForComparison(sample.nome),
+            normalizedDisplayName: normalizeForComparison(getDisplaySampleName(sample.nome)),
+            normalizedRawName: removerAcentos(sample.nome).toLowerCase(),
+            normalizedRawDisplayName: removerAcentos(getDisplaySampleName(sample.nome)).toLowerCase(),
+            fullSlug: slugifyProductName(sample.nome),
+            displaySlug: slugifyProductName(getDisplaySampleName(sample.nome)),
+            fullRawSlug: slugifyRawProductName(sample.nome),
+            displayRawSlug: slugifyRawProductName(getDisplaySampleName(sample.nome))
+        }));
+
+        const exactMatch = productEntries.find((entry) =>
+            entry.normalizedName === normalizedTarget
+            || entry.normalizedDisplayName === normalizedTarget
+            || entry.normalizedRawName === normalizedRawTarget
+            || entry.normalizedRawDisplayName === normalizedRawTarget
+            || entry.fullSlug === slugTarget
+            || entry.displaySlug === slugTarget
+            || entry.fullRawSlug === rawSlugTarget
+            || entry.displayRawSlug === rawSlugTarget
+        );
+        if (exactMatch) return exactMatch.index;
+
+        const startsWithMatch = productEntries.find((entry) =>
+            entry.normalizedName.startsWith(normalizedTarget + ' ')
+            || entry.normalizedDisplayName.startsWith(normalizedTarget + ' ')
+            || entry.normalizedRawName.startsWith(normalizedRawTarget + ' ')
+            || entry.normalizedRawDisplayName.startsWith(normalizedRawTarget + ' ')
+            || entry.fullSlug.startsWith(slugTarget + '-')
+            || entry.displaySlug.startsWith(slugTarget + '-')
+            || entry.fullRawSlug.startsWith(rawSlugTarget + '-')
+            || entry.displayRawSlug.startsWith(rawSlugTarget + '-')
+        );
+        if (startsWithMatch) return startsWithMatch.index;
+
+        const containsMatch = productEntries.find((entry) =>
+            entry.normalizedName.includes(normalizedTarget)
+            || entry.normalizedDisplayName.includes(normalizedTarget)
+            || entry.normalizedRawName.includes(normalizedRawTarget)
+            || entry.normalizedRawDisplayName.includes(normalizedRawTarget)
+            || entry.fullSlug.includes(slugTarget)
+            || entry.displaySlug.includes(slugTarget)
+            || entry.fullRawSlug.includes(rawSlugTarget)
+            || entry.displayRawSlug.includes(rawSlugTarget)
+        );
+        return containsMatch ? containsMatch.index : -1;
     }
 
     function applyLinkedProductFromUrl() {
