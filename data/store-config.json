@@ -9,7 +9,7 @@
     "showCustomerMenuButton": true
   },
   "globalPricing": {
-    "active": true,
+    "active": false,
     "type": "fixed_price",
     "value": 40
   },
