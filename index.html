@@ -1461,6 +1461,135 @@
         background: rgba(211, 47, 47, 0.14);
     }
 
+    .available-coupons-panel {
+        display: grid;
+        gap: 14px;
+        margin: 0 0 18px;
+        padding: 18px 20px;
+        border-radius: 28px;
+        background:
+            radial-gradient(circle at top right, rgba(255, 193, 7, 0.12), transparent 34%),
+            linear-gradient(180deg, rgba(255,255,255,0.035), rgba(255,255,255,0.02));
+        border: 1px solid rgba(255, 193, 7, 0.14);
+        box-shadow: 0 18px 36px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.04);
+    }
+
+    .available-coupons-head {
+        display: grid;
+        gap: 4px;
+    }
+
+    .available-coupons-eyebrow {
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: #cfa63d;
+    }
+
+    .available-coupons-title {
+        font-size: 1.25rem;
+        font-weight: 900;
+        color: #fff6d8;
+    }
+
+    .available-coupons-copy {
+        font-size: 0.95rem;
+        line-height: 1.5;
+        color: #d2c394;
+        max-width: 780px;
+    }
+
+    .available-coupons-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 12px;
+    }
+
+    .available-coupon-card {
+        display: grid;
+        gap: 12px;
+        padding: 16px;
+        border-radius: 20px;
+        background: rgba(10, 10, 10, 0.42);
+        border: 1px solid rgba(255,255,255,0.08);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+    }
+
+    .available-coupon-top {
+        display: flex;
+        align-items: start;
+        justify-content: space-between;
+        gap: 12px;
+    }
+
+    .available-coupon-label {
+        display: grid;
+        gap: 3px;
+    }
+
+    .available-coupon-code {
+        font-size: 1rem;
+        font-weight: 900;
+        color: #fff8dd;
+        letter-spacing: 0.02em;
+        text-transform: uppercase;
+    }
+
+    .available-coupon-name {
+        font-size: 0.9rem;
+        color: #d1c08b;
+        line-height: 1.4;
+    }
+
+    .available-coupon-value {
+        justify-self: start;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        min-height: 34px;
+        padding: 0 12px;
+        border-radius: 999px;
+        background: rgba(255, 193, 7, 0.14);
+        border: 1px solid rgba(255, 193, 7, 0.24);
+        color: #ffe59a;
+        font-size: 0.82rem;
+        font-weight: 800;
+    }
+
+    .available-coupon-meta {
+        display: grid;
+        gap: 5px;
+        font-size: 0.82rem;
+        color: #bba96d;
+        line-height: 1.45;
+    }
+
+    .available-coupon-copy {
+        min-height: 42px;
+        border-radius: 14px;
+        border: 1px solid rgba(255, 193, 7, 0.28);
+        background: rgba(255, 193, 7, 0.1);
+        color: #fff1be;
+        font-size: 0.9rem;
+        font-weight: 800;
+        cursor: pointer;
+        transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    }
+
+    .available-coupon-copy:hover {
+        transform: translateY(-2px);
+        background: rgba(255, 193, 7, 0.16);
+        box-shadow: 0 14px 22px rgba(0,0,0,0.16);
+    }
+
+    .available-coupons-empty {
+        color: #b8aa7e;
+        font-size: 0.95rem;
+        line-height: 1.5;
+        padding: 2px 0;
+    }
+
     .catalog-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
@@ -1838,6 +1967,15 @@
         grid-template-columns: 1fr;
     }
 
+    .available-coupons-panel {
+        padding: 16px;
+        border-radius: 24px;
+    }
+
+    .available-coupons-list {
+        grid-template-columns: 1fr;
+    }
+
     /* Se quiser ainda mais compacto, pode esconder os textos e deixar só ícones. Exemplo:
     .btn-finalizar span.text,
     .btn-copy-names span.text,
@@ -2029,6 +2167,15 @@
             </div>
         </div>
     </div>
+    <section id="availableCouponsPanel" class="available-coupons-panel" style="display:none;">
+        <div class="available-coupons-head">
+            <div class="available-coupons-eyebrow">Cupons disponíveis</div>
+            <div class="available-coupons-title">Aproveite os descontos da loja</div>
+            <div class="available-coupons-copy">Copie um cupom disponível e aplique no carrinho antes de finalizar a compra.</div>
+        </div>
+        <div id="availableCouponsList" class="available-coupons-list"></div>
+        <div id="availableCouponsEmpty" class="available-coupons-empty" style="display:none;">Nenhum cupom público disponível no momento.</div>
+    </section>
     <div class="cart-summary" id="cartSummary" style="display:none;">
         <div class="cart-header">
             <div class="cart-header-brand">
@@ -2367,6 +2514,7 @@
     let storeConfig = {
         ui: {
             showCouponBox: true,
+            showAvailableCouponsPanel: true,
             showCopyNamesButton: true,
             showCopyOrderButton: true,
             showSelectAllButton: true,
@@ -2390,6 +2538,7 @@
     function getStoreUi() {
         return {
             showCouponBox: true,
+            showAvailableCouponsPanel: true,
             showCopyNamesButton: true,
             showCopyOrderButton: true,
             showSelectAllButton: true,
@@ -2440,6 +2589,7 @@
         const ui = getStoreUi();
         const toggleMap = [
             ['couponBox', ui.showCouponBox],
+            ['availableCouponsPanel', ui.showAvailableCouponsPanel],
             ['copyNamesButton', ui.showCopyNamesButton],
             ['copyOrderButton', ui.showCopyOrderButton],
             ['selectAllButton', ui.showSelectAllButton],
@@ -2455,6 +2605,103 @@
         });
     }
 
+    function parseCouponDate(value) {
+        const raw = String(value || '').trim();
+        if (!raw) return null;
+        const parsed = new Date(raw);
+        return Number.isNaN(parsed.getTime()) ? null : parsed;
+    }
+
+    function formatCouponDate(value) {
+        const parsed = parseCouponDate(value);
+        if (!parsed) return '';
+        return parsed.toLocaleString('pt-BR');
+    }
+
+    function getPublicCoupons() {
+        const coupons = Object.values(storeConfig.coupons || {});
+        const now = Date.now();
+        return coupons.filter((coupon) => {
+            if (!coupon || !coupon.active) return false;
+            const validUntil = parseCouponDate(coupon.validUntil);
+            if (validUntil && now > validUntil.getTime()) return false;
+            return true;
+        }).sort((a, b) => String(a.code || '').localeCompare(String(b.code || ''), 'pt-BR'));
+    }
+
+    function getCouponDisplayValue(coupon) {
+        if (coupon.type === 'percent') {
+            return `${Number(coupon.value || 0)}% OFF`;
+        }
+        return `${formatCurrency(Number(coupon.value || 0))} OFF`;
+    }
+
+    function getCouponMetaLines(coupon) {
+        const lines = [];
+        if (coupon.minSubtotal) {
+            lines.push(`Pedido mínimo de ${formatCurrency(Number(coupon.minSubtotal || 0))}.`);
+        }
+        if (coupon.minItems && Number(coupon.minItems) > 1) {
+            lines.push(`Válido a partir de ${Number(coupon.minItems)} items.`);
+        }
+        if (coupon.validUntil) {
+            lines.push(`Válido até ${formatCouponDate(coupon.validUntil)}.`);
+        }
+        if (!lines.length) {
+            lines.push('Cupom pronto para uso imediato.');
+        }
+        return lines;
+    }
+
+    async function copyAvailableCoupon(code) {
+        try {
+            await navigator.clipboard.writeText(String(code || '').trim());
+            setCheckoutStatus(`Cupom ${String(code || '').trim()} copiado.`, 'success');
+        } catch (error) {
+            setCheckoutStatus('Não foi possível copiar o cupom agora.', 'error');
+        }
+    }
+
+    function renderAvailableCouponsPanel() {
+        const panel = document.getElementById('availableCouponsPanel');
+        const list = document.getElementById('availableCouponsList');
+        const empty = document.getElementById('availableCouponsEmpty');
+        if (!panel || !list || !empty) return;
+
+        const ui = getStoreUi();
+        const coupons = getPublicCoupons();
+
+        if (ui.showAvailableCouponsPanel === false) {
+            panel.style.display = 'none';
+            return;
+        }
+
+        panel.style.display = '';
+        if (!coupons.length) {
+            list.innerHTML = '';
+            empty.style.display = 'block';
+            return;
+        }
+
+        empty.style.display = 'none';
+        list.innerHTML = coupons.map((coupon) => {
+            const meta = getCouponMetaLines(coupon).map((line) => `<div>${line}</div>`).join('');
+            return `
+                <article class="available-coupon-card">
+                    <div class="available-coupon-top">
+                        <div class="available-coupon-label">
+                            <div class="available-coupon-code">${coupon.code}</div>
+                            <div class="available-coupon-name">${coupon.label || coupon.code}</div>
+                        </div>
+                        <div class="available-coupon-value">${getCouponDisplayValue(coupon)}</div>
+                    </div>
+                    <div class="available-coupon-meta">${meta}</div>
+                    <button class="available-coupon-copy" type="button" onclick="copyAvailableCoupon('${String(coupon.code || '').replace(/'/g, "\\'")}')">Copiar cupom</button>
+                </article>
+            `;
+        }).join('');
+    }
+
     async function loadStoreConfig() {
         try {
             const response = await fetch(STORE_CONFIG_ENDPOINT, { cache: 'no-store' });
@@ -2462,7 +2709,8 @@
             if (response.ok && data?.config) {
                 storeConfig = {
                     ...storeConfig,
-                    ...data.config
+                    ...data.config,
+                    coupons: data.coupons || data.config.coupons || storeConfig.coupons || {}
                 };
             }
         } catch (error) {
@@ -2470,6 +2718,7 @@
         }
 
         applyStoreUiConfig();
+        renderAvailableCouponsPanel();
     }
 
     function formatCurrency(value) {

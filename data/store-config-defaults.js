@@ -1,6 +1,7 @@
 module.exports = {
   ui: {
     showCouponBox: true,
+    showAvailableCouponsPanel: true,
     showCopyNamesButton: true,
     showCopyOrderButton: true,
     showSelectAllButton: true,
