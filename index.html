@@ -2647,9 +2647,6 @@
         if (coupon.validUntil) {
             lines.push(`Válido até ${formatCouponDate(coupon.validUntil)}.`);
         }
-        if (!lines.length) {
-            lines.push('Cupom pronto para uso imediato.');
-        }
         return lines;
     }
 
@@ -2685,7 +2682,8 @@
 
         empty.style.display = 'none';
         list.innerHTML = coupons.map((coupon) => {
-            const meta = getCouponMetaLines(coupon).map((line) => `<div>${line}</div>`).join('');
+            const metaLines = getCouponMetaLines(coupon);
+            const meta = metaLines.length ? `<div class="available-coupon-meta">${metaLines.map((line) => `<div>${line}</div>`).join('')}</div>` : '';
             return `
                 <article class="available-coupon-card">
                     <div class="available-coupon-top">
@@ -2695,7 +2693,7 @@
                         </div>
                         <div class="available-coupon-value">${getCouponDisplayValue(coupon)}</div>
                     </div>
-                    <div class="available-coupon-meta">${meta}</div>
+                    ${meta}
                     <button class="available-coupon-copy" type="button" onclick="copyAvailableCoupon('${String(coupon.code || '').replace(/'/g, "\\'")}')">Copiar cupom</button>
                 </article>
             `;
