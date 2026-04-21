@@ -1488,7 +1488,7 @@
     }
 
     .available-coupons-title {
-        font-size: 1.08rem;
+        font-size: 0.96rem;
         font-weight: 900;
         color: #fff6d8;
     }
@@ -1537,7 +1537,7 @@
     }
 
     .available-coupon-name {
-        font-size: 0.84rem;
+        font-size: 0.8rem;
         color: #d1c08b;
         line-height: 1.4;
     }
@@ -2171,7 +2171,6 @@
         <div class="available-coupons-head">
             <div class="available-coupons-eyebrow">Cupons disponíveis</div>
             <div class="available-coupons-title">Aproveite os descontos da loja</div>
-            <div class="available-coupons-copy">Copie um cupom disponível e aplique no carrinho antes de finalizar a compra.</div>
         </div>
         <div id="availableCouponsList" class="available-coupons-list"></div>
         <div id="availableCouponsEmpty" class="available-coupons-empty" style="display:none;">Nenhum cupom público disponível no momento.</div>
@@ -2689,7 +2688,7 @@
                     <div class="available-coupon-top">
                         <div class="available-coupon-label">
                             <div class="available-coupon-code">${coupon.code}</div>
-                            <div class="available-coupon-name">${coupon.label || coupon.code}</div>
+                            <div class="available-coupon-name">${coupon.type === 'percent' ? 'Cupom percentual' : 'Cupom de desconto fixo'}</div>
                         </div>
                         <div class="available-coupon-value">${getCouponDisplayValue(coupon)}</div>
                     </div>
