@@ -2489,6 +2489,16 @@
         return texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
     }
 
+    function normalizePackageRouteSlug(value) {
+        return removerAcentos(String(value || ""))
+            .toLowerCase()
+            .replace(/^\/+|\/+$/g, "")
+            .replace(/[^a-z0-9/-]+/g, "-")
+            .replace(/\/+/g, "/")
+            .replace(/-+/g, "-")
+            .replace(/^-+|-+$/g, "");
+    }
+
     // Função para padronizar termos de versão (já existente, mas crucial para a busca e correspondência de vídeos)
     function padronizarVersao(texto) {
         let padronizado = texto.toLowerCase();
@@ -2766,6 +2776,11 @@
     const CARD_SURCHARGE = 1.0524;
     let appliedCoupon = null;
     let selectedPackageCode = '';
+    const currentPackageRouteSlug = (() => {
+        const cleanPath = decodeURIComponent(window.location.pathname || '/').replace(/^\/+|\/+$/g, '');
+        if (!cleanPath || cleanPath.includes('.') || cleanPath.startsWith('api/')) return '';
+        return normalizePackageRouteSlug(cleanPath);
+    })();
     let transparentCheckoutConfig = null;
     let brickController = null;
     let currentPaymentId = null;
@@ -2895,9 +2910,16 @@
     }
 
     function getPublicPackages() {
+        const directRouteSlug = currentPackageRouteSlug;
         return Object.values(storeConfig.packages || {})
             .filter((pkg) => {
                 if (!pkg || !pkg.active || Number(pkg.fixedPrice || 0) <= 0) return false;
+                const visibility = pkg.visibility === 'direct_only' ? 'direct_only' : 'public';
+                const routeSlug = normalizePackageRouteSlug(pkg.routeSlug || '');
+                if (directRouteSlug) {
+                    return visibility === 'direct_only' && routeSlug === directRouteSlug;
+                }
+                if (visibility === 'direct_only') return false;
                 const mode = pkg.mode === 'fixed_set' ? 'fixed_set' : 'custom_choice';
                 if (mode === 'fixed_set') {
                     return Array.isArray(pkg.includedItems) && pkg.includedItems.length > 0;
@@ -3132,6 +3154,7 @@
         list.innerHTML = packages.map((pkg) => {
             const meta = getPackageMetaLines(pkg);
             const isActive = String(pkg.code || '').trim().toUpperCase() === selectedPackageCode;
+            const routeBadge = currentPackageRouteSlug ? `<div class="available-package-meta"><div>Oferta exclusiva deste link.</div></div>` : '';
             const statusLine = isActive && packageState
                 ? (packageState.eligible
                     ? `<div class="available-package-meta"><div>Pacote pronto para este carrinho.</div></div>`
@@ -3147,6 +3170,7 @@
                         <div class="available-package-value">${Number(pkg.quantity || 0)} por ${formatCurrency(Number(pkg.fixedPrice || 0))}</div>
                     </div>
                     <div class="available-package-meta">${meta.map((line) => `<div>${line}</div>`).join('')}</div>
+                    ${routeBadge}
                     ${statusLine}
                     <button class="available-package-select ${isActive ? 'active' : ''}" type="button" onclick="selectPackage('${String(pkg.code || '').replace(/'/g, "\\'")}')">${isActive ? 'Remover pacote' : 'Usar pacote'}</button>
                 </article>

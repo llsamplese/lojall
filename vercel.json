@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/:packageSlug((?!api|clientes|sucesso|falha|pendente|index|favicon)[^/.]+)",
+      "destination": "/index.html"
+    }
+  ]
+}
