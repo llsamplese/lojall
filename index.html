@@ -788,33 +788,13 @@
     .product-focus-banner {
         display: none;
         align-items: center;
-        justify-content: space-between;
-        gap: 16px;
+        justify-content: center;
+        gap: 0;
         margin-bottom: 14px;
-        padding: 16px 18px;
-        border-radius: 18px;
-        border: 1px solid rgba(255, 193, 7, 0.2);
-        background: linear-gradient(135deg, rgba(255, 193, 7, 0.12), rgba(255, 193, 7, 0.04));
-        box-shadow: 0 16px 34px rgba(0,0,0,0.24);
-    }
-    .product-focus-copy {
-        display: grid;
-        gap: 4px;
-    }
-    .product-focus-label {
-        font-size: 12px;
-        letter-spacing: 0.14em;
-        text-transform: uppercase;
-        color: rgba(255, 219, 138, 0.78);
-    }
-    .product-focus-title {
-        font-size: 24px;
-        font-weight: 800;
-        color: #fff0c6;
-    }
-    .product-focus-text {
-        color: #d3c18f;
-        font-size: 14px;
+        padding: 8px 0 4px;
+        border: none;
+        background: transparent;
+        box-shadow: none;
     }
     .product-focus-button {
         border: 1px solid rgba(255, 193, 7, 0.26);
@@ -1593,6 +1573,11 @@
         gap: 10px;
     }
 
+    .catalog-grid.product-mode {
+        grid-template-columns: minmax(0, 720px);
+        justify-content: center;
+    }
+
     .catalog-grid.is-loading {
         visibility: hidden;
     }
@@ -1629,6 +1614,13 @@
             0 18px 36px rgba(0,0,0,0.28);
         animation: deepLinkPulse 1.6s ease-in-out 3;
     }
+
+    .catalog-grid.product-mode .sample-card.deep-linked {
+        grid-template-columns: 104px minmax(0, 1fr);
+        gap: 16px;
+        padding: 12px 14px;
+        border-radius: 34px;
+    }
     @keyframes deepLinkPulse {
         0%, 100% { transform: translateY(0); }
         50% { transform: translateY(-3px); }
@@ -1653,6 +1645,12 @@
         width: 100%;
         height: 100%;
         object-fit: cover;
+    }
+
+    .catalog-grid.product-mode .sample-card.deep-linked .video-thumbnail {
+        width: 104px;
+        height: 104px;
+        border-radius: 24px;
     }
 
     .video-thumbnail.no-video {
@@ -1680,6 +1678,26 @@
         line-height: 1.1;
         overflow: hidden;
         min-width: 0;
+    }
+
+    .catalog-grid.product-mode .sample-card.deep-linked .sample-name {
+        font-size: 1.28rem;
+        line-height: 1.14;
+    }
+
+    .catalog-grid.product-mode .sample-card.deep-linked .sample-price {
+        font-size: 1.18rem;
+    }
+
+    .catalog-grid.product-mode .sample-card.deep-linked .btn-preview {
+        width: 44px;
+        height: 44px;
+    }
+
+    .catalog-grid.product-mode .sample-card.deep-linked .btn-select {
+        min-width: 112px;
+        min-height: 44px;
+        font-size: 0.92rem;
     }
 
     .sample-name span {
@@ -2108,11 +2126,6 @@
         </div>
     </div>
     <div id="productFocusBanner" class="product-focus-banner" style="display:none;">
-        <div class="product-focus-copy">
-            <div class="product-focus-label">Link direto do produto</div>
-            <div id="productFocusTitle" class="product-focus-title">Produto selecionado</div>
-            <div class="product-focus-text">Você está vendo um sample específico da loja. Se quiser, pode abrir o catálogo completo a qualquer momento.</div>
-        </div>
         <button class="product-focus-button" type="button" onclick="openFullCatalog()">Ver catálogo completo</button>
     </div>
     <div class="search-filter">
@@ -3652,14 +3665,24 @@
 
     function updateProductFocusBanner() {
         const banner = document.getElementById('productFocusBanner');
-        const title = document.getElementById('productFocusTitle');
+        const searchFilter = document.querySelector('.search-filter');
+        const grid = document.getElementById('catalogGrid');
         if (!banner) return;
         if (!isProductMode()) {
             banner.style.display = 'none';
+            if (searchFilter) {
+                searchFilter.style.display = '';
+            }
+            if (grid) {
+                grid.classList.remove('product-mode');
+            }
             return;
         }
-        if (title) {
-            title.textContent = getDisplaySampleName(samplesData[linkedProductIndex].nome);
+        if (searchFilter) {
+            searchFilter.style.display = 'none';
+        }
+        if (grid) {
+            grid.classList.add('product-mode');
         }
         banner.style.display = 'grid';
     }
