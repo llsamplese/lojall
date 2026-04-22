@@ -91,16 +91,20 @@
       "visibility": "direct_only",
       "routeSlug": "combo3"
     },
-    "COMBO1": {
-      "code": "COMBO1",
-      "label": "Combo 1",
-      "mode": "custom_choice",
-      "visibility": "public",
-      "routeSlug": "",
+    "PACOTEARROCHA": {
+      "code": "PACOTEARROCHA",
+      "label": "Pacote Arrocha 1",
+      "mode": "fixed_set",
+      "visibility": "direct_only",
+      "routeSlug": "pacotearrocha",
       "active": true,
       "quantity": 3,
       "fixedPrice": 150,
-      "includedItems": []
+      "includedItems": [
+        "LL Arrocha Drums",
+        "LL Guitarra Arrocha",
+        "LL Bass Arrocha"
+      ]
     }
   }
 }
