@@ -70,14 +70,16 @@
   },
   "productOverrides": {},
   "packages": {
-    "COMBO1": {
-      "code": "COMBO1",
-      "label": "Combo 1",
+    "COMBO2": {
+      "code": "COMBO2",
+      "label": "Combo 2",
       "active": true,
-      "quantity": 3,
-      "fixedPrice": 150,
+      "quantity": 5,
+      "fixedPrice": 230,
       "includedItems": [],
-      "mode": "custom_choice"
+      "mode": "custom_choice",
+      "visibility": "direct_only",
+      "routeSlug": "https-/www-llsamples-com/combo2"
     }
   }
 }
