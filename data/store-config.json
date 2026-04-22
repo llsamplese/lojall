@@ -3,7 +3,7 @@
     "showCouponBox": true,
     "showAvailableCouponsPanel": true,
     "showPackagesPanel": true,
-    "showPackagesPanelHome": false,
+    "showPackagesPanelHome": true,
     "showPackagesPanelDirect": true,
     "showCopyNamesButton": false,
     "showCopyOrderButton": false,
