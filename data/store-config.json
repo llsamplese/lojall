@@ -82,6 +82,17 @@
       "mode": "custom_choice",
       "visibility": "direct_only",
       "routeSlug": "combo3"
+    },
+    "COMBO1": {
+      "code": "COMBO1",
+      "label": "Combo 1",
+      "mode": "custom_choice",
+      "visibility": "public",
+      "routeSlug": "",
+      "active": true,
+      "quantity": 3,
+      "fixedPrice": 150,
+      "includedItems": []
     }
   }
 }
