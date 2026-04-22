@@ -70,9 +70,9 @@
   },
   "productOverrides": {},
   "packages": {
-    "PAC4174": {
-      "code": "PAC4174",
-      "label": "Pacote 4174",
+    "COMBO1": {
+      "code": "COMBO1",
+      "label": "Combo 1",
       "active": true,
       "quantity": 3,
       "fixedPrice": 150,
