@@ -3029,6 +3029,9 @@
         if (coupon.type === 'percent') {
             return `${Number(coupon.value || 0)}% OFF`;
         }
+        if (coupon.type === 'fixed_per_item') {
+            return `${formatCurrency(Number(coupon.value || 0))} OFF por sample`;
+        }
         return `${formatCurrency(Number(coupon.value || 0))} OFF`;
     }
 
@@ -3039,6 +3042,10 @@
         }
         if (coupon.minItems && Number(coupon.minItems) > 1) {
             lines.push(`Válido a partir de ${Number(coupon.minItems)} items.`);
+        }
+        if (Number(coupon.usageLimit || 0) > 0) {
+            const remaining = Math.max(0, Number(coupon.usageLimit || 0) - Number(coupon.usedCount || 0));
+            lines.push(`Restam ${remaining} uso(s) deste cupom.`);
         }
         if (coupon.validUntil) {
             lines.push(`Válido até ${formatCouponDate(coupon.validUntil)}.`);
@@ -3159,7 +3166,7 @@
                     <div class="available-coupon-top">
                         <div class="available-coupon-label">
                             <div class="available-coupon-code">${coupon.code}</div>
-                            <div class="available-coupon-name">${coupon.type === 'percent' ? 'Cupom percentual' : 'Cupom de desconto fixo'}</div>
+                            <div class="available-coupon-name">${coupon.type === 'percent' ? 'Cupom percentual' : coupon.type === 'fixed_per_item' ? 'Cupom fixo por sample' : 'Cupom de desconto fixo'}</div>
                         </div>
                         <div class="available-coupon-value">${getCouponDisplayValue(coupon)}</div>
                     </div>

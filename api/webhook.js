@@ -1,6 +1,7 @@
 const crypto = require('node:crypto');
 const { appendOrderLead, hasSuccessfulEmailLog } = require('../lib/github-order-log');
 const { sendPurchaseApprovedEmail } = require('../lib/email-delivery');
+const { registerCouponUsage } = require('../lib/coupon-utils');
 
 const PAYMENT_API_BASE = 'https://api.mercadopago.com/v1/payments';
 
@@ -175,6 +176,14 @@ module.exports = async (req, res) => {
 
     let email = { sent: false, skipped: true, reason: 'payment_not_approved' };
     if (normalizedPayment.status === 'approved') {
+      const couponCode = normalizedPayment.metadata?.coupon_code || '';
+      if (couponCode) {
+        try {
+          await registerCouponUsage(couponCode, normalizedPayment.id);
+        } catch (couponError) {
+          console.error('[coupon-usage]', couponError);
+        }
+      }
       const alreadySent = await hasSuccessfulEmailLog(normalizedPayment.id);
       if (alreadySent) {
         email = { sent: false, skipped: true, reason: 'already_sent' };
