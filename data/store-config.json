@@ -45,7 +45,11 @@
       "value": 20,
       "minSubtotal": 0,
       "minItems": 1,
-      "validUntil": "2026-04-22T23:59"
+      "validUntil": "2026-04-22T23:59",
+      "usedPayments": [
+        "155988280750"
+      ],
+      "usedCount": 1
     },
     "TESTE98": {
       "code": "TESTE98",
