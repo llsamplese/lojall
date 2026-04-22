@@ -69,5 +69,13 @@
     }
   },
   "productOverrides": {},
-  "packages": {}
+  "packages": {
+    "PAC1057": {
+      "code": "PAC1057",
+      "label": "Pacote 1057",
+      "active": true,
+      "quantity": 10,
+      "fixedPrice": 250
+    }
+  }
 }
