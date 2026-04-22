@@ -2,7 +2,7 @@
   "ui": {
     "showCouponBox": true,
     "showAvailableCouponsPanel": true,
-    "showPackagesPanel": false,
+    "showPackagesPanel": true,
     "showCopyNamesButton": false,
     "showCopyOrderButton": false,
     "showSelectAllButton": false,
