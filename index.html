@@ -2804,6 +2804,8 @@
             showCouponBox: true,
             showAvailableCouponsPanel: true,
             showPackagesPanel: true,
+            showPackagesPanelHome: true,
+            showPackagesPanelDirect: true,
             showCopyNamesButton: true,
             showCopyOrderButton: true,
             showSelectAllButton: true,
@@ -2830,6 +2832,8 @@
             showCouponBox: true,
             showAvailableCouponsPanel: true,
             showPackagesPanel: true,
+            showPackagesPanelHome: true,
+            showPackagesPanelDirect: true,
             showCopyNamesButton: true,
             showCopyOrderButton: true,
             showSelectAllButton: true,
@@ -2881,7 +2885,6 @@
         const toggleMap = [
             ['couponBox', ui.showCouponBox],
             ['availableCouponsPanel', ui.showAvailableCouponsPanel],
-            ['availablePackagesPanel', ui.showPackagesPanel],
             ['copyNamesButton', ui.showCopyNamesButton],
             ['copyOrderButton', ui.showCopyOrderButton],
             ['selectAllButton', ui.showSelectAllButton],
@@ -3144,24 +3147,26 @@
         if (!panel || !list || !empty) return;
 
         const ui = getStoreUi();
+        const isDirectPackagesPage = Boolean(currentPackageRouteSlug);
         const packages = getPublicPackages();
         if (selectedPackageCode && !packages.some((pkg) => String(pkg.code || '').trim().toUpperCase() === selectedPackageCode)) {
             selectedPackageCode = '';
         }
         const packageState = getSelectedPackage();
 
-        if (ui.showPackagesPanel === false) {
+        if ((isDirectPackagesPage && ui.showPackagesPanelDirect === false) || (!isDirectPackagesPage && ui.showPackagesPanelHome === false)) {
+            panel.style.display = 'none';
+            return;
+        }
+
+        if (!packages.length) {
+            list.innerHTML = '';
+            empty.style.display = 'none';
             panel.style.display = 'none';
             return;
         }
 
         panel.style.display = '';
-        if (!packages.length) {
-            list.innerHTML = '';
-            empty.style.display = 'block';
-            return;
-        }
-
         empty.style.display = 'none';
         list.innerHTML = packages.map((pkg) => {
             const meta = getPackageMetaLines(pkg);

@@ -3,6 +3,8 @@ module.exports = {
     showCouponBox: true,
     showAvailableCouponsPanel: true,
     showPackagesPanel: true,
+    showPackagesPanelHome: true,
+    showPackagesPanelDirect: true,
     showCopyNamesButton: true,
     showCopyOrderButton: true,
     showSelectAllButton: true,
