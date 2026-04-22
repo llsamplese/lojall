@@ -2896,7 +2896,14 @@
 
     function getPublicPackages() {
         return Object.values(storeConfig.packages || {})
-            .filter((pkg) => pkg && pkg.active && Array.isArray(pkg.includedItems) && pkg.includedItems.length > 0 && Number(pkg.fixedPrice || 0) > 0)
+            .filter((pkg) => {
+                if (!pkg || !pkg.active || Number(pkg.fixedPrice || 0) <= 0) return false;
+                const mode = pkg.mode === 'fixed_set' ? 'fixed_set' : 'custom_choice';
+                if (mode === 'fixed_set') {
+                    return Array.isArray(pkg.includedItems) && pkg.includedItems.length > 0;
+                }
+                return Number(pkg.quantity || 0) > 0;
+            })
             .sort((a, b) => Number(a.quantity || 0) - Number(b.quantity || 0) || String(a.code || '').localeCompare(String(b.code || ''), 'pt-BR'));
     }
 
@@ -2904,14 +2911,40 @@
         if (!selectedPackageCode) return null;
         const pkg = (storeConfig.packages || {})[selectedPackageCode];
         if (!pkg || !pkg.active) return null;
+        const mode = pkg.mode === 'fixed_set' ? 'fixed_set' : 'custom_choice';
+        const subtotal = roundCurrency(items.reduce((sum, item) => sum + Number(item.valor || 0), 0));
+        const fixedPrice = roundCurrency(Number(pkg.fixedPrice || 0));
+        if (fixedPrice <= 0) return null;
+        if (mode === 'custom_choice') {
+            const packageQuantity = Math.max(0, parseInt(String(pkg.quantity || 0), 10) || 0);
+            if (!packageQuantity) return null;
+            const orderedItems = [...items].sort((a, b) => Number(b.valor || 0) - Number(a.valor || 0));
+            const coveredItems = orderedItems.slice(0, packageQuantity);
+            const quantity = items.reduce((sum, item) => sum + Number(item.quantity || 1), 0);
+            const includedSubtotal = roundCurrency(coveredItems.reduce((sum, item) => sum + Number(item.valor || 0), 0));
+            const eligible = quantity >= packageQuantity;
+            const discount = eligible ? roundCurrency(Math.max(0, includedSubtotal - fixedPrice)) : 0;
+            const appliedSubtotal = roundCurrency(subtotal - discount);
+            return {
+                ...pkg,
+                mode,
+                quantity: packageQuantity,
+                quantitySelected: quantity,
+                subtotal,
+                includedSubtotal,
+                includedItems: [],
+                fixedPrice,
+                eligible,
+                appliedSubtotal,
+                discount
+            };
+        }
         const includedItems = Array.isArray(pkg.includedItems) ? pkg.includedItems.map((item) => String(item || '').trim()).filter(Boolean) : [];
         if (!includedItems.length) return null;
         const selectedTitles = new Set(items.map((item) => String(item.nome || '').trim()));
         const matchedItems = items.filter((item) => includedItems.includes(String(item.nome || '').trim()));
         const quantity = matchedItems.reduce((sum, item) => sum + Number(item.quantity || 1), 0);
-        const subtotal = roundCurrency(items.reduce((sum, item) => sum + Number(item.valor || 0), 0));
         const includedSubtotal = roundCurrency(matchedItems.reduce((sum, item) => sum + Number(item.valor || 0), 0));
-        const fixedPrice = roundCurrency(Number(pkg.fixedPrice || 0));
         const eligible = includedItems.every((title) => selectedTitles.has(title));
         const packageQuantity = includedItems.length;
         const discount = eligible ? roundCurrency(Math.max(0, includedSubtotal - fixedPrice)) : 0;
@@ -2952,6 +2985,12 @@
     }
 
     function getPackageMetaLines(pkg) {
+        if (pkg.mode === 'custom_choice') {
+            return [
+                `Cliente escolhe ${Number(pkg.quantity || 0)} sample${Number(pkg.quantity || 0) > 1 ? 's' : ''}.`,
+                `Preço fechado de ${formatCurrency(Number(pkg.fixedPrice || 0))}.`
+            ];
+        }
         return [
             `${Number(pkg.quantity || 0)} sample${Number(pkg.quantity || 0) > 1 ? 's' : ''} incluído${Number(pkg.quantity || 0) > 1 ? 's' : ''}.`,
             `Preço fechado de ${formatCurrency(Number(pkg.fixedPrice || 0))}.`
@@ -2993,13 +3032,15 @@
         selectedPackageCode = nextCode;
         if (nextCode) {
             const pkg = (storeConfig.packages || {})[nextCode];
-            const includedItems = Array.isArray(pkg?.includedItems) ? pkg.includedItems.map((item) => String(item || '').trim()).filter(Boolean) : [];
-            includedItems.forEach((title) => {
-                const index = samplesData.findIndex((sample) => String(sample.nome || '').trim() === title);
-                if (index >= 0) {
-                    selectedSamples.add(index);
-                }
-            });
+            if ((pkg?.mode || 'custom_choice') === 'fixed_set') {
+                const includedItems = Array.isArray(pkg?.includedItems) ? pkg.includedItems.map((item) => String(item || '').trim()).filter(Boolean) : [];
+                includedItems.forEach((title) => {
+                    const index = samplesData.findIndex((sample) => String(sample.nome || '').trim() === title);
+                    if (index >= 0) {
+                        selectedSamples.add(index);
+                    }
+                });
+            }
         }
         if (appliedCoupon) {
             invalidateCouponDueToCartChange();
@@ -3094,7 +3135,7 @@
             const statusLine = isActive && packageState
                 ? (packageState.eligible
                     ? `<div class="available-package-meta"><div>Pacote pronto para este carrinho.</div></div>`
-                    : `<div class="available-package-meta"><div>Selecione todos os samples do pacote para travar o valor.</div></div>`)
+                    : `<div class="available-package-meta"><div>${pkg.mode === 'fixed_set' ? 'Selecione todos os samples do pacote para travar o valor.' : 'Adicione a quantidade necessária para travar o valor do pacote.'}</div></div>`)
                 : '';
             return `
                 <article class="available-package-card">

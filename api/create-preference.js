@@ -49,6 +49,44 @@ function resolvePackageForItems(items, packageCode, packages = {}) {
   if (!pkg || !pkg.active) {
     return null;
   }
+  const mode = pkg.mode === "fixed_set" ? "fixed_set" : "custom_choice";
+  const subtotal = roundCurrency(items.reduce((sum, item) => sum + (Number(item.unit_price || 0) * Number(item.quantity || 0)), 0));
+  const fixedPrice = roundCurrency(Number(pkg.fixedPrice || 0));
+  if (fixedPrice <= 0) {
+    return null;
+  }
+  if (mode === "custom_choice") {
+    const packageQuantity = Math.max(0, parseInt(String(pkg.quantity || 0), 10) || 0);
+    if (!packageQuantity) {
+      return null;
+    }
+    const expandedItems = items
+      .flatMap((item) => Array.from({ length: Math.max(1, Number(item.quantity || 1)) }, () => ({
+        title: String(item.title || "").trim(),
+        unit_price: Number(item.unit_price || 0)
+      })))
+      .sort((a, b) => Number(b.unit_price || 0) - Number(a.unit_price || 0));
+    const coveredItems = expandedItems.slice(0, packageQuantity);
+    const quantity = expandedItems.length;
+    const includedSubtotal = roundCurrency(coveredItems.reduce((sum, item) => sum + Number(item.unit_price || 0), 0));
+    const eligible = quantity >= packageQuantity;
+    const discount = eligible ? roundCurrency(Math.max(0, includedSubtotal - fixedPrice)) : 0;
+    const appliedSubtotal = roundCurrency(subtotal - discount);
+    return {
+      ...pkg,
+      mode,
+      code: normalizedCode,
+      includedItems: [],
+      quantity: packageQuantity,
+      eligible,
+      quantitySelected: quantity,
+      subtotal,
+      includedSubtotal,
+      fixedPrice,
+      appliedSubtotal,
+      discount
+    };
+  }
   const includedItems = Array.isArray(pkg.includedItems)
     ? pkg.includedItems.map((item) => String(item || "").trim()).filter(Boolean)
     : [];
@@ -58,21 +96,20 @@ function resolvePackageForItems(items, packageCode, packages = {}) {
   const selectedTitles = new Set(items.map((item) => String(item.title || "").trim()));
   const matchedItems = items.filter((item) => includedItems.includes(String(item.title || "").trim()));
   const quantity = matchedItems.reduce((sum, item) => sum + Number(item.quantity || 0), 0);
-  const subtotal = roundCurrency(items.reduce((sum, item) => sum + (Number(item.unit_price || 0) * Number(item.quantity || 0)), 0));
   const includedSubtotal = roundCurrency(matchedItems.reduce((sum, item) => sum + (Number(item.unit_price || 0) * Number(item.quantity || 0)), 0));
-  const fixedPrice = roundCurrency(Number(pkg.fixedPrice || 0));
   const packageQuantity = includedItems.length;
-  if (!packageQuantity || fixedPrice <= 0) {
+  if (!packageQuantity) {
     return null;
   }
   const eligible = includedItems.every((title) => selectedTitles.has(title));
   if (!eligible) {
-    return { ...pkg, code: normalizedCode, includedItems, quantity: packageQuantity, eligible: false, quantitySelected: quantity, subtotal, includedSubtotal, fixedPrice, appliedSubtotal: subtotal, discount: 0 };
+    return { ...pkg, mode, code: normalizedCode, includedItems, quantity: packageQuantity, eligible: false, quantitySelected: quantity, subtotal, includedSubtotal, fixedPrice, appliedSubtotal: subtotal, discount: 0 };
   }
   const discount = roundCurrency(Math.max(0, includedSubtotal - fixedPrice));
   const appliedSubtotal = roundCurrency(subtotal - discount);
   return {
     ...pkg,
+    mode,
     code: normalizedCode,
     includedItems,
     quantity: packageQuantity,
