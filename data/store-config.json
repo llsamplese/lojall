@@ -70,12 +70,13 @@
     "LLOFF30": {
       "code": "LLOFF30",
       "label": "CUPOM 1804",
-      "active": true,
+      "active": false,
       "type": "fixed",
       "value": 30,
       "minSubtotal": 60,
       "minItems": 1,
-      "validUntil": "2026-04-19T23:59"
+      "validUntil": "",
+      "expiredAt": "2026-04-22T17:21:56.070Z"
     }
   },
   "productOverrides": {},
