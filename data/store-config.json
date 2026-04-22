@@ -1,16 +1,24 @@
 {
   "ui": {
-    "showCouponBox": true,
-    "showAvailableCouponsPanel": true,
+    "showCouponBoxHome": true,
+    "showCouponBoxProductDirect": true,
+    "showCouponBoxPackageDirect": false,
+    "showAvailableCouponsPanelHome": true,
+    "showAvailableCouponsPanelProductDirect": true,
+    "showAvailableCouponsPanelPackageDirect": false,
     "showPackagesPanel": true,
-    "showPackagesPanelHome": true,
-    "showPackagesPanelDirect": true,
+    "showPackagesPanelHome": false,
+    "showPackagesPanelProductDirect": true,
+    "showPackagesPanelPackageDirect": true,
     "showCopyNamesButton": false,
     "showCopyOrderButton": false,
     "showSelectAllButton": false,
     "showClearAllButton": true,
     "showFiltersButton": false,
-    "showCustomerMenuButton": true
+    "showCustomerMenuButton": true,
+    "showCouponBox": true,
+    "showAvailableCouponsPanel": true,
+    "showPackagesPanelDirect": true
   },
   "globalPricing": {
     "active": false,
