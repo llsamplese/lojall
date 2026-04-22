@@ -2498,6 +2498,9 @@
             .replace(/-+/g, "-")
             .replace(/^-+|-+$/g, "");
     }
+    function getPackageRouteSlug(pkg) {
+        return normalizePackageRouteSlug(pkg?.routeSlug || '') || normalizePackageRouteSlug(pkg?.code || '');
+    }
 
     // Função para padronizar termos de versão (já existente, mas crucial para a busca e correspondência de vídeos)
     function padronizarVersao(texto) {
@@ -2915,7 +2918,7 @@
             .filter((pkg) => {
                 if (!pkg || !pkg.active || Number(pkg.fixedPrice || 0) <= 0) return false;
                 const visibility = pkg.visibility === 'direct_only' ? 'direct_only' : 'public';
-                const routeSlug = normalizePackageRouteSlug(pkg.routeSlug || '');
+                const routeSlug = getPackageRouteSlug(pkg);
                 if (directRouteSlug) {
                     return visibility === 'direct_only' && routeSlug === directRouteSlug;
                 }
