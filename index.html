@@ -2802,12 +2802,15 @@
     let storeConfig = {
         ui: {
             showCouponBoxHome: true,
-            showCouponBoxDirect: true,
+            showCouponBoxProductDirect: true,
+            showCouponBoxPackageDirect: true,
             showAvailableCouponsPanelHome: true,
-            showAvailableCouponsPanelDirect: true,
+            showAvailableCouponsPanelProductDirect: true,
+            showAvailableCouponsPanelPackageDirect: true,
             showPackagesPanel: true,
             showPackagesPanelHome: true,
-            showPackagesPanelDirect: true,
+            showPackagesPanelProductDirect: true,
+            showPackagesPanelPackageDirect: true,
             showCopyNamesButton: true,
             showCopyOrderButton: true,
             showSelectAllButton: true,
@@ -2832,15 +2835,21 @@
     function getStoreUi() {
         const rawUi = storeConfig.ui || {};
         const legacyCouponBox = rawUi.showCouponBox;
+        const legacyCouponBoxDirect = rawUi.showCouponBoxDirect;
         const legacyCouponPanel = rawUi.showAvailableCouponsPanel;
+        const legacyCouponPanelDirect = rawUi.showAvailableCouponsPanelDirect;
+        const legacyPackagesDirect = rawUi.showPackagesPanelDirect;
         return {
             showCouponBoxHome: legacyCouponBox === false ? false : true,
-            showCouponBoxDirect: legacyCouponBox === false ? false : true,
+            showCouponBoxProductDirect: legacyCouponBoxDirect === false ? false : (legacyCouponBox === false ? false : true),
+            showCouponBoxPackageDirect: legacyCouponBoxDirect === false ? false : (legacyCouponBox === false ? false : true),
             showAvailableCouponsPanelHome: legacyCouponPanel === false ? false : true,
-            showAvailableCouponsPanelDirect: legacyCouponPanel === false ? false : true,
+            showAvailableCouponsPanelProductDirect: legacyCouponPanelDirect === false ? false : (legacyCouponPanel === false ? false : true),
+            showAvailableCouponsPanelPackageDirect: legacyCouponPanelDirect === false ? false : (legacyCouponPanel === false ? false : true),
             showPackagesPanel: true,
             showPackagesPanelHome: true,
-            showPackagesPanelDirect: true,
+            showPackagesPanelProductDirect: legacyPackagesDirect === false ? false : true,
+            showPackagesPanelPackageDirect: legacyPackagesDirect === false ? false : true,
             showCopyNamesButton: true,
             showCopyOrderButton: true,
             showSelectAllButton: true,
@@ -2889,7 +2898,7 @@
 
     function applyStoreUiConfig() {
         const ui = getStoreUi();
-        const isDirectPage = isProductMode() || Boolean(currentPackageRouteSlug);
+        const pageContext = getPageDisplayContext();
         const toggleMap = [
             ['copyNamesButton', ui.showCopyNamesButton],
             ['copyOrderButton', ui.showCopyOrderButton],
@@ -2907,7 +2916,12 @@
 
         const couponBox = document.getElementById('couponBox');
         if (couponBox) {
-            couponBox.style.display = ((isDirectPage ? ui.showCouponBoxDirect : ui.showCouponBoxHome) === false) ? 'none' : '';
+            const couponBoxVisible = pageContext === 'package_direct'
+                ? ui.showCouponBoxPackageDirect !== false
+                : pageContext === 'product_direct'
+                    ? ui.showCouponBoxProductDirect !== false
+                    : ui.showCouponBoxHome !== false;
+            couponBox.style.display = couponBoxVisible ? '' : 'none';
         }
     }
 
@@ -3115,9 +3129,15 @@
 
         const ui = getStoreUi();
         const coupons = getPublicCoupons();
-        const isDirectPage = isProductMode() || Boolean(currentPackageRouteSlug);
+        const pageContext = getPageDisplayContext();
 
-        if ((isDirectPage ? ui.showAvailableCouponsPanelDirect : ui.showAvailableCouponsPanelHome) === false) {
+        const panelVisible = pageContext === 'package_direct'
+            ? ui.showAvailableCouponsPanelPackageDirect !== false
+            : pageContext === 'product_direct'
+                ? ui.showAvailableCouponsPanelProductDirect !== false
+                : ui.showAvailableCouponsPanelHome !== false;
+
+        if (!panelVisible) {
             panel.style.display = 'none';
             return;
         }
@@ -3159,14 +3179,20 @@
         if (!panel || !list || !empty) return;
 
         const ui = getStoreUi();
-        const isDirectPackagesPage = Boolean(currentPackageRouteSlug);
+        const pageContext = getPageDisplayContext();
         const packages = getPublicPackages();
         if (selectedPackageCode && !packages.some((pkg) => String(pkg.code || '').trim().toUpperCase() === selectedPackageCode)) {
             selectedPackageCode = '';
         }
         const packageState = getSelectedPackage();
 
-        if ((isDirectPackagesPage && ui.showPackagesPanelDirect === false) || (!isDirectPackagesPage && ui.showPackagesPanelHome === false)) {
+        const panelVisible = pageContext === 'package_direct'
+            ? ui.showPackagesPanelPackageDirect !== false
+            : pageContext === 'product_direct'
+                ? ui.showPackagesPanelProductDirect !== false
+                : ui.showPackagesPanelHome !== false;
+
+        if (!panelVisible) {
             panel.style.display = 'none';
             return;
         }
@@ -4184,6 +4210,12 @@
 
     function isProductMode() {
         return linkedProductIndex >= 0 && Boolean(samplesData[linkedProductIndex]);
+    }
+
+    function getPageDisplayContext() {
+        if (currentPackageRouteSlug) return 'package_direct';
+        if (isProductMode()) return 'product_direct';
+        return 'home';
     }
 
     function updateProductFocusBanner() {

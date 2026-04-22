@@ -558,11 +558,14 @@ const STORE_PRODUCTS_ENDPOINT='/api/store-products';
 const CUSTOMER_UPDATE_ENDPOINT='/api/admin-customer-update';
 const UI_FIELDS=[
   {key:'showCouponBoxHome',label:'Mostrar caixa de cupom na página principal',help:'Exibe ou esconde o campo de cupom na home da loja.'},
-  {key:'showCouponBoxDirect',label:'Mostrar caixa de cupom em links diretos',help:'Exibe ou esconde o campo de cupom nas páginas de produto e pacote por link direto.'},
+  {key:'showCouponBoxProductDirect',label:'Mostrar caixa de cupom em link direto de produto',help:'Exibe ou esconde o campo de cupom nas páginas individuais de produto.'},
+  {key:'showCouponBoxPackageDirect',label:'Mostrar caixa de cupom em link direto de pacote',help:'Exibe ou esconde o campo de cupom nas páginas exclusivas de pacote.'},
   {key:'showAvailableCouponsPanelHome',label:'Mostrar painel de cupons na página principal',help:'Exibe ou esconde o painel público de cupons na home da loja.'},
-  {key:'showAvailableCouponsPanelDirect',label:'Mostrar painel de cupons em links diretos',help:'Exibe ou esconde o painel público de cupons nas páginas de produto e pacote por link direto.'},
+  {key:'showAvailableCouponsPanelProductDirect',label:'Mostrar painel de cupons em link direto de produto',help:'Exibe ou esconde o painel público de cupons nas páginas individuais de produto.'},
+  {key:'showAvailableCouponsPanelPackageDirect',label:'Mostrar painel de cupons em link direto de pacote',help:'Exibe ou esconde o painel público de cupons nas páginas exclusivas de pacote.'},
   {key:'showPackagesPanelHome',label:'Mostrar painel de pacotes na página principal',help:'Controla a exibição dos pacotes na home da loja.'},
-  {key:'showPackagesPanelDirect',label:'Mostrar painel de pacotes em link direto',help:'Controla a exibição dos pacotes nas rotas exclusivas, como /combo1.'},
+  {key:'showPackagesPanelProductDirect',label:'Mostrar painel de pacotes em link direto de produto',help:'Controla a exibição dos pacotes nas páginas individuais de produto.'},
+  {key:'showPackagesPanelPackageDirect',label:'Mostrar painel de pacotes em link direto de pacote',help:'Controla a exibição dos pacotes nas rotas exclusivas, como /combo1.'},
   {key:'showCopyNamesButton',label:'Mostrar botão Copiar nomes',help:'Controla o botão para copiar só os nomes dos samples.'},
   {key:'showCopyOrderButton',label:'Mostrar botão Copiar pedido',help:'Controla o botão que copia o resumo do pedido.'},
   {key:'showSelectAllButton',label:'Mostrar botão Selecionar todos',help:'Liga ou desliga a ação de selecionar todos os cards.'},
