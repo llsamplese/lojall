@@ -1,7 +1,9 @@
 module.exports = {
   ui: {
-    showCouponBox: true,
-    showAvailableCouponsPanel: true,
+    showCouponBoxHome: true,
+    showCouponBoxDirect: true,
+    showAvailableCouponsPanelHome: true,
+    showAvailableCouponsPanelDirect: true,
     showPackagesPanel: true,
     showPackagesPanelHome: true,
     showPackagesPanelDirect: true,

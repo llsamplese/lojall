@@ -2801,8 +2801,10 @@
     let mobileCartOpen = false;
     let storeConfig = {
         ui: {
-            showCouponBox: true,
-            showAvailableCouponsPanel: true,
+            showCouponBoxHome: true,
+            showCouponBoxDirect: true,
+            showAvailableCouponsPanelHome: true,
+            showAvailableCouponsPanelDirect: true,
             showPackagesPanel: true,
             showPackagesPanelHome: true,
             showPackagesPanelDirect: true,
@@ -2828,9 +2830,14 @@
     }
 
     function getStoreUi() {
+        const rawUi = storeConfig.ui || {};
+        const legacyCouponBox = rawUi.showCouponBox;
+        const legacyCouponPanel = rawUi.showAvailableCouponsPanel;
         return {
-            showCouponBox: true,
-            showAvailableCouponsPanel: true,
+            showCouponBoxHome: legacyCouponBox === false ? false : true,
+            showCouponBoxDirect: legacyCouponBox === false ? false : true,
+            showAvailableCouponsPanelHome: legacyCouponPanel === false ? false : true,
+            showAvailableCouponsPanelDirect: legacyCouponPanel === false ? false : true,
             showPackagesPanel: true,
             showPackagesPanelHome: true,
             showPackagesPanelDirect: true,
@@ -2840,7 +2847,7 @@
             showClearAllButton: true,
             showFiltersButton: true,
             showCustomerMenuButton: true,
-            ...(storeConfig.ui || {})
+            ...rawUi
         };
     }
 
@@ -2882,9 +2889,8 @@
 
     function applyStoreUiConfig() {
         const ui = getStoreUi();
+        const isDirectPage = isProductMode() || Boolean(currentPackageRouteSlug);
         const toggleMap = [
-            ['couponBox', ui.showCouponBox],
-            ['availableCouponsPanel', ui.showAvailableCouponsPanel],
             ['copyNamesButton', ui.showCopyNamesButton],
             ['copyOrderButton', ui.showCopyOrderButton],
             ['selectAllButton', ui.showSelectAllButton],
@@ -2898,6 +2904,11 @@
             if (!element) return;
             element.style.display = visible ? '' : 'none';
         });
+
+        const couponBox = document.getElementById('couponBox');
+        if (couponBox) {
+            couponBox.style.display = ((isDirectPage ? ui.showCouponBoxDirect : ui.showCouponBoxHome) === false) ? 'none' : '';
+        }
     }
 
     function parseCouponDate(value) {
@@ -3104,8 +3115,9 @@
 
         const ui = getStoreUi();
         const coupons = getPublicCoupons();
+        const isDirectPage = isProductMode() || Boolean(currentPackageRouteSlug);
 
-        if (ui.showAvailableCouponsPanel === false) {
+        if ((isDirectPage ? ui.showAvailableCouponsPanelDirect : ui.showAvailableCouponsPanelHome) === false) {
             panel.style.display = 'none';
             return;
         }
