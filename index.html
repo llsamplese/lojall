@@ -126,6 +126,15 @@
         font-size: 1.08rem;
     }
 
+    .topbar-actions .icon-button {
+        font-size: 1.24rem;
+    }
+
+    .topbar-actions .icon-button.whatsapp-button {
+        font-size: 1.42rem;
+        line-height: 1;
+    }
+
     .icon-button:hover {
         transform: translateY(-2px);
         border-color: rgba(255, 193, 7, 0.3);
@@ -1856,7 +1865,15 @@
         width: 48px;
         height: 48px;
         border-radius: 14px;
-        font-size: 1rem;
+        font-size: 1.08rem;
+    }
+
+    .topbar-actions .icon-button {
+        font-size: 1.14rem;
+    }
+
+    .topbar-actions .icon-button.whatsapp-button {
+        font-size: 1.32rem;
     }
 
     .search-box {
@@ -2198,18 +2215,25 @@
             </div>
         </div>
         <div class="topbar-actions">
-            <button class="icon-button" type="button" onclick="scrollToCart()" aria-label="Ir para carrinho">
+            <button class="icon-button cart-button" type="button" onclick="scrollToCart()" aria-label="Ir para carrinho">
                 🛒
                 <span id="cartBadge" class="cart-badge" style="display:none;">0</span>
             </button>
-            <a class="icon-button" href="https://wa.me/5585988608620" target="_blank" rel="noopener noreferrer" aria-label="Abrir WhatsApp da loja" title="WhatsApp da loja">
+            <a class="icon-button whatsapp-button" href="https://wa.me/5585988608620" target="_blank" rel="noopener noreferrer" aria-label="Abrir WhatsApp da loja" title="WhatsApp da loja">
                 ✆
             </a>
-            <button id="accountMenuButton" class="icon-button" type="button" onclick="toggleMenu(true)" aria-label="Abrir menu">
+            <button id="accountMenuButton" class="icon-button menu-button" type="button" onclick="toggleMenu(true)" aria-label="Abrir menu">
                 ☰
             </button>
         </div>
     </div>
+    <section id="availableCouponsPanel" class="available-coupons-panel" style="display:none;">
+        <div class="available-coupons-head">
+            <div class="available-coupons-eyebrow">Cupons disponíveis</div>
+        </div>
+        <div id="availableCouponsList" class="available-coupons-list"></div>
+        <div id="availableCouponsEmpty" class="available-coupons-empty" style="display:none;">Nenhum cupom público disponível no momento.</div>
+    </section>
     <div id="productFocusBanner" class="product-focus-banner" style="display:none;">
         <button class="product-focus-button" type="button" onclick="openFullCatalog()">Ver catálogo completo</button>
     </div>
@@ -2262,13 +2286,6 @@
             </div>
         </div>
     </div>
-    <section id="availableCouponsPanel" class="available-coupons-panel" style="display:none;">
-        <div class="available-coupons-head">
-            <div class="available-coupons-eyebrow">Cupons disponíveis</div>
-        </div>
-        <div id="availableCouponsList" class="available-coupons-list"></div>
-        <div id="availableCouponsEmpty" class="available-coupons-empty" style="display:none;">Nenhum cupom público disponível no momento.</div>
-    </section>
     <div class="cart-summary" id="cartSummary" style="display:none;">
         <div class="cart-header">
             <div class="cart-header-brand">
