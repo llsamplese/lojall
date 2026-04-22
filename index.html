@@ -2490,7 +2490,16 @@
     }
 
     function normalizePackageRouteSlug(value) {
-        return removerAcentos(String(value || ""))
+        let raw = String(value || "").trim();
+        if (!raw) return "";
+        try {
+            if (/^https?:\/\//i.test(raw)) {
+                raw = new URL(raw).pathname || "";
+            }
+        } catch {}
+        raw = raw.replace(/^https?:\/\/(?:www\.)?llsamples\.com\/?/i, "");
+        raw = raw.replace(/^https?-+(?:www-+)?llsamples-+com-+/i, "");
+        return removerAcentos(raw)
             .toLowerCase()
             .replace(/^\/+|\/+$/g, "")
             .replace(/[^a-z0-9/-]+/g, "-")

@@ -578,7 +578,7 @@ const escapeHtml=v=>String(v||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').rep
 const quoteJs=v=>JSON.stringify(String(v||''));
 function removerAcentos(texto){return String(texto||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'');}
 function slugifyProductName(name){return removerAcentos(String(name||'')).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').replace(/^ll-/, '');}
-function normalizePackageRouteSlug(value){return removerAcentos(String(value||'')).toLowerCase().replace(/^\/+|\/+$/g,'').replace(/[^a-z0-9/-]+/g,'-').replace(/\/+/g,'/').replace(/-+/g,'-').replace(/^-+|-+$/g,'');}
+function normalizePackageRouteSlug(value){let raw=String(value||'').trim();if(!raw)return'';try{if(/^https?:\/\//i.test(raw)){raw=new URL(raw).pathname||'';}}catch{}raw=raw.replace(/^https?:\/\/(?:www\.)?llsamples\.com\/?/i,'');raw=raw.replace(/^https?-+(?:www-+)?llsamples-+com-+/i,'');return removerAcentos(raw).toLowerCase().replace(/^\/+|\/+$/g,'').replace(/[^a-z0-9/-]+/g,'-').replace(/\/+/g,'/').replace(/-+/g,'-').replace(/^-+|-+$/g,'');}
 function setStatus(message,type=''){const box=document.getElementById('statusBox');box.className=`status-box${type?` ${type}`:''}`;box.textContent=message;}
 function copyText(text,label='Conteúdo copiado'){navigator.clipboard.writeText(String(text||'')).then(()=>setStatus(label,'ok')).catch(()=>setStatus('Não foi possível copiar agora.','error'));}
 function buildCustomerCopyText(customer){const delivered=customer.purchases.flatMap(p=>(p.items||[]).filter(i=>i.delivered));return delivered.map(i=>`${i.title}\n${i.link}`).join('\n\n');}
