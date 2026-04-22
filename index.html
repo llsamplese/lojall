@@ -2896,7 +2896,7 @@
 
     function getPublicPackages() {
         return Object.values(storeConfig.packages || {})
-            .filter((pkg) => pkg && pkg.active && Number(pkg.quantity || 0) > 0 && Number(pkg.fixedPrice || 0) > 0)
+            .filter((pkg) => pkg && pkg.active && Array.isArray(pkg.includedItems) && pkg.includedItems.length > 0 && Number(pkg.fixedPrice || 0) > 0)
             .sort((a, b) => Number(a.quantity || 0) - Number(b.quantity || 0) || String(a.code || '').localeCompare(String(b.code || ''), 'pt-BR'));
     }
 
@@ -2904,16 +2904,25 @@
         if (!selectedPackageCode) return null;
         const pkg = (storeConfig.packages || {})[selectedPackageCode];
         if (!pkg || !pkg.active) return null;
-        const quantity = items.reduce((sum, item) => sum + Number(item.quantity || 1), 0);
+        const includedItems = Array.isArray(pkg.includedItems) ? pkg.includedItems.map((item) => String(item || '').trim()).filter(Boolean) : [];
+        if (!includedItems.length) return null;
+        const selectedTitles = new Set(items.map((item) => String(item.nome || '').trim()));
+        const matchedItems = items.filter((item) => includedItems.includes(String(item.nome || '').trim()));
+        const quantity = matchedItems.reduce((sum, item) => sum + Number(item.quantity || 1), 0);
         const subtotal = roundCurrency(items.reduce((sum, item) => sum + Number(item.valor || 0), 0));
+        const includedSubtotal = roundCurrency(matchedItems.reduce((sum, item) => sum + Number(item.valor || 0), 0));
         const fixedPrice = roundCurrency(Number(pkg.fixedPrice || 0));
-        const eligible = quantity === Number(pkg.quantity || 0);
-        const appliedSubtotal = eligible ? roundCurrency(Math.min(subtotal, fixedPrice)) : subtotal;
-        const discount = eligible ? roundCurrency(Math.max(0, subtotal - appliedSubtotal)) : 0;
+        const eligible = includedItems.every((title) => selectedTitles.has(title));
+        const packageQuantity = includedItems.length;
+        const discount = eligible ? roundCurrency(Math.max(0, includedSubtotal - fixedPrice)) : 0;
+        const appliedSubtotal = roundCurrency(subtotal - discount);
         return {
             ...pkg,
+            quantity: packageQuantity,
             quantitySelected: quantity,
             subtotal,
+            includedSubtotal,
+            includedItems,
             fixedPrice,
             eligible,
             appliedSubtotal,
@@ -2944,7 +2953,7 @@
 
     function getPackageMetaLines(pkg) {
         return [
-            `Escolha exatamente ${Number(pkg.quantity || 0)} sample${Number(pkg.quantity || 0) > 1 ? 's' : ''}.`,
+            `${Number(pkg.quantity || 0)} sample${Number(pkg.quantity || 0) > 1 ? 's' : ''} incluído${Number(pkg.quantity || 0) > 1 ? 's' : ''}.`,
             `Preço fechado de ${formatCurrency(Number(pkg.fixedPrice || 0))}.`
         ];
     }
@@ -2980,7 +2989,18 @@
 
     function selectPackage(code) {
         const normalized = String(code || '').trim().toUpperCase();
-        selectedPackageCode = selectedPackageCode === normalized ? '' : normalized;
+        const nextCode = selectedPackageCode === normalized ? '' : normalized;
+        selectedPackageCode = nextCode;
+        if (nextCode) {
+            const pkg = (storeConfig.packages || {})[nextCode];
+            const includedItems = Array.isArray(pkg?.includedItems) ? pkg.includedItems.map((item) => String(item || '').trim()).filter(Boolean) : [];
+            includedItems.forEach((title) => {
+                const index = samplesData.findIndex((sample) => String(sample.nome || '').trim() === title);
+                if (index >= 0) {
+                    selectedSamples.add(index);
+                }
+            });
+        }
         if (appliedCoupon) {
             invalidateCouponDueToCartChange();
         }
@@ -3074,7 +3094,7 @@
             const statusLine = isActive && packageState
                 ? (packageState.eligible
                     ? `<div class="available-package-meta"><div>Pacote pronto para este carrinho.</div></div>`
-                    : `<div class="available-package-meta"><div>Faltam ${Math.max(0, Number(pkg.quantity || 0) - Number(packageState.quantitySelected || 0))} sample(s) para ativar este pacote.</div></div>`)
+                    : `<div class="available-package-meta"><div>Selecione todos os samples do pacote para travar o valor.</div></div>`)
                 : '';
             return `
                 <article class="available-package-card">

@@ -47,22 +47,40 @@ function resolvePackageForItems(items, packageCode, packages = {}) {
   if (!pkg || !pkg.active) {
     return null;
   }
-  const quantity = items.reduce((sum, item) => sum + Number(item.quantity || 0), 0);
-  const subtotal = roundCurrency(items.reduce((sum, item) => sum + (Number(item.unit_price || 0) * Number(item.quantity || 0)), 0));
-  const fixedPrice = roundCurrency(Number(pkg.fixedPrice || 0));
-  if (quantity !== Number(pkg.quantity || 0) || fixedPrice <= 0) {
-    return { ...pkg, code: normalizedCode, eligible: false, quantitySelected: quantity, subtotal, fixedPrice, appliedSubtotal: subtotal, discount: 0 };
+  const includedItems = Array.isArray(pkg.includedItems)
+    ? pkg.includedItems.map((item) => String(item || "").trim()).filter(Boolean)
+    : [];
+  if (!includedItems.length) {
+    return null;
   }
-  const appliedSubtotal = roundCurrency(Math.min(subtotal, fixedPrice));
+  const selectedTitles = new Set(items.map((item) => String(item.title || "").trim()));
+  const matchedItems = items.filter((item) => includedItems.includes(String(item.title || "").trim()));
+  const quantity = matchedItems.reduce((sum, item) => sum + Number(item.quantity || 0), 0);
+  const subtotal = roundCurrency(items.reduce((sum, item) => sum + (Number(item.unit_price || 0) * Number(item.quantity || 0)), 0));
+  const includedSubtotal = roundCurrency(matchedItems.reduce((sum, item) => sum + (Number(item.unit_price || 0) * Number(item.quantity || 0)), 0));
+  const fixedPrice = roundCurrency(Number(pkg.fixedPrice || 0));
+  const packageQuantity = includedItems.length;
+  if (!packageQuantity || fixedPrice <= 0) {
+    return null;
+  }
+  const eligible = includedItems.every((title) => selectedTitles.has(title));
+  if (!eligible) {
+    return { ...pkg, code: normalizedCode, includedItems, quantity: packageQuantity, eligible: false, quantitySelected: quantity, subtotal, includedSubtotal, fixedPrice, appliedSubtotal: subtotal, discount: 0 };
+  }
+  const discount = roundCurrency(Math.max(0, includedSubtotal - fixedPrice));
+  const appliedSubtotal = roundCurrency(subtotal - discount);
   return {
     ...pkg,
     code: normalizedCode,
-    eligible: true,
+    includedItems,
+    quantity: packageQuantity,
+    eligible,
     quantitySelected: quantity,
     subtotal,
+    includedSubtotal,
     fixedPrice,
     appliedSubtotal,
-    discount: roundCurrency(Math.max(0, subtotal - appliedSubtotal))
+    discount
   };
 }
 
