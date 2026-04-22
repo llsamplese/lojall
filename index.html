@@ -1991,6 +1991,65 @@
         grid-template-columns: 1fr;
     }
 
+    .catalog-grid.product-mode .sample-card.deep-linked {
+        grid-template-columns: 72px minmax(0, 1fr);
+        gap: 10px;
+        padding: 10px;
+        border-radius: 24px;
+    }
+
+    .catalog-grid.product-mode .sample-card.deep-linked .video-thumbnail {
+        width: 72px;
+        height: 72px;
+        border-radius: 16px;
+    }
+
+    .catalog-grid.product-mode .sample-card.deep-linked .card-content {
+        gap: 6px 10px;
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-areas:
+            "name"
+            "price"
+            "actions";
+        align-items: start;
+    }
+
+    .catalog-grid.product-mode .sample-card.deep-linked .sample-name {
+        font-size: 0.98rem;
+        line-height: 1.2;
+    }
+
+    .catalog-grid.product-mode .sample-card.deep-linked .sample-name span {
+        white-space: normal;
+        width: 100%;
+    }
+
+    .catalog-grid.product-mode .sample-card.deep-linked .sample-name.marquee span {
+        animation: none;
+        transform: none;
+    }
+
+    .catalog-grid.product-mode .sample-card.deep-linked .sample-price {
+        font-size: 1rem;
+    }
+
+    .catalog-grid.product-mode .sample-card.deep-linked .card-actions {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .catalog-grid.product-mode .sample-card.deep-linked .btn-preview {
+        width: 38px;
+        height: 38px;
+    }
+
+    .catalog-grid.product-mode .sample-card.deep-linked .btn-select {
+        min-width: 96px;
+        min-height: 40px;
+        padding: 8px 14px;
+        font-size: 0.84rem;
+    }
+
     /* Se quiser ainda mais compacto, pode esconder os textos e deixar só ícones. Exemplo:
     .btn-finalizar span.text,
     .btn-copy-names span.text,
