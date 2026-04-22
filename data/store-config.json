@@ -74,9 +74,10 @@
       "code": "PAC4174",
       "label": "Pacote 4174",
       "active": true,
-      "quantity": 0,
-      "fixedPrice": 250,
-      "includedItems": []
+      "quantity": 3,
+      "fixedPrice": 150,
+      "includedItems": [],
+      "mode": "custom_choice"
     }
   }
 }
