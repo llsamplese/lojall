@@ -2,6 +2,7 @@
   "ui": {
     "showCouponBox": true,
     "showAvailableCouponsPanel": true,
+    "showPackagesPanel": true,
     "showCopyNamesButton": false,
     "showCopyOrderButton": false,
     "showSelectAllButton": false,
@@ -67,5 +68,6 @@
       "validUntil": "2026-04-19T23:59"
     }
   },
-  "productOverrides": {}
+  "productOverrides": {},
+  "packages": {}
 }

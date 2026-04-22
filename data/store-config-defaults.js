@@ -2,6 +2,7 @@ module.exports = {
   ui: {
     showCouponBox: true,
     showAvailableCouponsPanel: true,
+    showPackagesPanel: true,
     showCopyNamesButton: true,
     showCopyOrderButton: true,
     showSelectAllButton: true,
@@ -16,5 +17,6 @@ module.exports = {
   },
   deletedCoupons: [],
   coupons: {},
-  productOverrides: {}
+  productOverrides: {},
+  packages: {}
 };

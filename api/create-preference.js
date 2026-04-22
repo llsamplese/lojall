@@ -40,6 +40,34 @@ function applyGlobalPricing(basePrice, globalPricing = {}) {
   return roundCurrency(Math.max(0, numericBase - (numericBase * value / 100)));
 }
 
+function resolvePackageForItems(items, packageCode, packages = {}) {
+  const normalizedCode = String(packageCode || "").trim().toUpperCase();
+  if (!normalizedCode) {
+    return null;
+  }
+  const pkg = packages[normalizedCode];
+  if (!pkg || !pkg.active) {
+    return null;
+  }
+  const quantity = items.reduce((sum, item) => sum + Number(item.quantity || 0), 0);
+  const subtotal = roundCurrency(items.reduce((sum, item) => sum + (Number(item.unit_price || 0) * Number(item.quantity || 0)), 0));
+  const fixedPrice = roundCurrency(Number(pkg.fixedPrice || 0));
+  if (quantity !== Number(pkg.quantity || 0) || fixedPrice <= 0) {
+    return { ...pkg, code: normalizedCode, eligible: false, quantitySelected: quantity, subtotal, fixedPrice, appliedSubtotal: subtotal, discount: 0 };
+  }
+  const appliedSubtotal = roundCurrency(Math.min(subtotal, fixedPrice));
+  return {
+    ...pkg,
+    code: normalizedCode,
+    eligible: true,
+    quantitySelected: quantity,
+    subtotal,
+    fixedPrice,
+    appliedSubtotal,
+    discount: roundCurrency(Math.max(0, subtotal - appliedSubtotal))
+  };
+}
+
 function buildPaymentMethods(mode) {
   if (mode === "card") {
     return {
@@ -98,9 +126,12 @@ async function buildPreference(body) {
 
   const customer = body.customer || {};
   const subtotal = roundCurrency(items.reduce((sum, item) => sum + (item.unit_price * item.quantity), 0));
+  const config = await getStoreConfig();
+  const packageState = resolvePackageForItems(items, body.packageSelection?.code, config?.packages || {});
+  const couponSubtotal = packageState?.eligible ? packageState.appliedSubtotal : subtotal;
   const couponCode = String(body.coupon?.code || "").trim();
   const couponResult = await validateCoupon(body.coupon?.code, {
-    subtotal,
+    subtotal: couponSubtotal,
     itemsCount: items.reduce((sum, item) => sum + item.quantity, 0)
   });
 
@@ -108,8 +139,9 @@ async function buildPreference(body) {
     throw new Error(couponResult.error || "Cupom inválido.");
   }
 
+  const packageDiscount = packageState?.eligible ? roundCurrency(packageState.discount || 0) : 0;
   const discount = couponResult.valid ? couponResult.coupon.discount : 0;
-  const discountedSubtotal = roundCurrency(Math.max(0, subtotal - discount));
+  const discountedSubtotal = roundCurrency(Math.max(0, couponSubtotal - discount));
   const totalPix = discountedSubtotal;
   const totalCard = roundCurrency(discountedSubtotal * 1.0524);
   const finalAmount = roundCurrency(mode === "card" ? totalCard : totalPix);
@@ -145,11 +177,18 @@ async function buildPreference(body) {
       customer_name: String(customer.name || "").trim(),
       customer_contact: String(customer.contact || "").trim(),
       customer_note: String(customer.note || "").trim(),
+      package_code: packageState?.eligible ? packageState.code : "",
+      package_label: packageState?.eligible ? String(packageState.label || packageState.code || "").trim() : "",
+      package_quantity: packageState?.eligible ? Number(packageState.quantity || 0) : 0,
+      package_fixed_price: packageState?.eligible ? Number(packageState.fixedPrice || 0) : 0,
+      package_discount: packageDiscount,
       coupon_code: couponResult.valid ? couponResult.coupon.code : "",
       coupon_label: couponResult.valid ? couponResult.coupon.label : "",
       coupon_discount: discount,
       original_items: items,
       subtotal,
+      package_adjusted_subtotal: couponSubtotal,
+      package_discount: packageDiscount,
       discount,
       total_pix: totalPix,
       total_card: totalCard

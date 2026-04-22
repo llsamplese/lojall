@@ -1578,6 +1578,147 @@
         text-align: center;
     }
 
+    .coupon-countdown {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        justify-self: start;
+        padding: 5px 9px;
+        border-radius: 999px;
+        background: rgba(255, 193, 7, 0.09);
+        border: 1px solid rgba(255, 193, 7, 0.16);
+        color: #f7dfa0;
+        font-size: 0.74rem;
+        font-weight: 800;
+        letter-spacing: 0.02em;
+    }
+
+    .available-packages-panel {
+        display: grid;
+        gap: 8px;
+        margin: 0 0 12px;
+        padding: 12px 14px;
+        border-radius: 20px;
+        background:
+            radial-gradient(circle at top left, rgba(255, 193, 7, 0.1), transparent 30%),
+            linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.018));
+        border: 1px solid rgba(255, 193, 7, 0.14);
+        box-shadow: 0 14px 26px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.04);
+    }
+
+    .available-packages-head {
+        display: grid;
+        gap: 4px;
+        justify-items: center;
+        text-align: center;
+    }
+
+    .available-packages-eyebrow {
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: #cfa63d;
+    }
+
+    .available-packages-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 8px;
+    }
+
+    .available-package-card {
+        display: grid;
+        gap: 8px;
+        padding: 11px 12px;
+        border-radius: 14px;
+        background: rgba(10, 10, 10, 0.42);
+        border: 1px solid rgba(255,255,255,0.08);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+    }
+
+    .available-package-top {
+        display: flex;
+        align-items: start;
+        justify-content: space-between;
+        gap: 12px;
+    }
+
+    .available-package-label {
+        display: grid;
+        gap: 3px;
+    }
+
+    .available-package-code {
+        font-size: 0.92rem;
+        font-weight: 900;
+        color: #fff8dd;
+        letter-spacing: 0.02em;
+        text-transform: uppercase;
+    }
+
+    .available-package-name {
+        font-size: 0.8rem;
+        color: #d1c08b;
+        line-height: 1.4;
+    }
+
+    .available-package-value {
+        justify-self: start;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        min-height: 30px;
+        padding: 0 10px;
+        border-radius: 999px;
+        background: rgba(255, 193, 7, 0.14);
+        border: 1px solid rgba(255, 193, 7, 0.24);
+        color: #ffe59a;
+        font-size: 0.77rem;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .available-package-meta {
+        display: grid;
+        gap: 4px;
+        font-size: 0.77rem;
+        color: #bba96d;
+        line-height: 1.35;
+    }
+
+    .available-package-select {
+        min-height: 34px;
+        border-radius: 10px;
+        border: 1px solid rgba(255, 193, 7, 0.28);
+        background: rgba(255, 193, 7, 0.1);
+        color: #fff1be;
+        font-size: 0.84rem;
+        font-weight: 800;
+        cursor: pointer;
+        transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    }
+
+    .available-package-select:hover {
+        transform: translateY(-2px);
+        background: rgba(255, 193, 7, 0.16);
+        box-shadow: 0 14px 22px rgba(0,0,0,0.16);
+    }
+
+    .available-package-select.active {
+        background: linear-gradient(135deg, #ffe082, #ffbf00);
+        color: #241b01;
+        border-color: rgba(255, 193, 7, 0.4);
+    }
+
+    .available-packages-empty {
+        color: #b8aa7e;
+        font-size: 0.88rem;
+        line-height: 1.4;
+        padding: 0;
+        text-align: center;
+    }
+
     .catalog-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
@@ -2169,6 +2310,7 @@
             <div class="checkout-summary-list" id="checkoutSummaryList"></div>
             <div class="checkout-totals">
                 <div class="checkout-total-line"><span>Subtotal</span><strong id="checkoutSubtotal">R$ 0,00</strong></div>
+                <div class="checkout-total-line" id="checkoutPackageRow" style="display:none;"><span>Pacote</span><strong id="checkoutPackageDiscount">-R$ 0,00</strong></div>
                 <div class="checkout-total-line" id="checkoutDiscountRow" style="display:none;"><span>Desconto</span><strong id="checkoutDiscount">-R$ 0,00</strong></div>
                 <div class="checkout-total-line"><span>PIX</span><strong id="checkoutPixTotal">R$ 0,00</strong></div>
                 <div class="checkout-total-line"><span>Cartão</span><strong id="checkoutCardTotal">R$ 0,00</strong></div>
@@ -2233,6 +2375,13 @@
         </div>
         <div id="availableCouponsList" class="available-coupons-list"></div>
         <div id="availableCouponsEmpty" class="available-coupons-empty" style="display:none;">Nenhum cupom público disponível no momento.</div>
+    </section>
+    <section id="availablePackagesPanel" class="available-packages-panel" style="display:none;">
+        <div class="available-packages-head">
+            <div class="available-packages-eyebrow">Pacotes promocionais</div>
+        </div>
+        <div id="availablePackagesList" class="available-packages-list"></div>
+        <div id="availablePackagesEmpty" class="available-packages-empty" style="display:none;">Nenhum pacote ativo disponível no momento.</div>
     </section>
     <div id="productFocusBanner" class="product-focus-banner" style="display:none;">
         <button class="product-focus-button" type="button" onclick="openFullCatalog()">Ver catálogo completo</button>
@@ -2308,6 +2457,7 @@
         </div>
         <div class="cart-totals">
             <div class="cart-total" id="cartTotal">PIX: R$ 0,00</div>
+            <div class="cart-discount-line" id="cartPackageLine" style="display:none;">Pacote: -R$ 0,00</div>
             <div class="cart-discount-line" id="cartDiscountLine" style="display:none;">Cupom: -R$ 0,00</div>
             <div class="cart-total-note" id="cartCardTotal">Cartão: R$ 0,00</div>
             <div class="coupon-box" id="couponBox">
@@ -2615,6 +2765,7 @@
     const STORE_CONFIG_ENDPOINT = '/api/store-config';
     const CARD_SURCHARGE = 1.0524;
     let appliedCoupon = null;
+    let selectedPackageCode = '';
     let transparentCheckoutConfig = null;
     let brickController = null;
     let currentPaymentId = null;
@@ -2625,6 +2776,7 @@
         ui: {
             showCouponBox: true,
             showAvailableCouponsPanel: true,
+            showPackagesPanel: true,
             showCopyNamesButton: true,
             showCopyOrderButton: true,
             showSelectAllButton: true,
@@ -2638,7 +2790,8 @@
             value: 0
         },
         productOverrides: {},
-        coupons: {}
+        coupons: {},
+        packages: {}
     };
 
     function roundCurrency(value) {
@@ -2649,6 +2802,7 @@
         return {
             showCouponBox: true,
             showAvailableCouponsPanel: true,
+            showPackagesPanel: true,
             showCopyNamesButton: true,
             showCopyOrderButton: true,
             showSelectAllButton: true,
@@ -2700,6 +2854,7 @@
         const toggleMap = [
             ['couponBox', ui.showCouponBox],
             ['availableCouponsPanel', ui.showAvailableCouponsPanel],
+            ['availablePackagesPanel', ui.showPackagesPanel],
             ['copyNamesButton', ui.showCopyNamesButton],
             ['copyOrderButton', ui.showCopyOrderButton],
             ['selectAllButton', ui.showSelectAllButton],
@@ -2739,6 +2894,33 @@
         }).sort((a, b) => String(a.code || '').localeCompare(String(b.code || ''), 'pt-BR'));
     }
 
+    function getPublicPackages() {
+        return Object.values(storeConfig.packages || {})
+            .filter((pkg) => pkg && pkg.active && Number(pkg.quantity || 0) > 0 && Number(pkg.fixedPrice || 0) > 0)
+            .sort((a, b) => Number(a.quantity || 0) - Number(b.quantity || 0) || String(a.code || '').localeCompare(String(b.code || ''), 'pt-BR'));
+    }
+
+    function getSelectedPackage(items = getSelectedItems()) {
+        if (!selectedPackageCode) return null;
+        const pkg = (storeConfig.packages || {})[selectedPackageCode];
+        if (!pkg || !pkg.active) return null;
+        const quantity = items.reduce((sum, item) => sum + Number(item.quantity || 1), 0);
+        const subtotal = roundCurrency(items.reduce((sum, item) => sum + Number(item.valor || 0), 0));
+        const fixedPrice = roundCurrency(Number(pkg.fixedPrice || 0));
+        const eligible = quantity === Number(pkg.quantity || 0);
+        const appliedSubtotal = eligible ? roundCurrency(Math.min(subtotal, fixedPrice)) : subtotal;
+        const discount = eligible ? roundCurrency(Math.max(0, subtotal - appliedSubtotal)) : 0;
+        return {
+            ...pkg,
+            quantitySelected: quantity,
+            subtotal,
+            fixedPrice,
+            eligible,
+            appliedSubtotal,
+            discount
+        };
+    }
+
     function getCouponDisplayValue(coupon) {
         if (coupon.type === 'percent') {
             return `${Number(coupon.value || 0)}% OFF`;
@@ -2758,6 +2940,53 @@
             lines.push(`Válido até ${formatCouponDate(coupon.validUntil)}.`);
         }
         return lines;
+    }
+
+    function getPackageMetaLines(pkg) {
+        return [
+            `Escolha exatamente ${Number(pkg.quantity || 0)} sample${Number(pkg.quantity || 0) > 1 ? 's' : ''}.`,
+            `Preço fechado de ${formatCurrency(Number(pkg.fixedPrice || 0))}.`
+        ];
+    }
+
+    function formatCountdownParts(targetDate) {
+        const diff = Math.max(0, targetDate.getTime() - Date.now());
+        const totalSeconds = Math.floor(diff / 1000);
+        const days = Math.floor(totalSeconds / 86400);
+        const hours = Math.floor((totalSeconds % 86400) / 3600);
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
+        const seconds = totalSeconds % 60;
+        if (days > 0) {
+            return `${days}d ${String(hours).padStart(2, '0')}h ${String(minutes).padStart(2, '0')}m`;
+        }
+        return `${String(hours).padStart(2, '0')}h ${String(minutes).padStart(2, '0')}m ${String(seconds).padStart(2, '0')}s`;
+    }
+
+    function updateCouponCountdowns() {
+        document.querySelectorAll('[data-coupon-countdown]').forEach((element) => {
+            const raw = element.getAttribute('data-coupon-countdown');
+            const date = parseCouponDate(raw);
+            if (!date) {
+                element.textContent = '';
+                return;
+            }
+            if (Date.now() > date.getTime()) {
+                element.textContent = 'Encerrado';
+                return;
+            }
+            element.textContent = `Encerra em ${formatCountdownParts(date)}`;
+        });
+    }
+
+    function selectPackage(code) {
+        const normalized = String(code || '').trim().toUpperCase();
+        selectedPackageCode = selectedPackageCode === normalized ? '' : normalized;
+        if (appliedCoupon) {
+            invalidateCouponDueToCartChange();
+        }
+        updateCart();
+        updateTransparentCheckoutSummary();
+        renderAvailablePackagesPanel();
     }
 
     async function copyAvailableCoupon(code) {
@@ -2793,6 +3022,7 @@
         empty.style.display = 'none';
         list.innerHTML = coupons.map((coupon) => {
             const metaLines = getCouponMetaLines(coupon);
+            const countdown = coupon.validUntil ? `<div class="coupon-countdown" data-coupon-countdown="${coupon.validUntil}"></div>` : '';
             const meta = metaLines.length ? `<div class="available-coupon-meta">${metaLines.map((line) => `<div>${line}</div>`).join('')}</div>` : '';
             return `
                 <article class="available-coupon-card">
@@ -2803,8 +3033,61 @@
                         </div>
                         <div class="available-coupon-value">${getCouponDisplayValue(coupon)}</div>
                     </div>
+                    ${countdown}
                     ${meta}
                     <button class="available-coupon-copy" type="button" onclick="copyAvailableCoupon('${String(coupon.code || '').replace(/'/g, "\\'")}')">Copiar cupom</button>
+                </article>
+            `;
+        }).join('');
+        updateCouponCountdowns();
+    }
+
+    function renderAvailablePackagesPanel() {
+        const panel = document.getElementById('availablePackagesPanel');
+        const list = document.getElementById('availablePackagesList');
+        const empty = document.getElementById('availablePackagesEmpty');
+        if (!panel || !list || !empty) return;
+
+        const ui = getStoreUi();
+        const packages = getPublicPackages();
+        if (selectedPackageCode && !packages.some((pkg) => String(pkg.code || '').trim().toUpperCase() === selectedPackageCode)) {
+            selectedPackageCode = '';
+        }
+        const packageState = getSelectedPackage();
+
+        if (ui.showPackagesPanel === false) {
+            panel.style.display = 'none';
+            return;
+        }
+
+        panel.style.display = '';
+        if (!packages.length) {
+            list.innerHTML = '';
+            empty.style.display = 'block';
+            return;
+        }
+
+        empty.style.display = 'none';
+        list.innerHTML = packages.map((pkg) => {
+            const meta = getPackageMetaLines(pkg);
+            const isActive = String(pkg.code || '').trim().toUpperCase() === selectedPackageCode;
+            const statusLine = isActive && packageState
+                ? (packageState.eligible
+                    ? `<div class="available-package-meta"><div>Pacote pronto para este carrinho.</div></div>`
+                    : `<div class="available-package-meta"><div>Faltam ${Math.max(0, Number(pkg.quantity || 0) - Number(packageState.quantitySelected || 0))} sample(s) para ativar este pacote.</div></div>`)
+                : '';
+            return `
+                <article class="available-package-card">
+                    <div class="available-package-top">
+                        <div class="available-package-label">
+                            <div class="available-package-code">${pkg.code}</div>
+                            <div class="available-package-name">${pkg.label || pkg.code}</div>
+                        </div>
+                        <div class="available-package-value">${Number(pkg.quantity || 0)} por ${formatCurrency(Number(pkg.fixedPrice || 0))}</div>
+                    </div>
+                    <div class="available-package-meta">${meta.map((line) => `<div>${line}</div>`).join('')}</div>
+                    ${statusLine}
+                    <button class="available-package-select ${isActive ? 'active' : ''}" type="button" onclick="selectPackage('${String(pkg.code || '').replace(/'/g, "\\'")}')">${isActive ? 'Remover pacote' : 'Usar pacote'}</button>
                 </article>
             `;
         }).join('');
@@ -2827,6 +3110,7 @@
 
         applyStoreUiConfig();
         renderAvailableCouponsPanel();
+        renderAvailablePackagesPanel();
     }
 
     function formatCurrency(value) {
@@ -2994,12 +3278,14 @@
         const totals = getCartTotals();
         const list = document.getElementById('checkoutSummaryList');
         const subtotal = document.getElementById('checkoutSubtotal');
+        const packageRow = document.getElementById('checkoutPackageRow');
+        const packageDiscount = document.getElementById('checkoutPackageDiscount');
         const discountRow = document.getElementById('checkoutDiscountRow');
         const discount = document.getElementById('checkoutDiscount');
         const pix = document.getElementById('checkoutPixTotal');
         const card = document.getElementById('checkoutCardTotal');
 
-        if (!list || !subtotal || !discountRow || !discount || !pix || !card) return;
+        if (!list || !subtotal || !packageRow || !packageDiscount || !discountRow || !discount || !pix || !card) return;
 
         list.innerHTML = '';
         items.forEach(item => {
@@ -3010,6 +3296,13 @@
         });
 
         subtotal.textContent = formatCurrency(totals.subtotal);
+        if (totals.packageDiscount > 0) {
+            packageRow.style.display = 'flex';
+            packageDiscount.textContent = `-${formatCurrency(totals.packageDiscount)}`;
+        } else {
+            packageRow.style.display = 'none';
+            packageDiscount.textContent = '-R$ 0,00';
+        }
         pix.textContent = formatCurrency(totals.pix);
         card.textContent = formatCurrency(totals.card);
         if (totals.discount > 0) {
@@ -3111,7 +3404,8 @@
                     unit_price: item.valor,
                     quantity: 1
                 })),
-                coupon: appliedCoupon ? { code: appliedCoupon.code } : null
+                coupon: appliedCoupon ? { code: appliedCoupon.code } : null,
+                packageSelection: selectedPackageCode ? { code: selectedPackageCode } : null
             })
         });
 
@@ -3456,11 +3750,22 @@
     }
 
     function getCartTotals() {
-        const subtotal = getSelectedItems().reduce((total, item) => total + item.valor, 0);
+        const items = getSelectedItems();
+        const subtotal = items.reduce((total, item) => total + item.valor, 0);
+        const packageState = getSelectedPackage(items);
+        const packageDiscount = packageState?.eligible ? roundCurrency(packageState.discount || 0) : 0;
+        const packageAdjustedSubtotal = packageState?.eligible ? roundCurrency(packageState.appliedSubtotal || subtotal) : roundCurrency(subtotal);
         const discount = appliedCoupon ? roundCurrency(appliedCoupon.discount || 0) : 0;
-        const discountedSubtotal = Math.max(0, subtotal - discount);
+        const discountedSubtotal = Math.max(0, packageAdjustedSubtotal - discount);
         return {
             subtotal: roundCurrency(subtotal),
+            packageCode: packageState?.code || '',
+            packageLabel: packageState?.label || '',
+            packageEligible: Boolean(packageState?.eligible),
+            packageQuantity: Number(packageState?.quantity || 0),
+            packageFixedPrice: roundCurrency(packageState?.fixedPrice || 0),
+            packageDiscount,
+            packageAdjustedSubtotal: roundCurrency(packageAdjustedSubtotal),
             discount,
             pix: roundCurrency(discountedSubtotal),
             card: roundCurrency(discountedSubtotal * CARD_SURCHARGE)
@@ -3472,6 +3777,8 @@
         const code = couponInput ? couponInput.value.trim().toUpperCase() : '';
         const items = getSelectedItems();
         const subtotal = roundCurrency(items.reduce((total, item) => total + item.valor, 0));
+        const packageState = getSelectedPackage(items);
+        const couponBaseSubtotal = packageState?.eligible ? roundCurrency(packageState.appliedSubtotal || subtotal) : subtotal;
 
         if (!code) {
             setCouponFeedback('Digite um cupom antes de aplicar.', 'error');
@@ -3491,7 +3798,7 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     code,
-                    subtotal,
+                    subtotal: couponBaseSubtotal,
                     itemsCount: items.length
                 })
             });
@@ -3902,6 +4209,7 @@
         const cartSummary = document.getElementById('cartSummary');
         const cartInfo = document.getElementById('cartInfo');
         const cartTotal = document.getElementById('cartTotal');
+        const cartPackageLine = document.getElementById('cartPackageLine');
         const cartCardTotal = document.getElementById('cartCardTotal');
         const cartBadge = document.getElementById('cartBadge');
         const mobileCartBar = document.getElementById('mobileCartBar');
@@ -3909,14 +4217,33 @@
         const mobileCartBarTotal = document.getElementById('mobileCartBarTotal');
         const count = selectedSamples.size;
         const totals = getCartTotals();
+        renderAvailablePackagesPanel();
 
         if (count > 0) {
             cartSummary.style.display = 'grid';
             cartInfo.textContent = `${count} sample${count > 1 ? 's' : ''} selecionado${count > 1 ? 's' : ''}`;
             cartTotal.textContent = `PIX: ${formatCurrency(totals.pix)}`;
+            if (cartPackageLine) {
+                if (totals.packageDiscount > 0) {
+                    cartPackageLine.style.display = 'block';
+                    cartPackageLine.textContent = `${totals.packageLabel || totals.packageCode}: -${formatCurrency(totals.packageDiscount)}`;
+                } else if (selectedPackageCode && totals.packageEligible === false) {
+                    const currentCount = selectedSamples.size;
+                    const missing = Math.max(0, Number(totals.packageQuantity || 0) - currentCount);
+                    cartPackageLine.style.display = 'block';
+                    cartPackageLine.textContent = missing > 0
+                        ? `Pacote selecionado: faltam ${missing} sample(s).`
+                        : `Pacote selecionado: ajuste para ${totals.packageQuantity} sample(s).`;
+                } else {
+                    cartPackageLine.style.display = 'none';
+                    cartPackageLine.textContent = 'Pacote: -R$ 0,00';
+                }
+            }
             cartCardTotal.textContent = `Cartão: ${formatCurrency(totals.card)}`;
+            const packageMessage = totals.packageDiscount > 0 ? ` | Pacote: -${formatCurrency(totals.packageDiscount)}` : '';
             const discountMessage = totals.discount > 0 ? ` | Cupom: -${formatCurrency(totals.discount)}` : '';
-            setCheckoutStatus(`Pedido pronto para checkout. PIX: ${formatCurrency(totals.pix)} | Cartão: ${formatCurrency(totals.card)}${discountMessage}`, 'success');
+            const pendingPackageMessage = selectedPackageCode && !totals.packageEligible ? ` | Pacote ainda não aplicado` : '';
+            setCheckoutStatus(`Pedido pronto para checkout. PIX: ${formatCurrency(totals.pix)} | Cartão: ${formatCurrency(totals.card)}${packageMessage}${discountMessage}${pendingPackageMessage}`, 'success');
             cartBadge.style.display = 'grid';
             cartBadge.textContent = count;
             if (mobileCartBar) {
@@ -3936,6 +4263,10 @@
             setCheckoutStatus('Selecione os samples para liberar o checkout.');
             cartBadge.style.display = 'none';
             cartBadge.textContent = '0';
+            if (cartPackageLine) {
+                cartPackageLine.style.display = 'none';
+                cartPackageLine.textContent = 'Pacote: -R$ 0,00';
+            }
             if (mobileCartBar) {
                 mobileCartBar.style.display = 'none';
                 mobileCartBar.classList.remove('open');
@@ -4230,6 +4561,8 @@
             focusLinkedProductCard();
         });
         updateCouponUI();
+        updateCouponCountdowns();
+        setInterval(updateCouponCountdowns, 1000);
         setCheckoutStatus('Selecione os samples para liberar o checkout.');
     })();
 </script>

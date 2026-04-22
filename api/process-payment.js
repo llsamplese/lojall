@@ -38,6 +38,34 @@ function applyGlobalPricing(basePrice, globalPricing = {}) {
   return roundCurrency(Math.max(0, numericBase - (numericBase * value / 100)));
 }
 
+function resolvePackageForItems(items, packageCode, packages = {}) {
+  const normalizedCode = String(packageCode || "").trim().toUpperCase();
+  if (!normalizedCode) {
+    return null;
+  }
+  const pkg = packages[normalizedCode];
+  if (!pkg || !pkg.active) {
+    return null;
+  }
+  const quantity = items.reduce((sum, item) => sum + Number(item.quantity || 0), 0);
+  const subtotal = roundCurrency(items.reduce((sum, item) => sum + (Number(item.unit_price || 0) * Number(item.quantity || 0)), 0));
+  const fixedPrice = roundCurrency(Number(pkg.fixedPrice || 0));
+  if (quantity !== Number(pkg.quantity || 0) || fixedPrice <= 0) {
+    return { ...pkg, code: normalizedCode, eligible: false, quantitySelected: quantity, subtotal, fixedPrice, appliedSubtotal: subtotal, discount: 0 };
+  }
+  const appliedSubtotal = roundCurrency(Math.min(subtotal, fixedPrice));
+  return {
+    ...pkg,
+    code: normalizedCode,
+    eligible: true,
+    quantitySelected: quantity,
+    subtotal,
+    fixedPrice,
+    appliedSubtotal,
+    discount: roundCurrency(Math.max(0, subtotal - appliedSubtotal))
+  };
+}
+
 async function sanitizeItems(items) {
   if (!Array.isArray(items)) return [];
   const config = await getStoreConfig();
@@ -59,10 +87,13 @@ async function sanitizeItems(items) {
     .filter((item) => item.title && item.unit_price > 0 && item.quantity > 0);
 }
 
-async function buildTotals(items, couponCode) {
+async function buildTotals(items, couponCode, packageCode) {
   const subtotal = roundCurrency(items.reduce((sum, item) => sum + (item.unit_price * item.quantity), 0));
+  const config = await getStoreConfig();
+  const packageState = resolvePackageForItems(items, packageCode, config?.packages || {});
+  const couponSubtotal = packageState?.eligible ? packageState.appliedSubtotal : subtotal;
   const couponResult = await validateCoupon(couponCode, {
-    subtotal,
+    subtotal: couponSubtotal,
     itemsCount: items.reduce((sum, item) => sum + item.quantity, 0)
   });
 
@@ -70,11 +101,15 @@ async function buildTotals(items, couponCode) {
     throw new Error(couponResult.error || "Cupom inválido.");
   }
 
+  const packageDiscount = packageState?.eligible ? roundCurrency(packageState.discount || 0) : 0;
   const discount = couponResult.valid ? couponResult.coupon.discount : 0;
-  const discountedSubtotal = roundCurrency(Math.max(0, subtotal - discount));
+  const discountedSubtotal = roundCurrency(Math.max(0, couponSubtotal - discount));
 
   return {
     subtotal,
+    package: packageState,
+    packageDiscount,
+    packageAdjustedSubtotal: couponSubtotal,
     discount,
     pix: discountedSubtotal,
     card: roundCurrency(discountedSubtotal * 1.0524),
@@ -121,6 +156,11 @@ function buildPaymentBody(formData, items, totals, customerData = {}, customerAc
       customer_email: String(customer.email || "").trim(),
       customer_phone: String(customer.phone || "").trim(),
       customer_access_code: String(customerAccessCode || "").trim(),
+      package_code: totals.package?.eligible ? totals.package.code : "",
+      package_label: totals.package?.eligible ? String(totals.package.label || totals.package.code || "").trim() : "",
+      package_quantity: totals.package?.eligible ? Number(totals.package.quantity || 0) : 0,
+      package_fixed_price: totals.package?.eligible ? Number(totals.package.fixedPrice || 0) : 0,
+      package_discount: totals.packageDiscount || 0,
       coupon_code: totals.coupon?.code || "",
       coupon_label: totals.coupon?.label || "",
       coupon_discount: totals.discount,
@@ -173,6 +213,9 @@ function buildLeadRecord(paymentBody, items, totals) {
     discount: totals.discount,
     total_pix: totals.pix,
     total_card: totals.card,
+    package_code: totals.package?.eligible ? totals.package.code : "",
+    package_label: totals.package?.eligible ? totals.package.label || totals.package.code : "",
+    package_discount: totals.packageDiscount || 0,
     coupon_code: totals.coupon?.code || "",
     items: items.map((item) => ({
       title: item.title,
@@ -199,7 +242,7 @@ module.exports = async (req, res) => {
       throw new Error("Nenhum item válido foi enviado.");
     }
 
-    const totals = await buildTotals(items, body.coupon?.code);
+    const totals = await buildTotals(items, body.coupon?.code, body.packageSelection?.code);
     const payerEmail = String(body?.formData?.payer?.email || "").trim();
     const customerAccess = await assignCustomerAccessCode(payerEmail);
     const paymentBody = buildPaymentBody(body.formData || {}, items, totals, body.customer || {}, customerAccess.code);
