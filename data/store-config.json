@@ -69,5 +69,14 @@
     }
   },
   "productOverrides": {},
-  "packages": {}
+  "packages": {
+    "PAC4174": {
+      "code": "PAC4174",
+      "label": "Pacote 4174",
+      "active": true,
+      "quantity": 0,
+      "fixedPrice": 250,
+      "includedItems": []
+    }
+  }
 }
