@@ -25,18 +25,10 @@
     "type": "fixed_price",
     "value": 40
   },
-  "deletedCoupons": [],
+  "deletedCoupons": [
+    "BEMVINDO10"
+  ],
   "coupons": {
-    "BEMVINDO10": {
-      "code": "BEMVINDO10",
-      "label": "Bem-vindo 10%",
-      "active": false,
-      "type": "percent",
-      "value": 10,
-      "minSubtotal": 0,
-      "minItems": 1,
-      "validUntil": ""
-    },
     "LL20OFF": {
       "code": "LL20OFF",
       "label": "R$ 20 OFF",
@@ -50,7 +42,8 @@
         "155988280750"
       ],
       "usedCount": 1,
-      "expiredAt": "2026-04-23T01:20:09.972Z"
+      "expiredAt": "2026-04-23T01:20:09.972Z",
+      "usageLimit": ""
     },
     "TESTE98": {
       "code": "TESTE98",
@@ -60,7 +53,11 @@
       "value": 98,
       "minSubtotal": 0,
       "minItems": 1,
-      "validUntil": ""
+      "validUntil": "",
+      "usageLimit": "",
+      "usedCount": 0,
+      "usedPayments": [],
+      "expiredAt": ""
     },
     "TESTE99": {
       "code": "TESTE99",
@@ -70,7 +67,11 @@
       "value": 99,
       "minSubtotal": 0,
       "minItems": 1,
-      "validUntil": ""
+      "validUntil": "",
+      "usageLimit": "",
+      "usedCount": 0,
+      "usedPayments": [],
+      "expiredAt": ""
     },
     "LLOFF30": {
       "code": "LLOFF30",
@@ -81,7 +82,24 @@
       "minSubtotal": 60,
       "minItems": 1,
       "validUntil": "",
-      "expiredAt": "2026-04-22T17:21:56.070Z"
+      "expiredAt": "2026-04-22T17:21:56.070Z",
+      "usageLimit": "",
+      "usedCount": 0,
+      "usedPayments": []
+    },
+    "LL10": {
+      "code": "LL10",
+      "label": "Bem-vindo 10%",
+      "active": true,
+      "type": "percent",
+      "value": 10,
+      "minSubtotal": 0,
+      "minItems": 1,
+      "validUntil": "2026-04-24T06:00",
+      "usageLimit": "",
+      "usedCount": 0,
+      "usedPayments": [],
+      "expiredAt": ""
     }
   },
   "productOverrides": {},
