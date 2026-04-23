@@ -40,16 +40,17 @@
     "LL20OFF": {
       "code": "LL20OFF",
       "label": "R$ 20 OFF",
-      "active": true,
+      "active": false,
       "type": "fixed",
       "value": 20,
       "minSubtotal": 0,
       "minItems": 1,
-      "validUntil": "2026-04-22T23:59",
+      "validUntil": "",
       "usedPayments": [
         "155988280750"
       ],
-      "usedCount": 1
+      "usedCount": 1,
+      "expiredAt": "2026-04-23T01:20:09.972Z"
     },
     "TESTE98": {
       "code": "TESTE98",
