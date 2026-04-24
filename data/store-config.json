@@ -20,6 +20,10 @@
     "showAvailableCouponsPanel": true,
     "showPackagesPanelDirect": true
   },
+  "couponRuntime": {
+    "hideHomeCouponsAfterExpiry": false,
+    "lastAutoExpiredAt": ""
+  },
   "globalPricing": {
     "active": false,
     "type": "fixed_price",
@@ -43,12 +47,13 @@
       ],
       "usedCount": 1,
       "expiredAt": "2026-04-23T01:20:09.972Z",
-      "usageLimit": ""
+      "usageLimit": "",
+      "hidden": false
     },
     "TESTE98": {
       "code": "TESTE98",
       "label": "Teste 98%",
-      "active": false,
+      "active": true,
       "type": "percent",
       "value": 98,
       "minSubtotal": 0,
@@ -57,7 +62,8 @@
       "usageLimit": "",
       "usedCount": 0,
       "usedPayments": [],
-      "expiredAt": ""
+      "expiredAt": "",
+      "hidden": true
     },
     "TESTE99": {
       "code": "TESTE99",
@@ -71,7 +77,8 @@
       "usageLimit": "",
       "usedCount": 0,
       "usedPayments": [],
-      "expiredAt": ""
+      "expiredAt": "",
+      "hidden": false
     },
     "LLOFF30": {
       "code": "LLOFF30",
@@ -85,7 +92,8 @@
       "expiredAt": "2026-04-22T17:21:56.070Z",
       "usageLimit": "",
       "usedCount": 0,
-      "usedPayments": []
+      "usedPayments": [],
+      "hidden": false
     },
     "LL10": {
       "code": "LL10",
@@ -99,7 +107,8 @@
       "usageLimit": "",
       "usedCount": 0,
       "usedPayments": [],
-      "expiredAt": "2026-04-24T09:00:12.710Z"
+      "expiredAt": "2026-04-24T09:00:12.710Z",
+      "hidden": false
     }
   },
   "productOverrides": {},
