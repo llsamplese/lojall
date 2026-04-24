@@ -110,22 +110,11 @@
       "usedCount": 0,
       "usedPayments": [],
       "expiredAt": "2026-04-24T09:00:12.710Z",
-      "hidden": false
+      "hidden": true
     }
   },
   "productOverrides": {},
   "packages": {
-    "COMBO3": {
-      "code": "COMBO3",
-      "label": "Combo 3",
-      "active": true,
-      "quantity": 5,
-      "fixedPrice": 230,
-      "includedItems": [],
-      "mode": "custom_choice",
-      "visibility": "direct_only",
-      "routeSlug": "combo3"
-    },
     "PACOTEARROCHA": {
       "code": "PACOTEARROCHA",
       "label": "Pacote Arrocha 1",
@@ -140,6 +129,17 @@
         "LL Guitarra Arrocha",
         "LL Bass Arrocha"
       ]
+    },
+    "COMBO1": {
+      "code": "COMBO1",
+      "label": "Combo 1",
+      "active": true,
+      "quantity": 5,
+      "fixedPrice": 160,
+      "includedItems": [],
+      "mode": "custom_choice",
+      "visibility": "direct_only",
+      "routeSlug": "combo1"
     }
   }
 }
