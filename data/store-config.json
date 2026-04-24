@@ -128,18 +128,20 @@
         "LL Arrocha Drums",
         "LL Guitarra Arrocha",
         "LL Bass Arrocha"
-      ]
+      ],
+      "validUntil": ""
     },
     "COMBO1": {
       "code": "COMBO1",
       "label": "Combo 1",
-      "active": false,
+      "active": true,
       "quantity": 5,
       "fixedPrice": 160,
       "includedItems": [],
       "mode": "custom_choice",
       "visibility": "direct_only",
-      "routeSlug": "combo1"
+      "routeSlug": "combo1",
+      "validUntil": ""
     }
   }
 }
