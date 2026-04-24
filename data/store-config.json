@@ -141,7 +141,7 @@
       "mode": "custom_choice",
       "visibility": "direct_only",
       "routeSlug": "combo1",
-      "validUntil": ""
+      "validUntil": "2026-04-25T23:59"
     }
   }
 }
