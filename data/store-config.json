@@ -82,21 +82,6 @@
       "expiredAt": "",
       "hidden": false
     },
-    "LLOFF30": {
-      "code": "LLOFF30",
-      "label": "CUPOM 1804",
-      "active": false,
-      "type": "fixed",
-      "value": 30,
-      "minSubtotal": 60,
-      "minItems": 1,
-      "validUntil": "",
-      "expiredAt": "2026-04-22T17:21:56.070Z",
-      "usageLimit": "",
-      "usedCount": 0,
-      "usedPayments": [],
-      "hidden": false
-    },
     "LL10": {
       "code": "LL10",
       "label": "Bem-vindo 10%",
@@ -110,6 +95,21 @@
       "usedCount": 0,
       "usedPayments": [],
       "expiredAt": "2026-04-24T09:00:12.710Z",
+      "hidden": true
+    },
+    "LLOFF10": {
+      "code": "LLOFF10",
+      "label": "LL10",
+      "active": true,
+      "type": "fixed",
+      "value": 10,
+      "minSubtotal": 60,
+      "minItems": 1,
+      "validUntil": "",
+      "expiredAt": "2026-04-22T17:21:56.070Z",
+      "usageLimit": 1,
+      "usedCount": 0,
+      "usedPayments": [],
       "hidden": true
     }
   },
