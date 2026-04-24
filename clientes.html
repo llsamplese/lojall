@@ -390,6 +390,7 @@
         <div class="stat"><div class="stat-label">Compras aprovadas</div><strong id="statApproved">0</strong></div>
         <div class="stat"><div class="stat-label">Samples entregáveis</div><strong id="statDelivered">0</strong></div>
         <div class="stat"><div class="stat-label">Produtos</div><strong id="statProducts">0</strong></div>
+        <div class="stat"><div class="stat-label">Visitas da loja</div><strong id="statVisits">0</strong></div>
       </div>
       <div id="statusBox" class="status-box">Carregando painel...</div>
     </div>
@@ -553,6 +554,7 @@
   </div>
   <script>
 const ADMIN_CUSTOMERS_ENDPOINT='/api/admin-customers';
+const ADMIN_TRAFFIC_ENDPOINT='/api/admin-traffic';
 const STORE_CONFIG_ENDPOINT='/api/store-config';
 const STORE_PRODUCTS_ENDPOINT='/api/store-products';
 const CUSTOMER_UPDATE_ENDPOINT='/api/admin-customer-update';
@@ -574,6 +576,7 @@ const UI_FIELDS=[
   {key:'showCustomerMenuButton',label:'Mostrar menu da área do cliente',help:'Exibe ou esconde o botão de menu/área do cliente no topo.'}
 ];
 let customersCache=[];
+let trafficStatsCache={total:0,home:0,product_direct:0,package_direct:0};
 let storeConfigCache={ui:{},globalPricing:{active:false,type:'percent',value:0},coupons:{},productOverrides:{},packages:{}};
 let couponsCache={};
 let packagesCache={};
@@ -589,6 +592,7 @@ function setStatus(message,type=''){const box=document.getElementById('statusBox
 function copyText(text,label='Conteúdo copiado'){navigator.clipboard.writeText(String(text||'')).then(()=>setStatus(label,'ok')).catch(()=>setStatus('Não foi possível copiar agora.','error'));}
 function buildCustomerCopyText(customer){const delivered=customer.purchases.flatMap(p=>(p.items||[]).filter(i=>i.delivered));return delivered.map(i=>`${i.title}\n${i.link}`).join('\n\n');}
 function updateStats(customers){const approved=customers.reduce((s,c)=>s+Number(c.approved_orders||0),0);const delivered=customers.reduce((s,c)=>s+c.purchases.reduce((a,p)=>a+p.items.filter(i=>i.delivered).length,0),0);document.getElementById('statCustomers').textContent=customers.length;document.getElementById('statApproved').textContent=approved;document.getElementById('statDelivered').textContent=delivered;document.getElementById('statProducts').textContent=productsCache.length;}
+function updateTrafficStats(stats){trafficStatsCache={total:Number(stats?.total||0),home:Number(stats?.home||0),product_direct:Number(stats?.product_direct||0),package_direct:Number(stats?.package_direct||0)};const visitsEl=document.getElementById('statVisits');if(visitsEl)visitsEl.textContent=trafficStatsCache.total;}
 function renderProductSelectOptions(selectedLabel='Selecionar sample'){const options=['<option value="">'+escapeHtml(selectedLabel)+'</option>'];productsCache.forEach(product=>{options.push(`<option value="${escapeHtml(product.nome)}">${escapeHtml(product.nome)} • ${money(product.valor)}</option>`);});return options.join('');}
 function renderProductLinkOptions(){const select=document.getElementById('productLinkSelect');if(!select)return;const currentValue=String(select.value||'').trim();const query=removerAcentos(String(document.getElementById('productLinkSearch')?.value||'')).toLowerCase().trim();const options=['<option value="">Selecionar produto para gerar o link</option>'];productsCache.filter(product=>!query||removerAcentos(String(product.nome||'')).toLowerCase().includes(query)).forEach(product=>{options.push(`<option value="${escapeHtml(product.nome)}">${escapeHtml(product.nome)} • ${money(product.valor)}</option>`);});select.innerHTML=options.join('');if(currentValue&&Array.from(select.options).some(option=>option.value===currentValue)){select.value=currentValue;}updateProductLinkPreview();}
 function getProductLinkByName(name){const product=productsCache.find((item)=>item.nome===name);if(!product)return'';const slug=slugifyProductName(product.nome);return `https://llsamples.com/?produto=${encodeURIComponent(slug)}`;}
@@ -638,8 +642,9 @@ async function deleteCustomer(email){if(!confirm(`Excluir o cliente ${email} e t
 async function addSampleToCustomer(email,index){const select=document.getElementById(`customerSampleSelect-${index}`);const title=String(select?.value||'').trim();if(!title){setStatus('Selecione um sample para adicionar ao cliente.','error');return;}setStatus(`Adicionando sample ao cliente ${email}...`,'');try{const response=await fetch(CUSTOMER_UPDATE_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'add_sample',email,items:[title],name:document.getElementById(`customerName-${index}`)?.value||'',phone:document.getElementById(`customerPhone-${index}`)?.value||'',access_code:document.getElementById(`customerCode-${index}`)?.value||''})});const data=await response.json();if(!response.ok) throw new Error(data.error||'Não foi possível adicionar o sample.');if(select) select.value='';setStatus(`Sample adicionado ao cliente ${email}.`,'ok');await loadCustomers();}catch(error){setStatus(error.message||'Erro ao adicionar sample.','error');}}
 async function removeCustomerSample(email,paymentId,title){if(!confirm(`Remover o sample "${title}" do cliente ${email}?`)) return;setStatus(`Removendo sample ${title}...`,'');try{const response=await fetch(CUSTOMER_UPDATE_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'remove_sample',email,payment_id:paymentId,title})});const data=await response.json();if(!response.ok) throw new Error(data.error||'Não foi possível remover o sample.');setStatus(`Sample removido de ${email}.`,'ok');await loadCustomers();}catch(error){setStatus(error.message||'Erro ao remover sample.','error');}}
 async function loadCustomers(){const response=await fetch(ADMIN_CUSTOMERS_ENDPOINT,{cache:'no-store'});const data=await response.json();if(!response.ok) throw new Error(data.error||'Não foi possível carregar clientes.');customersCache=Array.isArray(data.customers)?data.customers:[];applyCustomerFilters();}
+async function loadTrafficStats(){const response=await fetch(ADMIN_TRAFFIC_ENDPOINT,{cache:'no-store'});const data=await response.json();if(!response.ok) throw new Error(data.error||'Não foi possível carregar visitas.');updateTrafficStats(data.stats||{});}
 async function loadStoreData(){const localPackages={...(packagesCache||{})};const [configResponse,productsResponse]=await Promise.all([fetch(STORE_CONFIG_ENDPOINT,{cache:'no-store'}),fetch(STORE_PRODUCTS_ENDPOINT,{cache:'no-store'})]);const configData=await configResponse.json();const productsData=await productsResponse.json();if(!configResponse.ok) throw new Error(configData.error||'Não foi possível carregar a configuração da loja.');if(!productsResponse.ok) throw new Error(productsData.error||'Não foi possível carregar os produtos.');storeConfigCache=configData.config||storeConfigCache;couponsCache=configData.coupons||{};packagesCache=mergeLocalPackages(storeConfigCache.packages||{},localPackages);storeConfigCache.packages=packagesCache;productsCache=Array.isArray(productsData.products)?productsData.products:[];renderUiToggles();renderGlobalPricing();renderCoupons();renderPackages();renderProducts();renderManualCustomerItems();renderProductLinkOptions();}
-async function loadDashboard(showSuccess=false){setStatus('Carregando painel...','');try{await Promise.all([loadStoreData(),loadCustomers()]);setStatus(showSuccess?'Painel atualizado.':'Painel carregado com sucesso.','ok');}catch(error){customersCache=[];productsCache=[];renderCustomers([]);renderProducts();setStatus(error.message||'Erro ao carregar painel.','error');}}
+async function loadDashboard(showSuccess=false){setStatus('Carregando painel...','');try{await Promise.all([loadStoreData(),loadCustomers(),loadTrafficStats()]);setStatus(showSuccess?'Painel atualizado.':'Painel carregado com sucesso.','ok');}catch(error){customersCache=[];productsCache=[];updateTrafficStats({});renderCustomers([]);renderProducts();setStatus(error.message||'Erro ao carregar painel.','error');}}
 document.getElementById('searchInput').addEventListener('input',applyCustomerFilters);
 document.getElementById('statusFilter').addEventListener('change',applyCustomerFilters);
 loadDashboard();
