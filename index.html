@@ -2972,9 +2972,12 @@
 
     function getPublicPackages() {
         const directRouteSlug = currentPackageRouteSlug;
+        const now = Date.now();
         return Object.values(storeConfig.packages || {})
             .filter((pkg) => {
                 if (!pkg || !pkg.active || Number(pkg.fixedPrice || 0) <= 0) return false;
+                const validUntil = parseCouponDate(pkg.validUntil);
+                if (validUntil && now > validUntil.getTime()) return false;
                 const visibility = pkg.visibility === 'direct_only' ? 'direct_only' : 'public';
                 const routeSlug = getPackageRouteSlug(pkg);
                 if (directRouteSlug) {
@@ -3075,16 +3078,19 @@
     }
 
     function getPackageMetaLines(pkg) {
-        if (pkg.mode === 'custom_choice') {
-            return [
+        const lines = pkg.mode === 'custom_choice'
+            ? [
                 `Cliente escolhe ${Number(pkg.quantity || 0)} sample${Number(pkg.quantity || 0) > 1 ? 's' : ''}.`,
                 `Preço fechado de ${formatCurrency(Number(pkg.fixedPrice || 0))}.`
-            ];
-        }
-        return [
+            ]
+            : [
             `${Number(pkg.quantity || 0)} sample${Number(pkg.quantity || 0) > 1 ? 's' : ''} incluído${Number(pkg.quantity || 0) > 1 ? 's' : ''}.`,
             `Preço fechado de ${formatCurrency(Number(pkg.fixedPrice || 0))}.`
         ];
+        if (pkg.validUntil) {
+            lines.push(`Válido até ${formatCouponDate(pkg.validUntil)}.`);
+        }
+        return lines;
     }
 
     function formatCountdownParts(targetDate) {
@@ -3119,6 +3125,22 @@
                     applyStoreUiConfig();
                     renderAvailableCouponsPanel();
                 }
+                return;
+            }
+            element.textContent = `Encerra em ${formatCountdownParts(date)}`;
+        });
+    }
+
+    function updatePackageCountdowns() {
+        document.querySelectorAll('[data-package-countdown]').forEach((element) => {
+            const raw = element.getAttribute('data-package-countdown');
+            const date = parseCouponDate(raw);
+            if (!date) {
+                element.textContent = '';
+                return;
+            }
+            if (Date.now() > date.getTime()) {
+                element.textContent = 'Encerrado';
                 return;
             }
             element.textContent = `Encerra em ${formatCountdownParts(date)}`;
@@ -3246,6 +3268,7 @@
         list.innerHTML = packages.map((pkg) => {
             const meta = getPackageMetaLines(pkg);
             const isActive = String(pkg.code || '').trim().toUpperCase() === selectedPackageCode;
+            const countdown = pkg.validUntil ? `<div class="coupon-countdown" data-package-countdown="${pkg.validUntil}"></div>` : '';
             const routeBadge = currentPackageRouteSlug ? `<div class="available-package-meta"><div>Oferta exclusiva deste link.</div></div>` : '';
             const statusLine = isActive && packageState
                 ? (packageState.eligible
@@ -3261,6 +3284,7 @@
                         </div>
                         <div class="available-package-value">${Number(pkg.quantity || 0)} por ${formatCurrency(Number(pkg.fixedPrice || 0))}</div>
                     </div>
+                    ${countdown}
                     <div class="available-package-meta">${meta.map((line) => `<div>${line}</div>`).join('')}</div>
                     ${routeBadge}
                     ${statusLine}
@@ -3268,6 +3292,7 @@
                 </article>
             `;
         }).join('');
+        updatePackageCountdowns();
     }
 
     async function loadStoreConfig() {
@@ -4762,7 +4787,11 @@
         });
         updateCouponUI();
         updateCouponCountdowns();
-        setInterval(updateCouponCountdowns, 1000);
+        updatePackageCountdowns();
+        setInterval(() => {
+            updateCouponCountdowns();
+            updatePackageCountdowns();
+        }, 1000);
         setCheckoutStatus('Selecione os samples para liberar o checkout.');
     })();
 </script>

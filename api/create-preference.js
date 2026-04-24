@@ -49,6 +49,13 @@ function resolvePackageForItems(items, packageCode, packages = {}) {
   if (!pkg || !pkg.active) {
     return null;
   }
+  const validUntil = String(pkg.validUntil || "").trim();
+  if (validUntil) {
+    const parsed = new Date(validUntil);
+    if (!Number.isNaN(parsed.getTime()) && Date.now() > parsed.getTime()) {
+      return null;
+    }
+  }
   const mode = pkg.mode === "fixed_set" ? "fixed_set" : "custom_choice";
   const subtotal = roundCurrency(items.reduce((sum, item) => sum + (Number(item.unit_price || 0) * Number(item.quantity || 0)), 0));
   const fixedPrice = roundCurrency(Number(pkg.fixedPrice || 0));
