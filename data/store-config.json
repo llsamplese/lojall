@@ -135,7 +135,7 @@
       "code": "COMBO1",
       "label": "Combo 1",
       "active": true,
-      "quantity": 5,
+      "quantity": 4,
       "fixedPrice": 160,
       "includedItems": [],
       "mode": "custom_choice",
