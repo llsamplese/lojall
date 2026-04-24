@@ -62,6 +62,12 @@ module.exports = async (req, res) => {
       if (nextConfig && nextConfig.coupons && typeof nextConfig.coupons === "object") {
         const currentCodes = new Set(Object.keys(nextConfig.coupons).map((code) => String(code || "").trim().toUpperCase()).filter(Boolean));
         nextConfig.deletedCoupons = Object.keys(BASE_COUPONS).filter((code) => !currentCodes.has(String(code || "").trim().toUpperCase()));
+        nextConfig.couponRuntime = nextConfig.couponRuntime && typeof nextConfig.couponRuntime === "object" ? nextConfig.couponRuntime : {};
+        const hasPublicActiveCoupons = Object.values(nextConfig.coupons).some((coupon) => coupon && coupon.active && !coupon.hidden);
+        if (hasPublicActiveCoupons) {
+          nextConfig.couponRuntime.hideHomeCouponsAfterExpiry = false;
+          nextConfig.couponRuntime.lastAutoExpiredAt = "";
+        }
       }
       const config = await saveStoreConfig(nextConfig);
       const coupons = await getCouponsMap();

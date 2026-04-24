@@ -1463,6 +1463,8 @@
             linear-gradient(180deg, rgba(255,255,255,0.035), rgba(255,255,255,0.02));
         border: 1px solid rgba(255, 193, 7, 0.14);
         box-shadow: 0 14px 26px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.04);
+        justify-items: center;
+        text-align: center;
     }
 
     .available-coupons-head {
@@ -1491,6 +1493,8 @@
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
         gap: 8px;
+        width: 100%;
+        justify-content: center;
     }
 
     .available-coupon-card {
@@ -1501,6 +1505,8 @@
         background: rgba(10, 10, 10, 0.42);
         border: 1px solid rgba(255,255,255,0.08);
         box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+        justify-items: center;
+        text-align: center;
     }
 
     .available-coupon-top {
@@ -1508,11 +1514,14 @@
         align-items: start;
         justify-content: space-between;
         gap: 12px;
+        width: 100%;
     }
 
     .available-coupon-label {
         display: grid;
         gap: 3px;
+        justify-items: center;
+        text-align: center;
     }
 
     .available-coupon-code {
@@ -1530,7 +1539,7 @@
     }
 
     .available-coupon-value {
-        justify-self: start;
+        justify-self: center;
         display: inline-flex;
         align-items: center;
         gap: 6px;
@@ -1582,7 +1591,7 @@
         display: inline-flex;
         align-items: center;
         gap: 6px;
-        justify-self: start;
+        justify-self: center;
         padding: 5px 9px;
         border-radius: 999px;
         background: rgba(255, 193, 7, 0.09);
@@ -2823,6 +2832,10 @@
             type: 'percent',
             value: 0
         },
+        couponRuntime: {
+            hideHomeCouponsAfterExpiry: false,
+            lastAutoExpiredAt: ''
+        },
         productOverrides: {},
         coupons: {},
         packages: {}
@@ -2921,7 +2934,7 @@
                 : pageContext === 'product_direct'
                     ? ui.showCouponBoxProductDirect !== false
                     : ui.showCouponBoxHome !== false;
-            couponBox.style.display = couponBoxVisible ? '' : 'none';
+            couponBox.style.display = couponBoxVisible && !shouldAutoHideHomeCoupons() ? '' : 'none';
         }
     }
 
@@ -2942,11 +2955,15 @@
         const coupons = Object.values(storeConfig.coupons || {});
         const now = Date.now();
         return coupons.filter((coupon) => {
-            if (!coupon || !coupon.active) return false;
+            if (!coupon || !coupon.active || coupon.hidden) return false;
             const validUntil = parseCouponDate(coupon.validUntil);
             if (validUntil && now > validUntil.getTime()) return false;
             return true;
         }).sort((a, b) => String(a.code || '').localeCompare(String(b.code || ''), 'pt-BR'));
+    }
+
+    function shouldAutoHideHomeCoupons() {
+        return getPageDisplayContext() === 'home' && storeConfig?.couponRuntime?.hideHomeCouponsAfterExpiry === true;
     }
 
     function getPublicPackages() {
@@ -3089,6 +3106,15 @@
             }
             if (Date.now() > date.getTime()) {
                 element.textContent = 'Encerrado';
+                if (getPageDisplayContext() === 'home' && !getPublicCoupons().length) {
+                    storeConfig.couponRuntime = {
+                        ...(storeConfig.couponRuntime || {}),
+                        hideHomeCouponsAfterExpiry: true,
+                        lastAutoExpiredAt: new Date().toISOString()
+                    };
+                    applyStoreUiConfig();
+                    renderAvailableCouponsPanel();
+                }
                 return;
             }
             element.textContent = `Encerra em ${formatCountdownParts(date)}`;
@@ -3144,7 +3170,7 @@
                 ? ui.showAvailableCouponsPanelProductDirect !== false
                 : ui.showAvailableCouponsPanelHome !== false;
 
-        if (!panelVisible) {
+        if (!panelVisible || shouldAutoHideHomeCoupons()) {
             panel.style.display = 'none';
             return;
         }

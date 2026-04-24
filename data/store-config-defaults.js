@@ -17,6 +17,10 @@ module.exports = {
     showFiltersButton: true,
     showCustomerMenuButton: true
   },
+  couponRuntime: {
+    hideHomeCouponsAfterExpiry: false,
+    lastAutoExpiredAt: ""
+  },
   globalPricing: {
     active: false,
     type: "percent",
