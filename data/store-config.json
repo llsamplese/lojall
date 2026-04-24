@@ -133,7 +133,7 @@
     "COMBO1": {
       "code": "COMBO1",
       "label": "Combo 1",
-      "active": true,
+      "active": false,
       "quantity": 5,
       "fixedPrice": 160,
       "includedItems": [],
