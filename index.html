@@ -1617,6 +1617,8 @@
             linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.018));
         border: 1px solid rgba(255, 193, 7, 0.14);
         box-shadow: 0 14px 26px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.04);
+        justify-items: center;
+        text-align: center;
     }
 
     .available-packages-head {
@@ -1638,6 +1640,8 @@
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
         gap: 8px;
+        width: 100%;
+        justify-content: center;
     }
 
     .available-package-card {
@@ -1648,18 +1652,24 @@
         background: rgba(10, 10, 10, 0.42);
         border: 1px solid rgba(255,255,255,0.08);
         box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+        justify-items: center;
+        text-align: center;
     }
 
     .available-package-top {
-        display: flex;
-        align-items: start;
-        justify-content: space-between;
-        gap: 12px;
+        display: grid;
+        gap: 8px;
+        width: 100%;
+        justify-items: center;
+        text-align: center;
     }
 
     .available-package-label {
         display: grid;
         gap: 3px;
+        width: 100%;
+        justify-items: center;
+        text-align: center;
     }
 
     .available-package-code {
@@ -1677,9 +1687,9 @@
     }
 
     .available-package-value {
-        justify-self: start;
         display: inline-flex;
         align-items: center;
+        justify-content: center;
         gap: 6px;
         min-height: 30px;
         padding: 0 10px;
@@ -1698,10 +1708,13 @@
         font-size: 0.77rem;
         color: #bba96d;
         line-height: 1.35;
+        justify-items: center;
+        text-align: center;
     }
 
     .available-package-select {
         min-height: 34px;
+        justify-self: center;
         border-radius: 10px;
         border: 1px solid rgba(255, 193, 7, 0.28);
         background: rgba(255, 193, 7, 0.1);
