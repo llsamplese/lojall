@@ -2785,7 +2785,6 @@
     const TRANSPARENT_PAYMENT_ENDPOINT = '/api/process-payment';
     const PAYMENT_STATUS_ENDPOINT = '/api/payment-status';
     const STORE_CONFIG_ENDPOINT = '/api/store-config';
-    const TRACK_VISIT_ENDPOINT = '/api/track-visit';
     const CARD_SURCHARGE = 1.0524;
     let appliedCoupon = null;
     let selectedPackageCode = '';
@@ -4230,10 +4229,11 @@
         if (window.__storefrontVisitTracked) return;
         window.__storefrontVisitTracked = true;
         try {
-            await fetch(TRACK_VISIT_ENDPOINT, {
+            await fetch(STORE_CONFIG_ENDPOINT, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
+                    action: 'track_visit',
                     pageType: getPageDisplayContext(),
                     path: `${window.location.pathname || '/'}${window.location.search || ''}`
                 })
