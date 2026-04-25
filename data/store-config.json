@@ -43,9 +43,10 @@
       "minItems": 1,
       "validUntil": "2026-04-25T23:59",
       "usedPayments": [
-        "155988280750"
+        "155988280750",
+        "155667933469"
       ],
-      "usedCount": 1,
+      "usedCount": 2,
       "expiredAt": "2026-04-23T01:20:09.972Z",
       "usageLimit": "",
       "hidden": false
