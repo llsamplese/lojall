@@ -142,6 +142,18 @@
       "visibility": "direct_only",
       "routeSlug": "combo1",
       "validUntil": "2026-04-25T23:59"
+    },
+    "COMBO2": {
+      "code": "COMBO2",
+      "label": "Combo com 3 samples",
+      "mode": "custom_choice",
+      "visibility": "direct_only",
+      "routeSlug": "combo2",
+      "active": true,
+      "quantity": 3,
+      "fixedPrice": 100,
+      "includedItems": [],
+      "validUntil": "2026-04-25T23:59"
     }
   }
 }
