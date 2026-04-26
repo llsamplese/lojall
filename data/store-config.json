@@ -21,8 +21,8 @@
     "showPackagesPanelDirect": true
   },
   "couponRuntime": {
-    "hideHomeCouponsAfterExpiry": false,
-    "lastAutoExpiredAt": ""
+    "hideHomeCouponsAfterExpiry": true,
+    "lastAutoExpiredAt": "2026-04-26T00:01:12.294Z"
   },
   "globalPricing": {
     "active": false,
@@ -36,18 +36,18 @@
     "LL20OFF": {
       "code": "LL20OFF",
       "label": "R$ 20 OFF",
-      "active": true,
+      "active": false,
       "type": "fixed",
       "value": 20,
       "minSubtotal": 0,
       "minItems": 1,
-      "validUntil": "2026-04-25T23:59",
+      "validUntil": "",
       "usedPayments": [
         "155988280750",
         "155667933469"
       ],
       "usedCount": 2,
-      "expiredAt": "2026-04-23T01:20:09.972Z",
+      "expiredAt": "2026-04-26T00:01:12.294Z",
       "usageLimit": "",
       "hidden": false
     },
