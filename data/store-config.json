@@ -21,8 +21,8 @@
     "showPackagesPanelDirect": true
   },
   "couponRuntime": {
-    "hideHomeCouponsAfterExpiry": true,
-    "lastAutoExpiredAt": "2026-04-27T07:42:51.004Z"
+    "hideHomeCouponsAfterExpiry": false,
+    "lastAutoExpiredAt": ""
   },
   "globalPricing": {
     "active": false,
@@ -116,7 +116,7 @@
     "LL15": {
       "code": "LL15",
       "label": "Bem-vindo 15%",
-      "active": false,
+      "active": true,
       "type": "percent",
       "value": 15,
       "minSubtotal": 0,
