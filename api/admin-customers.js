@@ -34,6 +34,10 @@ function sortByDateDesc(list, getDate) {
   return list.sort((a, b) => new Date(getDate(b) || 0) - new Date(getDate(a) || 0));
 }
 
+function buildPurchaseId(record) {
+  return String(record?.payment_id || `${record?.created_at || ""}-${JSON.stringify(record?.items || [])}`);
+}
+
 module.exports = async (req, res) => {
   if (req.method !== "GET") {
     res.setHeader("Allow", "GET");
@@ -63,7 +67,8 @@ module.exports = async (req, res) => {
         total_orders: 0,
         approved_orders: 0,
         purchases: [],
-        all_payment_ids: new Set()
+        all_payment_ids: new Set(),
+        approved_purchases: new Map()
       };
 
       customer.name = String(record?.customer_name || "").trim() || customer.name;
@@ -81,8 +86,7 @@ module.exports = async (req, res) => {
       }
 
       if (String(record?.status || "").trim() === "approved") {
-        customer.approved_orders += 1;
-        customer.purchases.push({
+        customer.approved_purchases.set(buildPurchaseId(record), {
           payment_id: paymentId,
           created_at: createdAt,
           payment_type_id: String(record?.payment_type_id || "").trim(),
@@ -101,9 +105,9 @@ module.exports = async (req, res) => {
         phone: customer.phone,
         access_code: customer.access_code,
         last_order_at: customer.last_order_at,
-        total_orders: customer.all_payment_ids.size || customer.purchases.length,
-        approved_orders: customer.approved_orders,
-        purchases: sortByDateDesc(customer.purchases, (purchase) => purchase.created_at)
+        total_orders: customer.all_payment_ids.size || customer.approved_purchases.size,
+        approved_orders: customer.approved_purchases.size,
+        purchases: sortByDateDesc(Array.from(customer.approved_purchases.values()), (purchase) => purchase.created_at)
       })),
       (customer) => customer.last_order_at
     );

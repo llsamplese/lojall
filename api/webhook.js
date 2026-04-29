@@ -1,5 +1,5 @@
 const crypto = require('node:crypto');
-const { appendOrderLead, hasSuccessfulEmailLog } = require('../lib/github-order-log');
+const { appendOrderLead, hasApprovedPaymentLog, hasSuccessfulEmailLog } = require('../lib/github-order-log');
 const { sendPurchaseApprovedEmail } = require('../lib/email-delivery');
 const { registerCouponUsage } = require('../lib/coupon-utils');
 
@@ -158,21 +158,26 @@ module.exports = async (req, res) => {
     const payment = await fetchPayment(resourceId);
     const normalizedPayment = normalizePayment(payment);
 
-    await appendOrderLead({
-      created_at: new Date().toISOString(),
-      status: normalizedPayment.status,
-      status_detail: normalizedPayment.status_detail,
-      payment_id: normalizedPayment.id,
-      payment_type_id: normalizedPayment.payment_type_id,
-      transaction_amount: normalizedPayment.transaction_amount,
-      payer_email: normalizedPayment.payer?.email || '',
-      customer_name: normalizedPayment.metadata?.customer_name || '',
-      customer_email: normalizedPayment.metadata?.customer_email || normalizedPayment.payer?.email || '',
-      customer_phone: normalizedPayment.metadata?.customer_phone || '',
-      customer_access_code: normalizedPayment.metadata?.customer_access_code || '',
-      coupon_code: normalizedPayment.metadata?.coupon_code || '',
-      items: Array.isArray(normalizedPayment.metadata?.original_items) ? normalizedPayment.metadata.original_items : []
-    });
+    const shouldSkipApprovedLog = normalizedPayment.status === 'approved'
+      && await hasApprovedPaymentLog(normalizedPayment.id);
+
+    if (!shouldSkipApprovedLog) {
+      await appendOrderLead({
+        created_at: new Date().toISOString(),
+        status: normalizedPayment.status,
+        status_detail: normalizedPayment.status_detail,
+        payment_id: normalizedPayment.id,
+        payment_type_id: normalizedPayment.payment_type_id,
+        transaction_amount: normalizedPayment.transaction_amount,
+        payer_email: normalizedPayment.payer?.email || '',
+        customer_name: normalizedPayment.metadata?.customer_name || '',
+        customer_email: normalizedPayment.metadata?.customer_email || normalizedPayment.payer?.email || '',
+        customer_phone: normalizedPayment.metadata?.customer_phone || '',
+        customer_access_code: normalizedPayment.metadata?.customer_access_code || '',
+        coupon_code: normalizedPayment.metadata?.coupon_code || '',
+        items: Array.isArray(normalizedPayment.metadata?.original_items) ? normalizedPayment.metadata.original_items : []
+      });
+    }
 
     let email = { sent: false, skipped: true, reason: 'payment_not_approved' };
     if (normalizedPayment.status === 'approved') {
