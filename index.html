@@ -4189,14 +4189,14 @@
         document.body.style.overflow = '';
     }
 
-    function getRequestedProductValue() {
+    function getRequestedProductCandidates() {
         const params = new URLSearchParams(window.location.search);
-        return String(
-            params.get('produto')
-            || params.get('product')
-            || params.get('sample')
-            || ''
-        ).trim();
+        return [
+            params.get('sample'),
+            params.get('product_name'),
+            params.get('produto'),
+            params.get('product')
+        ].map((value) => String(value || '').trim()).filter(Boolean);
     }
 
     function findLinkedProductIndex(rawValue) {
@@ -4256,8 +4256,12 @@
     }
 
     function applyLinkedProductFromUrl() {
-        const rawValue = getRequestedProductValue();
-        linkedProductIndex = findLinkedProductIndex(rawValue);
+        const candidates = getRequestedProductCandidates();
+        linkedProductIndex = -1;
+        for (const candidate of candidates) {
+            linkedProductIndex = findLinkedProductIndex(candidate);
+            if (linkedProductIndex >= 0) break;
+        }
         if (linkedProductIndex < 0) return;
 
         activeStyle = 'all';
@@ -4338,6 +4342,7 @@
         url.searchParams.delete('produto');
         url.searchParams.delete('product');
         url.searchParams.delete('sample');
+        url.searchParams.delete('product_name');
         window.location.href = url.toString();
     }
 
