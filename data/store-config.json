@@ -122,8 +122,10 @@
       "minSubtotal": 0,
       "minItems": 1,
       "usageLimit": "",
-      "usedCount": 0,
-      "usedPayments": [],
+      "usedCount": 1,
+      "usedPayments": [
+        "157228849830"
+      ],
       "hidden": false,
       "validUntil": "2026-05-01T23:59",
       "expiredAt": "2026-04-28T01:34:31.006Z"
