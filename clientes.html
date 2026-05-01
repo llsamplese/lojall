@@ -167,6 +167,51 @@
     }
     .status-box.ok { background: var(--ok-soft); border-color: rgba(34,197,94,.22); color: #d9ffd8; }
     .status-box.error { background: var(--danger-soft); border-color: rgba(239,68,68,.22); color: #ffd4d4; }
+    .whatsapp-action-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.62);
+      backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      z-index: 120;
+    }
+    .whatsapp-action-overlay.active { display: flex; }
+    .whatsapp-action-card {
+      width: min(460px, 100%);
+      border-radius: 24px;
+      border: 1px solid rgba(255,193,7,.16);
+      background: linear-gradient(180deg, rgba(20,20,20,.98), rgba(10,10,10,.98));
+      box-shadow: 0 24px 60px rgba(0,0,0,.35);
+      padding: 22px;
+      display: grid;
+      gap: 14px;
+    }
+    .whatsapp-action-card strong {
+      font-size: 1.12rem;
+      color: #fff4cc;
+      letter-spacing: -.02em;
+    }
+    .whatsapp-action-card p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+    .whatsapp-action-actions {
+      display: grid;
+      gap: 10px;
+    }
+    .whatsapp-action-actions button {
+      width: 100%;
+      min-height: 48px;
+    }
+    .whatsapp-action-note {
+      color: var(--muted);
+      font-size: .9rem;
+      line-height: 1.5;
+    }
     .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
     input,select {
       width: 100%;
@@ -593,6 +638,18 @@
       </div>
     </div>
   </div>
+  <div id="whatsappActionOverlay" class="whatsapp-action-overlay" aria-hidden="true">
+    <div class="whatsapp-action-card" role="dialog" aria-modal="true" aria-labelledby="whatsappActionTitle">
+      <strong id="whatsappActionTitle">Mensagem de WhatsApp</strong>
+      <p id="whatsappActionDescription">Escolha como você quer usar essa mensagem.</p>
+      <div id="whatsappActionPhoneNote" class="whatsapp-action-note"></div>
+      <div class="whatsapp-action-actions">
+        <button id="whatsappSendButton" class="primary" type="button">Enviar mensagem</button>
+        <button id="whatsappCopyButton" class="ghost" type="button">Copiar mensagem</button>
+        <button id="whatsappCloseButton" class="ghost" type="button">Cancelar</button>
+      </div>
+    </div>
+  </div>
   <script>
 const ADMIN_CUSTOMERS_ENDPOINT='/api/admin-customers';
 const STORE_CONFIG_ENDPOINT='/api/store-config';
@@ -621,6 +678,7 @@ let couponsCache={};
 let packagesCache={};
 let productsCache=[];
 let manualCustomerItems=[];
+let pendingWhatsAppPayload=null;
 const money=v=>Number(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
 const escapeHtml=v=>String(v||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 const quoteJs=v=>JSON.stringify(String(v||''));
@@ -634,8 +692,12 @@ function normalizeWhatsappPhone(value){const digits=String(value||'').replace(/\
 function buildPurchaseWhatsappText(customer,purchase){const customerName=String(customer?.name||'Cliente').trim()||'Cliente';const lines=[`Olá, ${customerName}!`,``,`Sua compra na Loja LL Samples foi aprovada.`];const items=Array.isArray(purchase?.items)?purchase.items:[];if(items.length){lines.push('',`Itens desta compra:`);items.forEach((item)=>{lines.push(`- ${String(item?.title||'').trim()}${item?.delivered&&item?.link?`: ${item.link}`:''}`);});}if(Number(purchase?.transaction_amount||0)>0){lines.push('',`Total: ${money(purchase.transaction_amount)}`);}if(customer?.access_code){lines.push(`Código de acesso: ${customer.access_code}`);}lines.push('',`Qualquer dúvida, fico à disposição.`);return lines.join('\n');}
 function buildCustomerWhatsappText(customer){const customerName=String(customer?.name||'Cliente').trim()||'Cliente';const lines=[`Olá, ${customerName}!`,``,`Segue o resumo das suas compras aprovadas na Loja LL Samples.`];const purchases=Array.isArray(customer?.purchases)?customer.purchases:[];if(purchases.length){purchases.forEach((purchase,index)=>{lines.push('',`Compra ${index+1}${purchase?.created_at?` • ${new Date(purchase.created_at).toLocaleDateString('pt-BR')}`:''}`);(Array.isArray(purchase?.items)?purchase.items:[]).forEach((item)=>{lines.push(`- ${String(item?.title||'').trim()}${item?.delivered&&item?.link?`: ${item.link}`:''}`);});if(Number(purchase?.transaction_amount||0)>0){lines.push(`Total: ${money(purchase.transaction_amount)}`);}});}if(customer?.access_code){lines.push('',`Código de acesso: ${customer.access_code}`);}lines.push('',`Se precisar de ajuda, estou à disposição.`);return lines.join('\n');}
 function openWhatsAppMessage(phone,text){const normalizedPhone=normalizeWhatsappPhone(phone);if(!normalizedPhone){setStatus('Esse cliente não tem telefone/WhatsApp informado.','error');return;}const message=String(text||'').trim();const url=`https://wa.me/${normalizedPhone}${message?`?text=${encodeURIComponent(message)}`:''}`;const popup=window.open(url,'_blank');if(popup){try{popup.opener=null;}catch{}try{popup.focus();}catch{}setStatus('WhatsApp aberto com a mensagem pronta.','ok');return;}window.location.href=url;setStatus('Abrindo WhatsApp com a mensagem pronta.','ok');}
-function openCustomerWhatsApp(email){const customer=customersCache.find(item=>String(item?.email||'').trim().toLowerCase()===String(email||'').trim().toLowerCase());if(!customer){setStatus('Cliente não encontrado para abrir o WhatsApp.','error');return;}openWhatsAppMessage(customer.phone,buildCustomerWhatsappText(customer));}
-function openPurchaseWhatsApp(email,paymentId){const customer=customersCache.find(item=>String(item?.email||'').trim().toLowerCase()===String(email||'').trim().toLowerCase());if(!customer){setStatus('Cliente não encontrado para abrir o WhatsApp.','error');return;}const purchase=(Array.isArray(customer.purchases)?customer.purchases:[]).find(item=>String(item?.payment_id||'').trim()===String(paymentId||'').trim())||customer.purchases?.[0];if(!purchase){setStatus('Compra não encontrada para esse cliente.','error');return;}openWhatsAppMessage(customer.phone,buildPurchaseWhatsappText(customer,purchase));}
+function closeWhatsAppActionPicker(){pendingWhatsAppPayload=null;const overlay=document.getElementById('whatsappActionOverlay');if(overlay){overlay.classList.remove('active');overlay.setAttribute('aria-hidden','true');}}
+function openWhatsAppActionPicker(payload){pendingWhatsAppPayload=payload;const overlay=document.getElementById('whatsappActionOverlay');const description=document.getElementById('whatsappActionDescription');const phoneNote=document.getElementById('whatsappActionPhoneNote');const sendButton=document.getElementById('whatsappSendButton');if(!overlay||!description||!phoneNote||!sendButton)return;const normalizedPhone=normalizeWhatsappPhone(payload?.phone||'');description.textContent=payload?.description||'Escolha como você quer usar essa mensagem.';phoneNote.textContent=normalizedPhone?`Número pronto para envio: +${normalizedPhone}`:'Esse cliente não tem telefone salvo. Você ainda pode copiar a mensagem.';sendButton.disabled=!normalizedPhone;sendButton.style.opacity=normalizedPhone?'1':'0.55';sendButton.style.cursor=normalizedPhone?'pointer':'not-allowed';overlay.classList.add('active');overlay.setAttribute('aria-hidden','false');}
+function sendPendingWhatsAppMessage(){if(!pendingWhatsAppPayload)return;const {phone,text}=pendingWhatsAppPayload;const normalizedPhone=normalizeWhatsappPhone(phone);if(!normalizedPhone){setStatus('Esse cliente não tem telefone/WhatsApp informado.','error');return;}openWhatsAppMessage(normalizedPhone,text);closeWhatsAppActionPicker();}
+function copyPendingWhatsAppMessage(){if(!pendingWhatsAppPayload)return;copyText(pendingWhatsAppPayload.text||'','Mensagem copiada.');closeWhatsAppActionPicker();}
+function openCustomerWhatsApp(email){const customer=customersCache.find(item=>String(item?.email||'').trim().toLowerCase()===String(email||'').trim().toLowerCase());if(!customer){setStatus('Cliente não encontrado para abrir o WhatsApp.','error');return;}openWhatsAppActionPicker({phone:customer.phone,text:buildCustomerWhatsappText(customer),description:'Escolha se você quer abrir o WhatsApp já com a mensagem pronta ou apenas copiar o texto.'});}
+function openPurchaseWhatsApp(email,paymentId){const customer=customersCache.find(item=>String(item?.email||'').trim().toLowerCase()===String(email||'').trim().toLowerCase());if(!customer){setStatus('Cliente não encontrado para abrir o WhatsApp.','error');return;}const purchase=(Array.isArray(customer.purchases)?customer.purchases:[]).find(item=>String(item?.payment_id||'').trim()===String(paymentId||'').trim())||customer.purchases?.[0];if(!purchase){setStatus('Compra não encontrada para esse cliente.','error');return;}openWhatsAppActionPicker({phone:customer.phone,text:buildPurchaseWhatsappText(customer,purchase),description:'Escolha se você quer abrir o WhatsApp da compra ou copiar a mensagem para enviar manualmente.'});}
 function updateStats(customers){const approved=customers.reduce((s,c)=>s+Number(c.approved_orders||0),0);const delivered=customers.reduce((s,c)=>s+c.purchases.reduce((a,p)=>a+p.items.filter(i=>i.delivered).length,0),0);document.getElementById('statCustomers').textContent=customers.length;document.getElementById('statApproved').textContent=approved;document.getElementById('statDelivered').textContent=delivered;document.getElementById('statProducts').textContent=productsCache.length;}
 function updateTrafficStats(stats){trafficStatsCache={total:Number(stats?.total||0),home:Number(stats?.home||0),product_direct:Number(stats?.product_direct||0),package_direct:Number(stats?.package_direct||0)};const visitsEl=document.getElementById('statVisits');if(visitsEl)visitsEl.textContent=trafficStatsCache.total;}
 function renderProductSelectOptions(selectedLabel='Selecionar sample'){const options=['<option value="">'+escapeHtml(selectedLabel)+'</option>'];productsCache.forEach(product=>{options.push(`<option value="${escapeHtml(product.nome)}">${escapeHtml(product.nome)} • ${money(product.valor)}</option>`);});return options.join('');}
@@ -692,6 +754,10 @@ async function loadStoreData(){const localPackages={...(packagesCache||{})};cons
 async function loadDashboard(showSuccess=false){setStatus('Carregando painel...','');try{await Promise.all([loadStoreData(),loadCustomers(),loadTrafficStats()]);setStatus(showSuccess?'Painel atualizado.':'Painel carregado com sucesso.','ok');}catch(error){customersCache=[];productsCache=[];updateTrafficStats({});renderCustomers([]);renderProducts();setStatus(error.message||'Erro ao carregar painel.','error');}}
 document.getElementById('searchInput').addEventListener('input',applyCustomerFilters);
 document.getElementById('statusFilter').addEventListener('change',applyCustomerFilters);
+document.getElementById('whatsappSendButton').addEventListener('click',sendPendingWhatsAppMessage);
+document.getElementById('whatsappCopyButton').addEventListener('click',copyPendingWhatsAppMessage);
+document.getElementById('whatsappCloseButton').addEventListener('click',closeWhatsAppActionPicker);
+document.getElementById('whatsappActionOverlay').addEventListener('click',(event)=>{if(event.target===event.currentTarget) closeWhatsAppActionPicker();});
 loadDashboard();
   </script>
 </body>
