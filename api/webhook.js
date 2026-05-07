@@ -32,6 +32,7 @@ function getNotificationType(req, body) {
 function getResourceId(req, body) {
   return String(
     getFirst(req.query?.['data.id'])
+    || getFirst(req.query?.id)
     || body?.data?.id
     || body?.id
     || ''
