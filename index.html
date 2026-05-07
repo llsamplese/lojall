@@ -478,6 +478,36 @@
         background: rgba(0, 166, 80, 0.12);
     }
 
+    .checkout-retry-panel {
+        display: none;
+        gap: 10px;
+        margin-top: 12px;
+        padding: 12px;
+        border-radius: 14px;
+        border: 1px solid rgba(255, 193, 7, 0.18);
+        background: rgba(255, 193, 7, 0.06);
+    }
+
+    .checkout-retry-panel.open {
+        display: grid;
+    }
+
+    .checkout-retry-panel span {
+        color: #efe2b5;
+        font-size: 0.88rem;
+        line-height: 1.45;
+    }
+
+    .checkout-retry-button {
+        min-height: 44px;
+        border-radius: 14px;
+        border: 1px solid rgba(255, 193, 7, 0.28);
+        background: linear-gradient(135deg, #ffe082, #ffc107);
+        color: #211901;
+        font-weight: 800;
+        cursor: pointer;
+    }
+
     .pix-result {
         display: none;
         gap: 14px;
@@ -2353,6 +2383,10 @@
             <div class="checkout-panel-title">Pagamento</div>
             <div id="paymentBrick_container" class="checkout-brick-host"></div>
             <div id="checkoutBrickStatus" class="checkout-brick-status">Carregue o checkout para pagar com Pix ou cartão diretamente aqui.</div>
+            <div id="checkoutRetryPanel" class="checkout-retry-panel">
+                <span id="checkoutRetryMessage">Não conseguimos gerar o Pix agora.</span>
+                <button class="checkout-retry-button" type="button" onclick="retryLastTransparentPayment()">Tentar gerar Pix novamente</button>
+            </div>
             <div id="checkoutAccessCodeNotice" class="checkout-brick-status" style="display:none;"></div>
             <div id="pixResult" class="pix-result">
                 <img id="pixQrImage" class="pix-qr" alt="QR Code Pix">
@@ -2824,6 +2858,9 @@
     let currentPaymentId = null;
     let currentCustomerAccessCode = '';
     let paymentStatusPoll = null;
+    let lastTransparentFormData = null;
+    let paymentSubmitInProgress = false;
+    const PAYMENT_REQUEST_TIMEOUT_MS = 30000;
     let mobileCartOpen = false;
     let storeConfig = {
         ui: {
@@ -3346,6 +3383,22 @@
         status.textContent = message;
     }
 
+    function setCheckoutRetryPanel(open, message = '') {
+        const panel = document.getElementById('checkoutRetryPanel');
+        const messageEl = document.getElementById('checkoutRetryMessage');
+        if (!panel) return;
+        panel.classList.toggle('open', Boolean(open));
+        if (messageEl && message) {
+            messageEl.textContent = message;
+        }
+    }
+
+    function createTimeoutSignal(timeoutMs) {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+        return { signal: controller.signal, timeoutId };
+    }
+
     function setAccessCodeNotice(code) {
         const notice = document.getElementById('checkoutAccessCodeNotice');
         if (!notice) {
@@ -3605,55 +3658,92 @@
     }
 
     async function submitTransparentPayment(formData) {
+        if (paymentSubmitInProgress) {
+            throw new Error('Já estamos tentando gerar o pagamento. Aguarde alguns segundos.');
+        }
+
+        paymentSubmitInProgress = true;
+        lastTransparentFormData = formData;
+        setCheckoutRetryPanel(false);
         const customer = validateCheckoutCustomer();
         const items = getSelectedItems();
         const totals = getCartTotals();
-        const response = await fetch(TRANSPARENT_PAYMENT_ENDPOINT, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                formData,
-                customer,
-                items: items.map(item => ({
-                    title: item.nome,
-                    unit_price: item.valor,
-                    quantity: 1
-                })),
-                coupon: appliedCoupon ? { code: appliedCoupon.code } : null,
-                packageSelection: selectedPackageCode ? { code: selectedPackageCode } : null
-            })
-        });
+        const { signal, timeoutId } = createTimeoutSignal(PAYMENT_REQUEST_TIMEOUT_MS);
 
-        const data = await response.json();
-        if (!response.ok) {
-            throw new Error(data.error || 'Falha ao processar pagamento.');
+        try {
+            const response = await fetch(TRANSPARENT_PAYMENT_ENDPOINT, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                signal,
+                body: JSON.stringify({
+                    formData,
+                    customer,
+                    items: items.map(item => ({
+                        title: item.nome,
+                        unit_price: item.valor,
+                        quantity: 1
+                    })),
+                    coupon: appliedCoupon ? { code: appliedCoupon.code } : null,
+                    packageSelection: selectedPackageCode ? { code: selectedPackageCode } : null
+                })
+            });
+
+            const data = await response.json();
+            if (!response.ok) {
+                throw new Error(data.error || 'Falha ao processar pagamento.');
+            }
+
+            currentCustomerAccessCode = String(data.customer_access_code || '').trim();
+            setAccessCodeNotice(currentCustomerAccessCode);
+
+            if (data.status === 'approved') {
+                setBrickStatus('Pagamento aprovado. Redirecionando para sua entrega...', 'success');
+                const accessParam = currentCustomerAccessCode ? `&access_code=${encodeURIComponent(currentCustomerAccessCode)}` : '';
+                window.location.href = `/sucesso.html?payment_id=${data.payment_id}${accessParam}`;
+                return;
+            }
+
+            if (data.payment_type_id === 'pix' || data.payment_type_id === 'bank_transfer' || data.qr_code || data.qr_code_base64 || data.ticket_url) {
+                setBrickStatus('Pix gerado. Pague pelo QR Code ou pelo código copia e cola abaixo. A entrega será liberada automaticamente.', '');
+                showPixResult(data);
+                startPaymentStatusPolling(data.payment_id);
+                return;
+            }
+
+            if (data.status === 'pending' || data.status === 'in_process') {
+                currentPaymentId = data.payment_id;
+                setBrickStatus(`Pagamento criado com status ${data.status}. Vamos acompanhar a aprovação.`, '');
+                startPaymentStatusPolling(data.payment_id);
+                return;
+            }
+
+            throw new Error(data.status_detail || 'O pagamento não foi aprovado.');
+        } catch (error) {
+            const timedOut = error?.name === 'AbortError';
+            const message = timedOut
+                ? 'O Mercado Pago demorou para responder. Tente gerar o Pix novamente.'
+                : (error.message || 'Não conseguimos gerar o pagamento agora.');
+            setBrickStatus(message, 'error');
+            setCheckoutRetryPanel(true, 'Se o QR Code não apareceu, tente novamente. Se já pagou, use o botão "Já paguei" quando ele aparecer.');
+            throw error;
+        } finally {
+            clearTimeout(timeoutId);
+            paymentSubmitInProgress = false;
         }
+    }
 
-        currentCustomerAccessCode = String(data.customer_access_code || '').trim();
-        setAccessCodeNotice(currentCustomerAccessCode);
-
-        if (data.status === 'approved') {
-            setBrickStatus('Pagamento aprovado. Redirecionando para sua entrega...', 'success');
-            const accessParam = currentCustomerAccessCode ? `&access_code=${encodeURIComponent(currentCustomerAccessCode)}` : '';
-            window.location.href = `/sucesso.html?payment_id=${data.payment_id}${accessParam}`;
+    async function retryLastTransparentPayment() {
+        if (!lastTransparentFormData) {
+            setBrickStatus('Escolha Pix novamente no checkout para gerar uma nova tentativa.', 'error');
             return;
         }
 
-        if (data.payment_type_id === 'pix' || data.payment_type_id === 'bank_transfer' || data.qr_code || data.qr_code_base64 || data.ticket_url) {
-            setBrickStatus('Pix gerado. Pague pelo QR Code ou pelo código copia e cola abaixo. A entrega será liberada automaticamente.', '');
-            showPixResult(data);
-            startPaymentStatusPolling(data.payment_id);
-            return;
+        setBrickStatus('Tentando gerar o Pix novamente...', '');
+        try {
+            await submitTransparentPayment(lastTransparentFormData);
+        } catch (error) {
+            console.error('[transparent-checkout-retry]', error);
         }
-
-        if (data.status === 'pending' || data.status === 'in_process') {
-            currentPaymentId = data.payment_id;
-            setBrickStatus(`Pagamento criado com status ${data.status}. Vamos acompanhar a aprovação.`, '');
-            startPaymentStatusPolling(data.payment_id);
-            return;
-        }
-
-        throw new Error(data.status_detail || 'O pagamento não foi aprovado.');
     }
 
     async function renderTransparentCheckoutBrick() {
@@ -3666,9 +3756,12 @@
 
         await destroyPaymentBrick();
         hidePixResult();
+        setCheckoutRetryPanel(false);
         stopPaymentStatusPolling();
         currentPaymentId = null;
         currentCustomerAccessCode = '';
+        lastTransparentFormData = null;
+        paymentSubmitInProgress = false;
         setAccessCodeNotice('');
 
         const mp = new MercadoPago(config.publicKey, { locale: 'pt-BR' });
