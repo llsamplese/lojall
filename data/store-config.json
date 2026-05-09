@@ -122,7 +122,7 @@
     },
     "LL30": {
       "code": "LL30",
-      "label": "30% OFF",
+      "label": "30%OFF",
       "active": true,
       "type": "percent",
       "value": 30,
