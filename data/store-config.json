@@ -76,7 +76,7 @@
       "minSubtotal": 0,
       "minItems": 1,
       "validUntil": "",
-      "usageLimit": "",
+      "usageLimit": 10,
       "usedCount": 2,
       "usedPayments": [
         "157067961813",
@@ -135,7 +135,7 @@
       ],
       "usedCount": 2,
       "expiredAt": "2026-04-26T00:01:12.294Z",
-      "usageLimit": "",
+      "usageLimit": 10,
       "hidden": false
     }
   },
