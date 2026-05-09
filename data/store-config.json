@@ -122,10 +122,10 @@
     },
     "LL30": {
       "code": "LL30",
-      "label": "R$ 20 OFF",
+      "label": "30% OFF",
       "active": true,
       "type": "percent",
-      "value": 25,
+      "value": 30,
       "minSubtotal": 0,
       "minItems": 1,
       "validUntil": "",
