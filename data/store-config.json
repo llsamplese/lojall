@@ -44,10 +44,11 @@
       "minItems": 1,
       "validUntil": "",
       "usageLimit": "",
-      "usedCount": 2,
+      "usedCount": 3,
       "usedPayments": [
         "156281036638",
-        "158213356094"
+        "158213356094",
+        "158644647928"
       ],
       "expiredAt": "",
       "hidden": true
