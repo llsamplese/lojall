@@ -2208,14 +2208,39 @@
     }
 
     .checkout-modal {
-        width: calc(100vw - 18px);
-        max-height: calc(100vh - 18px);
-        padding: 16px;
-        border-radius: 20px;
+        width: calc(100vw - 8px);
+        max-height: calc(100vh - 8px);
+        padding: 10px;
+        border-radius: 18px;
     }
 
     .checkout-modal-grid {
         grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .checkout-modal-header {
+        margin-bottom: 12px;
+    }
+
+    .checkout-panel {
+        padding: 10px;
+        border-radius: 16px;
+        overflow: visible;
+    }
+
+    .checkout-brick-host {
+        overflow: visible;
+        min-height: 500px;
+    }
+
+    #paymentBrick_container {
+        margin-left: -6px;
+        margin-right: -6px;
+    }
+
+    .checkout-brick-status:empty {
+        display: none;
     }
 
     .coupon-row {
@@ -3264,6 +3289,7 @@
         if (!status) return;
         status.className = `checkout-brick-status${type ? ` ${type}` : ''}`;
         status.textContent = message;
+        status.style.display = message ? 'block' : 'none';
     }
 
     function setCheckoutRetryPanel(open, message = '') {
@@ -3682,7 +3708,7 @@
             callbacks: {
                 onReady: () => {
                     observePaymentBrickOptions();
-                    setBrickStatus('Checkout transparente carregado. Escolha Pix ou cartão e finalize aqui.', '');
+                    setBrickStatus('', '');
                 },
                 onSubmit: ({ formData }) => {
                     const paymentMethodId = String(formData?.payment_method_id || '').trim();
@@ -4840,6 +4866,7 @@
 
 
 </body></html>
+
 
 
 
