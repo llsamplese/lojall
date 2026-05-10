@@ -1,6 +1,6 @@
 {
   "ui": {
-    "showCouponBoxHome": false,
+    "showCouponBoxHome": true,
     "showCouponBoxProductDirect": true,
     "showCouponBoxPackageDirect": false,
     "showAvailableCouponsPanelHome": true,
@@ -74,12 +74,12 @@
     "LL10": {
       "code": "LL10",
       "label": "Bem-vindo 10%",
-      "active": false,
+      "active": true,
       "type": "percent",
       "value": 10,
       "minSubtotal": 0,
       "minItems": 1,
-      "validUntil": "",
+      "validUntil": "2026-05-11T23:59",
       "usageLimit": "",
       "usedCount": 2,
       "usedPayments": [
@@ -87,13 +87,13 @@
         "157633622387"
       ],
       "expiredAt": "2026-05-09T00:23:12.812Z",
-      "hidden": true,
+      "hidden": false,
       "allowWithPackage": false
     },
     "LLOFF10": {
       "code": "LLOFF10",
       "label": "LL10",
-      "active": false,
+      "active": true,
       "type": "fixed",
       "value": 10,
       "minSubtotal": 0,
