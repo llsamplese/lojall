@@ -3,7 +3,7 @@
     "showCouponBoxHome": true,
     "showCouponBoxProductDirect": true,
     "showCouponBoxPackageDirect": false,
-    "showAvailableCouponsPanelHome": false,
+    "showAvailableCouponsPanelHome": true,
     "showAvailableCouponsPanelProductDirect": true,
     "showAvailableCouponsPanelPackageDirect": false,
     "showPackagesPanel": true,
