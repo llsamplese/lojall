@@ -96,7 +96,7 @@
       "active": true,
       "type": "fixed",
       "value": 10,
-      "minSubtotal": 60,
+      "minSubtotal": 0,
       "minItems": 1,
       "validUntil": "",
       "expiredAt": "2026-04-22T17:21:56.070Z",
