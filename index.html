@@ -3582,7 +3582,6 @@
             }
 
             currentCustomerAccessCode = String(data.customer_access_code || '').trim();
-            setAccessCodeNotice(currentCustomerAccessCode);
 
             if (data.status === 'approved') {
                 setBrickStatus('Pagamento aprovado. Redirecionando para sua entrega...', 'success');
