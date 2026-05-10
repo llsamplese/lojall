@@ -2621,9 +2621,8 @@
             <div class="product-focus-kicker">Link direto do sample</div>
             <div id="productFocusTitle" class="product-focus-title">Sample LL Samples</div>
             <div id="productFocusPrice" class="product-focus-price">R$ 0,00</div>
-            <div class="product-focus-note">Assista à prévia, adicione ao carrinho e finalize com Pix ou cartão. A entrega é liberada automaticamente após a aprovação.</div>
+            <div class="product-focus-note">Finalize com Pix ou cartão. A entrega é liberada automaticamente após o pagamento.</div>
             <div class="product-focus-actions">
-                <button id="productFocusPreviewButton" class="product-focus-button" type="button" onclick="previewLinkedProduct()">Ver vídeo</button>
                 <button id="productFocusBuyButton" class="product-focus-button primary" type="button" onclick="buyLinkedProduct()">Comprar agora</button>
                 <button class="product-focus-button" type="button" onclick="openFullCatalog()">Ver catálogo completo</button>
             </div>
@@ -4543,6 +4542,7 @@
             }
             if (grid) {
                 grid.classList.remove('product-mode');
+                grid.style.display = '';
             }
             return;
         }
@@ -4551,7 +4551,6 @@
         const title = document.getElementById('productFocusTitle');
         const price = document.getElementById('productFocusPrice');
         const media = document.getElementById('productFocusMedia');
-        const previewButton = document.getElementById('productFocusPreviewButton');
         const playBadge = banner.querySelector('.product-focus-play');
         if (sample) {
             const effectivePrice = getEffectiveSamplePrice(sample);
@@ -4576,10 +4575,6 @@
                     }
                 };
             }
-            if (previewButton) {
-                previewButton.disabled = !sample.video;
-                previewButton.textContent = sample.video ? 'Ver vídeo' : 'Sem vídeo';
-            }
             if (playBadge) {
                 playBadge.style.display = sample.video ? 'grid' : 'none';
             }
@@ -4589,6 +4584,7 @@
         }
         if (grid) {
             grid.classList.add('product-mode');
+            grid.style.display = 'none';
         }
         banner.style.display = 'grid';
     }
