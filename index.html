@@ -1638,18 +1638,21 @@
 
     .available-coupon-top {
         display: grid;
-        gap: 8px;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 10px;
         width: 100%;
-        justify-items: center;
-        text-align: center;
+        align-items: center;
+        justify-items: stretch;
+        text-align: left;
     }
 
     .available-coupon-label {
         display: grid;
         gap: 3px;
-        justify-items: center;
-        text-align: center;
+        justify-items: start;
+        text-align: left;
         width: 100%;
+        min-width: 0;
     }
 
     .available-coupon-code {
@@ -1664,6 +1667,14 @@
         font-size: 0.8rem;
         color: #d1c08b;
         line-height: 1.4;
+    }
+
+    .available-coupon-main-actions {
+        display: inline-flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 8px;
+        flex-wrap: wrap;
     }
 
     .available-coupon-value {
@@ -1694,6 +1705,7 @@
     .available-coupon-copy {
         min-height: 34px;
         justify-self: center;
+        padding: 0 10px;
         border-radius: 10px;
         border: 1px solid rgba(255, 193, 7, 0.28);
         background: rgba(255, 193, 7, 0.1);
@@ -1723,12 +1735,12 @@
         align-items: center;
         gap: 6px;
         justify-self: center;
-        padding: 5px 9px;
+        padding: 6px 11px;
         border-radius: 999px;
         background: rgba(255, 193, 7, 0.09);
         border: 1px solid rgba(255, 193, 7, 0.16);
         color: #f7dfa0;
-        font-size: 0.74rem;
+        font-size: 0.86rem;
         font-weight: 800;
         letter-spacing: 0.02em;
     }
@@ -2394,6 +2406,22 @@
     .product-focus-button {
         flex: 1 1 140px;
         max-width: 240px;
+    }
+
+    .available-coupon-top {
+        grid-template-columns: 1fr;
+        justify-items: center;
+        text-align: center;
+    }
+
+    .available-coupon-label {
+        justify-items: center;
+        text-align: center;
+    }
+
+    .available-coupon-main-actions {
+        justify-content: center;
+        width: 100%;
     }
 
     .available-coupons-list {
@@ -3186,9 +3214,6 @@
             const remaining = Math.max(0, Number(coupon.usageLimit || 0) - Number(coupon.usedCount || 0));
             lines.push(`Restam ${remaining} uso(s) deste cupom.`);
         }
-        if (coupon.validUntil) {
-            lines.push(`Válido até ${formatCouponDate(coupon.validUntil)}.`);
-        }
         return lines;
     }
 
@@ -3216,7 +3241,7 @@
         const minutes = Math.floor((totalSeconds % 3600) / 60);
         const seconds = totalSeconds % 60;
         if (days > 0) {
-            return `${days}d ${String(hours).padStart(2, '0')}h ${String(minutes).padStart(2, '0')}m`;
+            return `${days}d ${String(hours).padStart(2, '0')}h ${String(minutes).padStart(2, '0')}m ${String(seconds).padStart(2, '0')}s`;
         }
         return `${String(hours).padStart(2, '0')}h ${String(minutes).padStart(2, '0')}m ${String(seconds).padStart(2, '0')}s`;
     }
@@ -3333,13 +3358,14 @@
                     <div class="available-coupon-top">
                         <div class="available-coupon-label">
                             <div class="available-coupon-code">${coupon.code}</div>
-                            <div class="available-coupon-name">${coupon.type === 'percent' ? 'Cupom percentual' : coupon.type === 'fixed_per_item' ? 'Cupom fixo por sample' : 'Cupom de desconto fixo'}</div>
                         </div>
-                        <div class="available-coupon-value">${getCouponDisplayValue(coupon)}</div>
+                        <div class="available-coupon-main-actions">
+                            <div class="available-coupon-value">${getCouponDisplayValue(coupon)}</div>
+                            <button class="available-coupon-copy" type="button" onclick="copyAvailableCoupon('${String(coupon.code || '').replace(/'/g, "\\'")}')">Copiar cupom</button>
+                        </div>
                     </div>
                     ${countdown}
                     ${meta}
-                    <button class="available-coupon-copy" type="button" onclick="copyAvailableCoupon('${String(coupon.code || '').replace(/'/g, "\\'")}')">Copiar cupom</button>
                 </article>
             `;
         }).join('');
