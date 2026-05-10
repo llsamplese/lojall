@@ -4155,6 +4155,15 @@
         return `https://img.youtube.com/vi/${videoId}/${quality}.jpg`;
     }
 
+    function isExternalThumbnailUrl(url) {
+        try {
+            const parsed = new URL(url);
+            return /(^|\.)youtube\.com$/i.test(parsed.hostname) || /(^|\.)ytimg\.com$/i.test(parsed.hostname);
+        } catch {
+            return false;
+        }
+    }
+
     function getDisplaySampleName(name) {
         return name.startsWith('LL ') ? name.slice(3) : name;
     }
@@ -4445,7 +4454,7 @@
                 thumbnailImage.src = FALLBACK_THUMBNAIL_URL;
             }, { once: true });
             const targetSrc = thumbnailImage.dataset.targetSrc;
-            if (targetSrc && targetSrc !== FALLBACK_THUMBNAIL_URL) {
+            if (targetSrc && targetSrc !== FALLBACK_THUMBNAIL_URL && !isExternalThumbnailUrl(targetSrc)) {
                 const preloadImage = new Image();
                 preloadImage.onload = () => {
                     thumbnailImage.src = targetSrc;
@@ -4454,6 +4463,8 @@
                     thumbnailImage.src = FALLBACK_THUMBNAIL_URL;
                 };
                 preloadImage.src = targetSrc;
+            } else if (targetSrc && targetSrc !== FALLBACK_THUMBNAIL_URL) {
+                thumbnailImage.src = targetSrc;
             }
         }
         const nameContainer = card.querySelector('.sample-name');
