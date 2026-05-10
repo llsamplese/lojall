@@ -68,8 +68,8 @@
       "usedCount": 0,
       "usedPayments": [],
       "expiredAt": "",
-      "hidden": false,
-      "allowWithPackage": true
+      "hidden": true,
+      "allowWithPackage": false
     },
     "LL10": {
       "code": "LL10",
