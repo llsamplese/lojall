@@ -22,7 +22,7 @@ module.exports = async (req, res) => {
     const body = parseBody(req);
     const subtotal = roundCurrency(body.subtotal || 0);
     const itemsCount = Number(body.itemsCount || 0);
-    const result = await validateCoupon(body.code, { subtotal, itemsCount });
+    const result = await validateCoupon(body.code, { subtotal, itemsCount, hasPackage: Boolean(body.hasPackage) });
 
     if (!result.valid) {
       return res.status(400).json(result);

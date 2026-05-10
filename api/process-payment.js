@@ -157,7 +157,8 @@ async function buildTotals(items, couponCode, packageCode) {
   const couponSubtotal = packageState?.eligible ? packageState.appliedSubtotal : subtotal;
   const couponResult = await validateCoupon(couponCode, {
     subtotal: couponSubtotal,
-    itemsCount: items.reduce((sum, item) => sum + item.quantity, 0)
+    itemsCount: items.reduce((sum, item) => sum + item.quantity, 0),
+    hasPackage: Boolean(packageState?.eligible)
   });
 
   if (couponCode && !couponResult.valid) {

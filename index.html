@@ -4031,7 +4031,8 @@
                 body: JSON.stringify({
                     code,
                     subtotal: couponBaseSubtotal,
-                    itemsCount: items.length
+                    itemsCount: items.length,
+                    hasPackage: Boolean(packageState?.eligible)
                 })
             });
 
