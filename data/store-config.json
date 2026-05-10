@@ -52,7 +52,8 @@
         "157897616291"
       ],
       "expiredAt": "",
-      "hidden": true
+      "hidden": true,
+      "allowWithPackage": true
     },
     "TESTE99": {
       "code": "TESTE99",
@@ -67,12 +68,13 @@
       "usedCount": 0,
       "usedPayments": [],
       "expiredAt": "",
-      "hidden": false
+      "hidden": false,
+      "allowWithPackage": true
     },
     "LL10": {
       "code": "LL10",
       "label": "Bem-vindo 10%",
-      "active": true,
+      "active": false,
       "type": "percent",
       "value": 10,
       "minSubtotal": 0,
@@ -85,7 +87,8 @@
         "157633622387"
       ],
       "expiredAt": "2026-05-09T00:23:12.812Z",
-      "hidden": false
+      "hidden": false,
+      "allowWithPackage": false
     },
     "LLOFF10": {
       "code": "LLOFF10",
@@ -97,10 +100,11 @@
       "minItems": 1,
       "validUntil": "",
       "expiredAt": "2026-04-22T17:21:56.070Z",
-      "usageLimit": 1,
+      "usageLimit": "",
       "usedCount": 0,
       "usedPayments": [],
-      "hidden": true
+      "hidden": false,
+      "allowWithPackage": false
     },
     "LL15": {
       "code": "LL15",
@@ -118,9 +122,10 @@
         "156515733529",
         "156774662613"
       ],
-      "hidden": false,
+      "hidden": true,
       "validUntil": "",
-      "expiredAt": "2026-05-04T01:52:05.108Z"
+      "expiredAt": "2026-05-04T01:52:05.108Z",
+      "allowWithPackage": false
     },
     "LL20": {
       "code": "LL20",
@@ -138,7 +143,8 @@
       "usedCount": 2,
       "expiredAt": "2026-05-10T01:21:27.876Z",
       "usageLimit": 6,
-      "hidden": false
+      "hidden": true,
+      "allowWithPackage": false
     }
   },
   "productOverrides": {},
