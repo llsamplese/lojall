@@ -135,6 +135,38 @@
         line-height: 1;
     }
 
+    .product-direct-mode .topbar {
+        grid-template-columns: 1fr;
+    }
+
+    .product-direct-mode .brand {
+        grid-column: 1;
+        justify-self: center;
+    }
+
+    .product-direct-mode .topbar-actions {
+        display: contents;
+    }
+
+    .product-direct-mode .topbar-actions .cart-button,
+    .product-direct-mode .topbar-actions .menu-button {
+        display: none !important;
+    }
+
+    .product-direct-mode .topbar-actions .whatsapp-button {
+        position: absolute;
+        top: 50%;
+        right: 18px;
+        transform: translateY(-50%);
+        width: 44px;
+        height: 44px;
+        border-radius: 14px;
+    }
+
+    .product-direct-mode .topbar-actions .whatsapp-button:hover {
+        transform: translateY(calc(-50% - 2px));
+    }
+
     .icon-button:hover {
         transform: translateY(-2px);
         border-color: rgba(255, 193, 7, 0.3);
@@ -2195,6 +2227,28 @@
         font-size: 1.32rem;
     }
 
+    .product-direct-mode .topbar {
+        grid-template-columns: 1fr;
+    }
+
+    .product-direct-mode .brand {
+        padding-right: 58px;
+        justify-self: stretch;
+    }
+
+    .product-direct-mode .topbar-actions {
+        display: contents;
+        padding: 0;
+        background: transparent;
+        border: 0;
+    }
+
+    .product-direct-mode .topbar-actions .whatsapp-button {
+        right: 20px;
+        width: 42px;
+        height: 42px;
+    }
+
     .search-box {
         flex-direction: column;
         align-items: stretch;
@@ -2646,10 +2700,9 @@
             <span class="product-focus-play">▶</span>
         </div>
         <div class="product-focus-copy">
-            <div class="product-focus-kicker">Link direto do sample</div>
             <div id="productFocusTitle" class="product-focus-title">Sample LL Samples</div>
             <div id="productFocusPrice" class="product-focus-price">R$ 0,00</div>
-            <div class="product-focus-note">Finalize com Pix ou cartão. A entrega é liberada automaticamente após o pagamento.</div>
+            <div class="product-focus-note">Aceitamos Pix ou cartão<br>Receba automaticamente.</div>
             <div class="product-focus-actions">
                 <button id="productFocusBuyButton" class="product-focus-button primary" type="button" onclick="buyLinkedProduct()">Comprar agora</button>
                 <button class="product-focus-button" type="button" onclick="openFullCatalog()">Ver catálogo completo</button>
@@ -4562,6 +4615,7 @@
         const grid = document.getElementById('catalogGrid');
         if (!banner) return;
         if (!isProductMode()) {
+            document.body.classList.remove('product-direct-mode');
             banner.style.display = 'none';
             if (searchFilter) {
                 searchFilter.style.display = '';
@@ -4572,6 +4626,7 @@
             }
             return;
         }
+        document.body.classList.add('product-direct-mode');
         const sample = samplesData[linkedProductIndex];
         const image = document.getElementById('productFocusImage');
         const title = document.getElementById('productFocusTitle');
