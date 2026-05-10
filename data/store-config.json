@@ -68,13 +68,13 @@
       "usedCount": 0,
       "usedPayments": [],
       "expiredAt": "",
-      "hidden": true,
-      "allowWithPackage": false
+      "hidden": false,
+      "allowWithPackage": true
     },
     "LL10": {
       "code": "LL10",
       "label": "Bem-vindo 10%",
-      "active": false,
+      "active": true,
       "type": "percent",
       "value": 10,
       "minSubtotal": 0,
