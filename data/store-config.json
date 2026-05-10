@@ -21,8 +21,8 @@
     "showPackagesPanelDirect": true
   },
   "couponRuntime": {
-    "hideHomeCouponsAfterExpiry": true,
-    "lastAutoExpiredAt": "2026-05-10T01:21:27.876Z"
+    "hideHomeCouponsAfterExpiry": false,
+    "lastAutoExpiredAt": ""
   },
   "globalPricing": {
     "active": false,
@@ -70,13 +70,13 @@
     "LL10": {
       "code": "LL10",
       "label": "Bem-vindo 10%",
-      "active": false,
+      "active": true,
       "type": "percent",
       "value": 10,
       "minSubtotal": 0,
       "minItems": 1,
       "validUntil": "",
-      "usageLimit": 10,
+      "usageLimit": "",
       "usedCount": 2,
       "usedPayments": [
         "157067961813",
