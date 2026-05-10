@@ -3552,6 +3552,7 @@
         const items = getSelectedItems();
         const totals = getCartTotals();
         const { signal, timeoutId } = createTimeoutSignal(PAYMENT_REQUEST_TIMEOUT_MS);
+        const paymentMethodId = String(formData?.payment_method_id || '').trim();
 
         try {
             const response = await fetch(TRANSPARENT_PAYMENT_ENDPOINT, {
@@ -3567,7 +3568,11 @@
                         quantity: 1
                     })),
                     coupon: appliedCoupon ? { code: appliedCoupon.code } : null,
-                    packageSelection: selectedPackageCode ? { code: selectedPackageCode } : null
+                    packageSelection: selectedPackageCode ? { code: selectedPackageCode } : null,
+                    context: {
+                        pageType: getPageDisplayContext(),
+                        path: `${window.location.pathname || '/'}${window.location.search || ''}`
+                    }
                 })
             });
 
@@ -3608,6 +3613,12 @@
                 : (error.message || 'Não conseguimos gerar o pagamento agora.');
             setBrickStatus(message, 'error');
             setCheckoutRetryPanel(true, 'Se o QR Code não apareceu, tente novamente. Se já pagou, use o botão "Já paguei" quando ele aparecer.');
+            if (paymentMethodId === 'pix' || paymentMethodId === 'bank_transfer') {
+                trackCheckoutEvent('pix_failed', {
+                    paymentMethodId,
+                    errorMessage: message
+                });
+            }
             throw error;
         } finally {
             clearTimeout(timeoutId);
@@ -3675,6 +3686,10 @@
                     setBrickStatus('Checkout transparente carregado. Escolha Pix ou cartão e finalize aqui.', '');
                 },
                 onSubmit: ({ formData }) => {
+                    const paymentMethodId = String(formData?.payment_method_id || '').trim();
+                    if (paymentMethodId === 'pix' || paymentMethodId === 'bank_transfer') {
+                        trackCheckoutEvent('pix_submit_clicked', { paymentMethodId });
+                    }
                     setBrickStatus('Enviando pagamento para o Mercado Pago...', '');
                     return submitTransparentPayment(formData);
                 },
@@ -3701,6 +3716,7 @@
         document.body.style.overflow = 'hidden';
         updateTransparentCheckoutSummary();
         setBrickStatus('Carregando checkout transparente...', '');
+        trackCheckoutEvent('checkout_opened');
 
         try {
             await renderTransparentCheckoutBrick();
@@ -4286,6 +4302,39 @@
                     path: `${window.location.pathname || '/'}${window.location.search || ''}`
                 })
             });
+        } catch {}
+    }
+
+    function trackCheckoutEvent(eventName, extra = {}) {
+        const allowedEvents = ['checkout_opened', 'pix_submit_clicked', 'pix_failed'];
+        if (!allowedEvents.includes(eventName)) return;
+        const totals = getCartTotals();
+        const payload = {
+            action: 'track_event',
+            eventName,
+            pageType: getPageDisplayContext(),
+            path: `${window.location.pathname || '/'}${window.location.search || ''}`,
+            cartCount: selectedSamples.size,
+            totalPix: totals.pix,
+            totalCard: totals.card,
+            couponCode: appliedCoupon?.code || '',
+            packageCode: selectedPackageCode || '',
+            paymentMethodId: extra.paymentMethodId || '',
+            errorMessage: extra.errorMessage || ''
+        };
+
+        try {
+            const body = JSON.stringify(payload);
+            if (navigator.sendBeacon) {
+                const sent = navigator.sendBeacon(STORE_CONFIG_ENDPOINT, new Blob([body], { type: 'application/json' }));
+                if (sent) return;
+            }
+            fetch(STORE_CONFIG_ENDPOINT, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body,
+                keepalive: true
+            }).catch(() => {});
         } catch {}
     }
 

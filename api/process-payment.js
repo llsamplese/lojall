@@ -1,5 +1,6 @@
 const { validateCoupon, roundCurrency } = require("../lib/coupon-utils");
 const { appendOrderLead, assignCustomerAccessCode, isGithubLoggingConfigured } = require("../lib/github-order-log");
+const { appendTrafficRecord } = require("../lib/github-traffic-log");
 const { getStoreConfig } = require("../lib/store-config");
 
 const PAYMENT_API = "https://api.mercadopago.com/v1/payments";
@@ -287,6 +288,30 @@ function buildLeadRecord(paymentBody, items, totals) {
   };
 }
 
+async function trackPaymentEvent(eventName, paymentBody = {}, items = [], totals = {}, extra = {}) {
+  try {
+    await appendTrafficRecord({
+      created_at: new Date().toISOString(),
+      source: "checkout_event",
+      event_name: eventName,
+      page_type: String(extra.pageType || "home").trim() || "home",
+      path: String(extra.path || "").trim(),
+      payment_method_id: String(paymentBody.payment_method_id || extra.paymentMethodId || "").trim(),
+      payment_id: String(extra.paymentId || "").trim(),
+      status: String(extra.status || "").trim(),
+      status_detail: String(extra.statusDetail || "").trim(),
+      error_message: String(extra.errorMessage || "").trim(),
+      cart_count: items.reduce((sum, item) => sum + Number(item.quantity || 0), 0),
+      total_pix: Number(totals.pix || 0),
+      total_card: Number(totals.card || 0),
+      coupon_code: String(totals.coupon?.code || "").trim(),
+      package_code: String(totals.package?.eligible ? totals.package.code : "").trim()
+    });
+  } catch (error) {
+    console.error("[checkout-event-log]", error);
+  }
+}
+
 module.exports = async (req, res) => {
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
@@ -309,6 +334,10 @@ module.exports = async (req, res) => {
     const customerAccess = await assignCustomerAccessCode(payerEmail);
     const paymentBody = buildPaymentBody(body.formData || {}, items, totals, body.customer || {}, customerAccess.code);
     const githubLog = await appendOrderLead(buildLeadRecord(paymentBody, items, totals));
+    await trackPaymentEvent("process_payment_started", paymentBody, items, totals, {
+      pageType: body.context?.pageType,
+      path: body.context?.path
+    });
 
     const response = await fetch(PAYMENT_API, {
       method: "POST",
@@ -322,9 +351,28 @@ module.exports = async (req, res) => {
 
     const data = await response.json();
     if (!response.ok) {
+      if (paymentBody.payment_method_id === "pix") {
+        await trackPaymentEvent("pix_failed", paymentBody, items, totals, {
+          pageType: body.context?.pageType,
+          path: body.context?.path,
+          status: data?.status,
+          statusDetail: data?.status_detail,
+          errorMessage: data?.message || "Mercado Pago rejeitou o pagamento."
+        });
+      }
       return res.status(response.status).json({
         error: data?.message || "Mercado Pago rejeitou o pagamento.",
         details: data
+      });
+    }
+
+    if (paymentBody.payment_method_id === "pix") {
+      await trackPaymentEvent("pix_created", paymentBody, items, totals, {
+        pageType: body.context?.pageType,
+        path: body.context?.path,
+        paymentId: data.id,
+        status: data.status,
+        statusDetail: data.status_detail
       });
     }
 
@@ -344,6 +392,15 @@ module.exports = async (req, res) => {
       ticket_url: data?.point_of_interaction?.transaction_data?.ticket_url || data?.transaction_details?.external_resource_url || ""
     });
   } catch (error) {
+    const body = parseBody(req);
+    const paymentMethodId = String(body?.formData?.payment_method_id || "").trim();
+    if (paymentMethodId === "pix") {
+      await trackPaymentEvent("pix_failed", { payment_method_id: paymentMethodId }, [], {}, {
+        pageType: body.context?.pageType,
+        path: body.context?.path,
+        errorMessage: error.message || "Erro ao processar pagamento transparente."
+      });
+    }
     return res.status(500).json({
       error: error.message || "Erro ao processar pagamento transparente."
     });

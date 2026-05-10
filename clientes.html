@@ -535,6 +535,9 @@
         <div class="stat"><div class="stat-label">Samples entregáveis</div><strong id="statDelivered">0</strong></div>
         <div class="stat"><div class="stat-label">Produtos</div><strong id="statProducts">0</strong></div>
         <div class="stat"><div class="stat-label">Visitas da loja</div><strong id="statVisits">0</strong></div>
+        <div class="stat"><div class="stat-label">Pix clicados</div><strong id="statPixClicks">0</strong></div>
+        <div class="stat"><div class="stat-label">Pix gerados</div><strong id="statPixCreated">0</strong></div>
+        <div class="stat"><div class="stat-label">Falhas no Pix</div><strong id="statPixFailed">0</strong></div>
       </div>
       <div id="statusBox" class="status-box">Carregando painel...</div>
     </div>
@@ -770,7 +773,7 @@ function copyPendingWhatsAppMessage(){if(!pendingWhatsAppPayload)return;copyText
 function openCustomerWhatsApp(email){const customer=customersCache.find(item=>String(item?.email||'').trim().toLowerCase()===String(email||'').trim().toLowerCase());if(!customer){setStatus('Cliente não encontrado para abrir o WhatsApp.','error');return;}openWhatsAppActionPicker({phone:customer.phone,text:buildCustomerWhatsappText(customer),description:'Escolha se você quer abrir o WhatsApp já com a mensagem pronta ou apenas copiar o texto.'});}
 function openPurchaseWhatsApp(email,paymentId){const customer=customersCache.find(item=>String(item?.email||'').trim().toLowerCase()===String(email||'').trim().toLowerCase());if(!customer){setStatus('Cliente não encontrado para abrir o WhatsApp.','error');return;}const purchase=(Array.isArray(customer.purchases)?customer.purchases:[]).find(item=>String(item?.payment_id||'').trim()===String(paymentId||'').trim())||customer.purchases?.[0];if(!purchase){setStatus('Compra não encontrada para esse cliente.','error');return;}openWhatsAppActionPicker({phone:customer.phone,text:buildPurchaseWhatsappText(customer,purchase),description:'Escolha se você quer abrir o WhatsApp da compra ou copiar a mensagem para enviar manualmente.'});}
 function updateStats(customers){const approved=customers.reduce((s,c)=>s+Number(c.approved_orders||0),0);const delivered=customers.reduce((s,c)=>s+c.purchases.reduce((a,p)=>a+p.items.filter(i=>i.delivered).length,0),0);document.getElementById('statCustomers').textContent=customers.length;document.getElementById('statApproved').textContent=approved;document.getElementById('statDelivered').textContent=delivered;document.getElementById('statProducts').textContent=productsCache.length;}
-function updateTrafficStats(stats){trafficStatsCache={total:Number(stats?.total||0),home:Number(stats?.home||0),product_direct:Number(stats?.product_direct||0),package_direct:Number(stats?.package_direct||0)};const visitsEl=document.getElementById('statVisits');if(visitsEl)visitsEl.textContent=trafficStatsCache.total;}
+function updateTrafficStats(stats){const events=stats?.checkout_events||{};trafficStatsCache={total:Number(stats?.total||0),home:Number(stats?.home||0),product_direct:Number(stats?.product_direct||0),package_direct:Number(stats?.package_direct||0),checkout_events:events,checkout_total:Number(stats?.checkout_total||0)};const visitsEl=document.getElementById('statVisits');if(visitsEl)visitsEl.textContent=trafficStatsCache.total;const pixClicksEl=document.getElementById('statPixClicks');if(pixClicksEl)pixClicksEl.textContent=Number(events.pix_submit_clicked||0);const pixCreatedEl=document.getElementById('statPixCreated');if(pixCreatedEl)pixCreatedEl.textContent=Number(events.pix_created||0);const pixFailedEl=document.getElementById('statPixFailed');if(pixFailedEl)pixFailedEl.textContent=Number(events.pix_failed||0);}
 function renderProductSelectOptions(selectedLabel='Selecionar sample'){const options=['<option value="">'+escapeHtml(selectedLabel)+'</option>'];productsCache.forEach(product=>{options.push(`<option value="${escapeHtml(product.nome)}">${escapeHtml(product.nome)} • ${money(product.valor)}</option>`);});return options.join('');}
 function renderProductLinkOptions(){const select=document.getElementById('productLinkSelect');if(!select)return;const currentValue=String(select.value||'').trim();const query=removerAcentos(String(document.getElementById('productLinkSearch')?.value||'')).toLowerCase().trim();const options=['<option value="">Selecionar produto para gerar o link</option>'];productsCache.filter(product=>!query||removerAcentos(String(product.nome||'')).toLowerCase().includes(query)).forEach(product=>{options.push(`<option value="${escapeHtml(product.nome)}">${escapeHtml(product.nome)} • ${money(product.valor)}</option>`);});select.innerHTML=options.join('');if(currentValue&&Array.from(select.options).some(option=>option.value===currentValue)){select.value=currentValue;}updateProductLinkPreview();}
 function getProductLinkByName(name){const product=productsCache.find((item)=>item.nome===name);if(!product)return'';const slug=slugifyProductName(product.nome);return `https://llsamples.com/?produto=${encodeURIComponent(slug)}&sample=${encodeURIComponent(product.nome)}`;}
@@ -833,6 +836,7 @@ initAdminLock();
   </script>
 </body>
 </html>
+
 
 
 
