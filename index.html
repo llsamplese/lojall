@@ -830,26 +830,123 @@
         display: none;
         align-items: center;
         justify-content: center;
-        gap: 0;
+        gap: 18px;
         margin-bottom: 14px;
-        padding: 8px 0 4px;
-        border: none;
-        background: transparent;
-        box-shadow: none;
+        padding: 20px;
+        border-radius: 26px;
+        border: 1px solid rgba(255, 193, 7, 0.2);
+        background:
+            radial-gradient(circle at 18% 10%, rgba(255, 193, 7, 0.2), transparent 28%),
+            linear-gradient(145deg, rgba(24, 20, 9, 0.96), rgba(11, 11, 11, 0.98));
+        box-shadow: 0 24px 58px rgba(0,0,0,0.34);
+        overflow: hidden;
+        position: relative;
+    }
+    .product-focus-banner::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background: linear-gradient(90deg, rgba(255,255,255,0.05), transparent 32%, rgba(255,193,7,0.08));
+        opacity: 0.62;
+    }
+    .product-focus-media {
+        position: relative;
+        z-index: 1;
+        width: min(320px, 36vw);
+        aspect-ratio: 16 / 10;
+        border-radius: 24px;
+        overflow: hidden;
+        border: 1px solid rgba(255, 218, 119, 0.22);
+        background: #090909;
+        box-shadow: 0 18px 42px rgba(0,0,0,0.34);
+        cursor: pointer;
+    }
+    .product-focus-media img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        filter: saturate(1.08) contrast(1.04);
+    }
+    .product-focus-play {
+        position: absolute;
+        inset: 50% auto auto 50%;
+        transform: translate(-50%, -50%);
+        width: 58px;
+        height: 58px;
+        border-radius: 999px;
+        display: grid;
+        place-items: center;
+        color: #241b01;
+        background: linear-gradient(135deg, #ffe082, #ffbf00);
+        box-shadow: 0 12px 34px rgba(0,0,0,0.38);
+        font-size: 1.1rem;
+        font-weight: 900;
+    }
+    .product-focus-copy {
+        position: relative;
+        z-index: 1;
+        display: grid;
+        gap: 10px;
+        min-width: 0;
+        flex: 1;
+    }
+    .product-focus-kicker {
+        color: #ffc94a;
+        font-size: 0.76rem;
+        font-weight: 900;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+    }
+    .product-focus-title {
+        color: #fff8dc;
+        font-size: clamp(1.55rem, 3vw, 2.65rem);
+        font-weight: 950;
+        line-height: 1.02;
+        text-wrap: balance;
+    }
+    .product-focus-price {
+        color: #ffd54f;
+        font-size: 1.34rem;
+        font-weight: 950;
+    }
+    .product-focus-note {
+        color: #d6c891;
+        font-size: 0.96rem;
+        line-height: 1.45;
+        max-width: 560px;
+    }
+    .product-focus-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 4px;
     }
     .product-focus-button {
         border: 1px solid rgba(255, 193, 7, 0.26);
         background: rgba(24, 24, 24, 0.9);
         color: #fff0c6;
         border-radius: 999px;
-        padding: 12px 18px;
+        padding: 13px 18px;
         font-size: 14px;
-        font-weight: 700;
+        font-weight: 850;
         cursor: pointer;
         white-space: nowrap;
+        transition: transform 0.18s ease, background 0.18s ease, border-color 0.18s ease;
+    }
+    .product-focus-button.primary {
+        background: linear-gradient(135deg, #ffe082, #ffbf00);
+        border-color: rgba(255, 193, 7, 0.58);
+        color: #211900;
+        padding-inline: 24px;
+        box-shadow: 0 14px 28px rgba(255, 193, 7, 0.12);
     }
     .product-focus-button:hover {
+        transform: translateY(-2px);
         background: rgba(255, 193, 7, 0.12);
+    }
+    .product-focus-button.primary:hover {
+        background: linear-gradient(135deg, #fff0a8, #ffca22);
     }
 
     .search-box {
@@ -1782,7 +1879,7 @@
     }
 
     .catalog-grid.product-mode {
-        grid-template-columns: minmax(0, 720px);
+        grid-template-columns: minmax(0, 860px);
         justify-content: center;
     }
 
@@ -1824,10 +1921,13 @@
     }
 
     .catalog-grid.product-mode .sample-card.deep-linked {
-        grid-template-columns: 104px minmax(0, 1fr);
-        gap: 16px;
-        padding: 12px 14px;
-        border-radius: 34px;
+        grid-template-columns: 168px minmax(0, 1fr);
+        gap: 22px;
+        padding: 18px;
+        border-radius: 36px;
+        background:
+            radial-gradient(circle at 12% 14%, rgba(255, 193, 7, 0.14), transparent 34%),
+            linear-gradient(145deg, #202023 0%, #121214 100%);
     }
     @keyframes deepLinkPulse {
         0%, 100% { transform: translateY(0); }
@@ -1856,8 +1956,8 @@
     }
 
     .catalog-grid.product-mode .sample-card.deep-linked .video-thumbnail {
-        width: 104px;
-        height: 104px;
+        width: 168px;
+        height: 126px;
         border-radius: 24px;
     }
 
@@ -1889,23 +1989,33 @@
     }
 
     .catalog-grid.product-mode .sample-card.deep-linked .sample-name {
-        font-size: 1.28rem;
+        font-size: 1.55rem;
         line-height: 1.14;
     }
 
     .catalog-grid.product-mode .sample-card.deep-linked .sample-price {
-        font-size: 1.18rem;
+        font-size: 1.35rem;
     }
 
     .catalog-grid.product-mode .sample-card.deep-linked .btn-preview {
-        width: 44px;
-        height: 44px;
+        width: 50px;
+        height: 50px;
     }
 
     .catalog-grid.product-mode .sample-card.deep-linked .btn-select {
-        min-width: 112px;
-        min-height: 44px;
-        font-size: 0.92rem;
+        min-width: 154px;
+        min-height: 52px;
+        font-size: 1rem;
+        font-weight: 900;
+        background: linear-gradient(135deg, #ffe082, #ffbf00);
+        color: #211900;
+        border-color: rgba(255, 193, 7, 0.7);
+    }
+
+    .catalog-grid.product-mode .sample-card.deep-linked .btn-select.remove {
+        background: rgba(255,255,255,0.1);
+        color: #fff6cf;
+        border-color: rgba(255,255,255,0.18);
     }
 
     .sample-name span {
@@ -2252,21 +2362,55 @@
         border-radius: 18px;
     }
 
+    .product-focus-banner {
+        grid-template-columns: 1fr;
+        padding: 14px;
+        text-align: center;
+    }
+
+    .product-focus-media {
+        width: 100%;
+        max-width: 320px;
+        justify-self: center;
+    }
+
+    .product-focus-copy {
+        justify-items: center;
+    }
+
+    .product-focus-title {
+        font-size: 1.45rem;
+    }
+
+    .product-focus-note {
+        font-size: 0.9rem;
+    }
+
+    .product-focus-actions {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .product-focus-button {
+        flex: 1 1 140px;
+        max-width: 240px;
+    }
+
     .available-coupons-list {
         grid-template-columns: 1fr;
     }
 
     .catalog-grid.product-mode .sample-card.deep-linked {
-        grid-template-columns: 72px minmax(0, 1fr);
-        gap: 10px;
-        padding: 10px;
-        border-radius: 24px;
+        grid-template-columns: 104px minmax(0, 1fr);
+        gap: 12px;
+        padding: 12px;
+        border-radius: 26px;
     }
 
     .catalog-grid.product-mode .sample-card.deep-linked .video-thumbnail {
-        width: 72px;
-        height: 72px;
-        border-radius: 16px;
+        width: 104px;
+        height: 92px;
+        border-radius: 18px;
     }
 
     .catalog-grid.product-mode .sample-card.deep-linked .card-content {
@@ -2280,7 +2424,7 @@
     }
 
     .catalog-grid.product-mode .sample-card.deep-linked .sample-name {
-        font-size: 0.98rem;
+        font-size: 1.08rem;
         line-height: 1.2;
     }
 
@@ -2309,10 +2453,10 @@
     }
 
     .catalog-grid.product-mode .sample-card.deep-linked .btn-select {
-        min-width: 96px;
-        min-height: 40px;
-        padding: 8px 14px;
-        font-size: 0.84rem;
+        min-width: 124px;
+        min-height: 42px;
+        padding: 9px 14px;
+        font-size: 0.88rem;
     }
 
     /* Se quiser ainda mais compacto, pode esconder os textos e deixar só ícones. Exemplo:
@@ -2469,7 +2613,21 @@
         <div id="availablePackagesEmpty" class="available-packages-empty" style="display:none;">Nenhum pacote ativo disponível no momento.</div>
     </section>
     <div id="productFocusBanner" class="product-focus-banner" style="display:none;">
-        <button class="product-focus-button" type="button" onclick="openFullCatalog()">Ver catálogo completo</button>
+        <div id="productFocusMedia" class="product-focus-media" role="button" tabindex="0" aria-label="Ver vídeo do produto">
+            <img id="productFocusImage" src="https://llsamplese.github.io/llcatalogo/Layer%205.png" alt="Prévia do sample">
+            <span class="product-focus-play">▶</span>
+        </div>
+        <div class="product-focus-copy">
+            <div class="product-focus-kicker">Link direto do sample</div>
+            <div id="productFocusTitle" class="product-focus-title">Sample LL Samples</div>
+            <div id="productFocusPrice" class="product-focus-price">R$ 0,00</div>
+            <div class="product-focus-note">Assista à prévia, adicione ao carrinho e finalize com Pix ou cartão. A entrega é liberada automaticamente após a aprovação.</div>
+            <div class="product-focus-actions">
+                <button id="productFocusPreviewButton" class="product-focus-button" type="button" onclick="previewLinkedProduct()">Ver vídeo</button>
+                <button id="productFocusBuyButton" class="product-focus-button primary" type="button" onclick="buyLinkedProduct()">Comprar agora</button>
+                <button class="product-focus-button" type="button" onclick="openFullCatalog()">Ver catálogo completo</button>
+            </div>
+        </div>
     </div>
     <div class="search-filter">
         <div class="search-box">
@@ -4388,6 +4546,44 @@
             }
             return;
         }
+        const sample = samplesData[linkedProductIndex];
+        const image = document.getElementById('productFocusImage');
+        const title = document.getElementById('productFocusTitle');
+        const price = document.getElementById('productFocusPrice');
+        const media = document.getElementById('productFocusMedia');
+        const previewButton = document.getElementById('productFocusPreviewButton');
+        const playBadge = banner.querySelector('.product-focus-play');
+        if (sample) {
+            const effectivePrice = getEffectiveSamplePrice(sample);
+            const thumbnailUrl = getFastThumbnailUrl(sample.video);
+            if (image) {
+                image.src = thumbnailUrl || FALLBACK_THUMBNAIL_URL;
+                image.alt = `Prévia de ${sample.nome}`;
+                image.onerror = () => {
+                    image.src = FALLBACK_THUMBNAIL_URL;
+                };
+            }
+            if (title) title.textContent = getDisplaySampleName(sample.nome);
+            if (price) price.textContent = formatCurrency(effectivePrice);
+            if (media) {
+                media.style.cursor = sample.video ? 'pointer' : 'default';
+                media.setAttribute('aria-label', sample.video ? `Ver vídeo de ${sample.nome}` : `Imagem de ${sample.nome}`);
+                media.onclick = () => previewLinkedProduct();
+                media.onkeydown = (event) => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                        event.preventDefault();
+                        previewLinkedProduct();
+                    }
+                };
+            }
+            if (previewButton) {
+                previewButton.disabled = !sample.video;
+                previewButton.textContent = sample.video ? 'Ver vídeo' : 'Sem vídeo';
+            }
+            if (playBadge) {
+                playBadge.style.display = sample.video ? 'grid' : 'none';
+            }
+        }
         if (searchFilter) {
             searchFilter.style.display = 'none';
         }
@@ -4395,6 +4591,29 @@
             grid.classList.add('product-mode');
         }
         banner.style.display = 'grid';
+    }
+
+    function previewLinkedProduct() {
+        if (!isProductMode()) return;
+        const sample = samplesData[linkedProductIndex];
+        if (sample?.video) {
+            openYoutubeVideo(sample.video);
+        }
+    }
+
+    function buyLinkedProduct() {
+        if (!isProductMode()) return;
+        const card = document.querySelector(`.sample-card[data-index="${linkedProductIndex}"]`);
+        if (!selectedSamples.has(linkedProductIndex)) {
+            selectedSamples.add(linkedProductIndex);
+            updateCart();
+            renderCatalog(document.getElementById('searchInput')?.value || '');
+        }
+        openMobileCart();
+        setCheckoutStatus('Sample adicionado. Confira o carrinho e finalize a compra.', 'success');
+        if (card) {
+            card.classList.add('selected');
+        }
     }
 
     function openFullCatalog() {
