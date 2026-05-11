@@ -1691,19 +1691,19 @@
 
     .available-coupon-top {
         display: grid;
-        grid-template-columns: minmax(0, 1fr) auto;
+        grid-template-columns: 1fr;
         gap: 10px;
         width: 100%;
         align-items: center;
-        justify-items: stretch;
-        text-align: left;
+        justify-items: center;
+        text-align: center;
     }
 
     .available-coupon-label {
         display: grid;
         gap: 3px;
-        justify-items: start;
-        text-align: left;
+        justify-items: center;
+        text-align: center;
         width: 100%;
         min-width: 0;
     }
@@ -1725,9 +1725,10 @@
     .available-coupon-main-actions {
         display: inline-flex;
         align-items: center;
-        justify-content: flex-end;
+        justify-content: center;
         gap: 8px;
         flex-wrap: wrap;
+        width: 100%;
     }
 
     .product-direct-mode .available-coupon-top {
