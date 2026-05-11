@@ -874,6 +874,12 @@
         overflow: hidden;
         position: relative;
     }
+
+    .product-direct-mode .product-focus-banner {
+        grid-template-columns: minmax(0, 520px);
+        justify-items: center;
+        text-align: center;
+    }
     .product-focus-banner::before {
         content: "";
         position: absolute;
@@ -922,6 +928,21 @@
         gap: 10px;
         min-width: 0;
         flex: 1;
+    }
+
+    .product-direct-mode .product-focus-copy {
+        justify-items: center;
+        text-align: center;
+        width: 100%;
+    }
+
+    .product-direct-mode .product-focus-note {
+        margin-inline: auto;
+    }
+
+    .product-direct-mode .product-focus-actions {
+        justify-content: center;
+        width: 100%;
     }
     .product-focus-kicker {
         color: #ffc94a;
@@ -1707,6 +1728,22 @@
         justify-content: flex-end;
         gap: 8px;
         flex-wrap: wrap;
+    }
+
+    .product-direct-mode .available-coupon-top {
+        grid-template-columns: 1fr;
+        justify-items: center;
+        text-align: center;
+    }
+
+    .product-direct-mode .available-coupon-label {
+        justify-items: center;
+        text-align: center;
+    }
+
+    .product-direct-mode .available-coupon-main-actions {
+        justify-content: center;
+        width: 100%;
     }
 
     .available-coupon-value {
