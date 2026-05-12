@@ -482,9 +482,9 @@
     }
 
     .checkout-brick-host {
-        min-height: 470px;
+        min-height: 0;
         width: 100%;
-        overflow: hidden;
+        overflow: visible;
     }
 
     .checkout-brick-status {
@@ -513,11 +513,12 @@
     .paypal-checkout-panel {
         display: none;
         gap: 10px;
-        margin-top: 16px;
+        margin-top: 10px;
         padding: 16px;
         border: 1px solid rgba(255, 193, 7, 0.22);
         border-radius: 18px;
-        background: linear-gradient(135deg, rgba(255, 193, 7, 0.09), rgba(255,255,255,0.03));
+        background: linear-gradient(135deg, #fff7df, #f0e4c4);
+        color: #201703;
     }
 
     .paypal-checkout-panel.open {
@@ -526,13 +527,19 @@
 
     .paypal-checkout-title {
         font-weight: 900;
-        color: var(--cream);
+        color: #201703;
     }
 
     .paypal-checkout-copy {
-        color: var(--muted);
+        color: #4b3b13;
         font-size: 0.9rem;
         line-height: 1.45;
+    }
+
+    .paypal-checkout-panel .checkout-brick-status {
+        background: rgba(0,0,0,0.08);
+        border-color: rgba(0,0,0,0.12);
+        color: #201703;
     }
 
     .checkout-retry-panel {
@@ -2470,7 +2477,7 @@
 
     .checkout-brick-host {
         overflow: visible;
-        min-height: 500px;
+        min-height: 0;
     }
 
     #paymentBrick_container {
@@ -3858,6 +3865,12 @@
         setPaypalStatus('');
     }
 
+    function hidePaypalPanel() {
+        const panel = document.getElementById('paypalCheckoutPanel');
+        panel?.classList.remove('open');
+        resetPaypalButtons();
+    }
+
     function getCheckoutPaymentPayload() {
         const customer = validateCheckoutCustomer();
         const items = getSelectedItems();
@@ -4068,6 +4081,7 @@
 
             if (data.payment_type_id === 'pix' || data.payment_type_id === 'bank_transfer' || data.qr_code || data.qr_code_base64 || data.ticket_url) {
                 setBrickStatus('Pix gerado. Pague pelo QR Code ou pelo código copia e cola abaixo. A entrega será liberada automaticamente.', '');
+                hidePaypalPanel();
                 showPixResult(data);
                 startPaymentStatusPolling(data.payment_id);
                 return;
