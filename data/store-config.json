@@ -1,10 +1,10 @@
 {
   "ui": {
     "showCouponBoxHome": true,
-    "showCouponBoxProductDirect": true,
+    "showCouponBoxProductDirect": false,
     "showCouponBoxPackageDirect": false,
-    "showAvailableCouponsPanelHome": true,
-    "showAvailableCouponsPanelProductDirect": true,
+    "showAvailableCouponsPanelHome": false,
+    "showAvailableCouponsPanelProductDirect": false,
     "showAvailableCouponsPanelPackageDirect": false,
     "showPackagesPanel": true,
     "showPackagesPanelHome": false,
