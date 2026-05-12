@@ -536,6 +536,22 @@
         line-height: 1.45;
     }
 
+    .paypal-checkout-total {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 10px 12px;
+        border-radius: 14px;
+        background: rgba(0,0,0,0.08);
+        color: #201703;
+        font-weight: 900;
+    }
+
+    .paypal-checkout-total span {
+        color: #5b491c;
+        font-weight: 800;
+    }
+
     .paypal-checkout-panel .checkout-brick-status {
         background: rgba(0,0,0,0.08);
         border-color: rgba(0,0,0,0.12);
@@ -2719,6 +2735,7 @@
             <div id="paypalCheckoutPanel" class="paypal-checkout-panel">
                 <div class="paypal-checkout-title">PayPal para clientes internacionais</div>
                 <div class="paypal-checkout-copy">Opcional: use PayPal quando o cliente estiver fora do Brasil ou preferir pagar por lá.</div>
+                <div class="paypal-checkout-total"><span>Total PayPal</span><strong id="paypalCheckoutTotal">R$ 0,00</strong></div>
                 <div id="paypalButtons"></div>
                 <div id="paypalStatus" class="checkout-brick-status" style="display:none;"></div>
             </div>
@@ -3069,6 +3086,8 @@
     const PAYPAL_ENDPOINT = '/api/paypal';
     const STORE_CONFIG_ENDPOINT = '/api/store-config';
     const CARD_SURCHARGE = 1.0524;
+    const PAYPAL_SURCHARGE = 1.0161;
+    const PAYPAL_FIXED_FEE = 0.60;
     let appliedCoupon = null;
     let selectedPackageCode = '';
     const currentPackageRouteSlug = (() => {
@@ -3920,6 +3939,10 @@
             }
 
             panel.classList.add('open');
+            const total = document.getElementById('paypalCheckoutTotal');
+            if (total) {
+                total.textContent = formatCurrency(getCartTotals().paypal);
+            }
             const paypalSdk = await loadPaypalSdk(config);
             if (!paypalSdk?.Buttons) {
                 throw new Error('PayPal não ficou disponível no navegador.');
@@ -4460,6 +4483,8 @@
         const packageAdjustedSubtotal = packageState?.eligible ? roundCurrency(packageState.appliedSubtotal || subtotal) : roundCurrency(subtotal);
         const discount = appliedCoupon ? roundCurrency(appliedCoupon.discount || 0) : 0;
         const discountedSubtotal = Math.max(0, packageAdjustedSubtotal - discount);
+        const cardTotal = roundCurrency(discountedSubtotal * CARD_SURCHARGE);
+        const paypalFee = roundCurrency((cardTotal * (PAYPAL_SURCHARGE - 1)) + PAYPAL_FIXED_FEE);
         return {
             subtotal: roundCurrency(subtotal),
             packageCode: packageState?.code || '',
@@ -4471,7 +4496,9 @@
             packageAdjustedSubtotal: roundCurrency(packageAdjustedSubtotal),
             discount,
             pix: roundCurrency(discountedSubtotal),
-            card: roundCurrency(discountedSubtotal * CARD_SURCHARGE)
+            card: cardTotal,
+            paypal: roundCurrency(cardTotal + paypalFee),
+            paypalFee
         };
     }
 

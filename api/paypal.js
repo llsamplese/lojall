@@ -100,7 +100,7 @@ async function createOrder(req, res, body) {
           description: buildDescription(items).slice(0, 127),
           amount: {
             currency_code: "BRL",
-            value: totals.card.toFixed(2)
+            value: totals.paypal.toFixed(2)
           }
         }
       ]
@@ -113,7 +113,7 @@ async function createOrder(req, res, body) {
     status_detail: order.status || "",
     payment_id: order.id || "",
     payment_type_id: "paypal",
-    transaction_amount: totals.card,
+    transaction_amount: totals.paypal,
     payer_email: customer.email,
     customer_name: customer.name,
     customer_email: customer.email,
@@ -164,7 +164,7 @@ async function captureOrder(req, res, body) {
   const capture = getCapture(captured);
   const approved = captured.status === "COMPLETED" || capture?.status === "COMPLETED";
   const paymentId = `paypal-${String(capture?.id || captured.id || orderID).trim()}`;
-  const transactionAmount = Number(capture?.amount?.value || totals.card || 0);
+  const transactionAmount = Number(capture?.amount?.value || totals.paypal || 0);
   const payerEmail = String(captured?.payer?.email_address || customer.email || "").trim().toLowerCase();
 
   const normalizedPayment = {
@@ -192,6 +192,8 @@ async function captureOrder(req, res, body) {
       subtotal: totals.subtotal || 0,
       total_pix: totals.pix || 0,
       total_card: totals.card || 0,
+      total_paypal: totals.paypal || 0,
+      paypal_fee: totals.paypalFee || 0,
       paypal_order_id: captured.id || orderID,
       original_items: items
     }
