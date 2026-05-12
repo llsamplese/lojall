@@ -510,6 +510,31 @@
         background: rgba(0, 166, 80, 0.12);
     }
 
+    .paypal-checkout-panel {
+        display: none;
+        gap: 10px;
+        margin-top: 16px;
+        padding: 16px;
+        border: 1px solid rgba(255, 193, 7, 0.22);
+        border-radius: 18px;
+        background: linear-gradient(135deg, rgba(255, 193, 7, 0.09), rgba(255,255,255,0.03));
+    }
+
+    .paypal-checkout-panel.open {
+        display: grid;
+    }
+
+    .paypal-checkout-title {
+        font-weight: 900;
+        color: var(--cream);
+    }
+
+    .paypal-checkout-copy {
+        color: var(--muted);
+        font-size: 0.9rem;
+        line-height: 1.45;
+    }
+
     .checkout-retry-panel {
         display: none;
         gap: 10px;
@@ -2684,6 +2709,12 @@
                 <a id="pixTicketLink" class="checkout-secondary-button" href="#" target="_blank" rel="noopener" style="display:none; text-decoration:none; align-items:center; justify-content:center;">Abrir comprovante / instruções</a>
                 <button class="checkout-secondary-button" type="button" onclick="checkCurrentPaymentStatus(true)">Já paguei</button>
             </div>
+            <div id="paypalCheckoutPanel" class="paypal-checkout-panel">
+                <div class="paypal-checkout-title">PayPal para clientes internacionais</div>
+                <div class="paypal-checkout-copy">Opcional: use PayPal quando o cliente estiver fora do Brasil ou preferir pagar por lá.</div>
+                <div id="paypalButtons"></div>
+                <div id="paypalStatus" class="checkout-brick-status" style="display:none;"></div>
+            </div>
         </div>
     </div>
 </section>
@@ -3028,6 +3059,7 @@
     const TRANSPARENT_CONFIG_ENDPOINT = '/api/payment-config';
     const TRANSPARENT_PAYMENT_ENDPOINT = '/api/process-payment';
     const PAYMENT_STATUS_ENDPOINT = '/api/payment-status';
+    const PAYPAL_ENDPOINT = '/api/paypal';
     const STORE_CONFIG_ENDPOINT = '/api/store-config';
     const CARD_SURCHARGE = 1.0524;
     let appliedCoupon = null;
@@ -3044,6 +3076,8 @@
     let paymentStatusPoll = null;
     let lastTransparentFormData = null;
     let paymentSubmitInProgress = false;
+    let paypalConfig = null;
+    let paypalSdkPromise = null;
     const PAYMENT_REQUEST_TIMEOUT_MS = 30000;
     let mobileCartOpen = false;
     let storeConfig = {
@@ -3797,6 +3831,148 @@
         return data;
     }
 
+    async function loadPaypalConfig() {
+        if (paypalConfig) return paypalConfig;
+        const response = await fetch(`${PAYPAL_ENDPOINT}?action=config`);
+        const data = await response.json();
+        if (!response.ok) {
+            throw new Error(data.error || 'Não foi possível carregar a configuração do PayPal.');
+        }
+        paypalConfig = data;
+        return data;
+    }
+
+    function setPaypalStatus(message, type = '') {
+        const status = document.getElementById('paypalStatus');
+        if (!status) return;
+        status.className = `checkout-brick-status${type ? ` ${type}` : ''}`;
+        status.textContent = message;
+        status.style.display = message ? 'block' : 'none';
+    }
+
+    function resetPaypalButtons() {
+        const buttons = document.getElementById('paypalButtons');
+        if (buttons) {
+            buttons.innerHTML = '';
+        }
+        setPaypalStatus('');
+    }
+
+    function getCheckoutPaymentPayload() {
+        const customer = validateCheckoutCustomer();
+        const items = getSelectedItems();
+        return {
+            customer,
+            items: items.map(item => ({
+                title: item.nome,
+                unit_price: item.valor,
+                quantity: 1
+            })),
+            coupon: appliedCoupon ? { code: appliedCoupon.code } : null,
+            packageSelection: selectedPackageCode ? { code: selectedPackageCode } : null,
+            context: {
+                pageType: getPageDisplayContext(),
+                path: `${window.location.pathname || '/'}${window.location.search || ''}`
+            }
+        };
+    }
+
+    async function loadPaypalSdk(config) {
+        if (window.paypal?.Buttons) return window.paypal;
+        if (paypalSdkPromise) return paypalSdkPromise;
+
+        paypalSdkPromise = new Promise((resolve, reject) => {
+            const script = document.createElement('script');
+            script.src = `https://www.paypal.com/sdk/js?client-id=${encodeURIComponent(config.clientId)}&currency=${encodeURIComponent(config.currency || 'BRL')}&intent=capture&components=buttons`;
+            script.async = true;
+            script.onload = () => resolve(window.paypal);
+            script.onerror = () => reject(new Error('Não foi possível carregar o PayPal no navegador.'));
+            document.head.appendChild(script);
+        });
+
+        return paypalSdkPromise;
+    }
+
+    async function renderPaypalButtons() {
+        const panel = document.getElementById('paypalCheckoutPanel');
+        if (!panel) return;
+
+        resetPaypalButtons();
+
+        try {
+            const config = await loadPaypalConfig();
+            if (!config.enabled || !config.clientId) {
+                panel.classList.remove('open');
+                return;
+            }
+
+            panel.classList.add('open');
+            const paypalSdk = await loadPaypalSdk(config);
+            if (!paypalSdk?.Buttons) {
+                throw new Error('PayPal não ficou disponível no navegador.');
+            }
+
+            await paypalSdk.Buttons({
+                style: {
+                    layout: 'vertical',
+                    color: 'gold',
+                    shape: 'pill',
+                    label: 'paypal'
+                },
+                createOrder: async () => {
+                    const payload = getCheckoutPaymentPayload();
+                    setPaypalStatus('Criando pedido PayPal...', '');
+                    const response = await fetch(PAYPAL_ENDPOINT, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            ...payload,
+                            action: 'create'
+                        })
+                    });
+                    const data = await response.json();
+                    if (!response.ok) {
+                        throw new Error(data.error || 'Falha ao criar pedido PayPal.');
+                    }
+                    currentCustomerAccessCode = String(data.customer_access_code || '').trim();
+                    return data.orderID;
+                },
+                onApprove: async (data) => {
+                    const payload = getCheckoutPaymentPayload();
+                    setPaypalStatus('Confirmando pagamento PayPal...', '');
+                    const response = await fetch(PAYPAL_ENDPOINT, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            ...payload,
+                            action: 'capture',
+                            orderID: data.orderID
+                        })
+                    });
+                    const result = await response.json();
+                    if (!response.ok) {
+                        throw new Error(result.error || 'Falha ao confirmar pagamento PayPal.');
+                    }
+                    currentCustomerAccessCode = String(result.customer_access_code || currentCustomerAccessCode || '').trim();
+                    setPaypalStatus('Pagamento PayPal aprovado. Preparando sua entrega...', 'success');
+                    const accessParam = currentCustomerAccessCode ? `&access_code=${encodeURIComponent(currentCustomerAccessCode)}` : '';
+                    window.location.href = `/sucesso.html?payment_id=${encodeURIComponent(result.payment_id)}${accessParam}`;
+                },
+                onCancel: () => {
+                    setPaypalStatus('Pagamento PayPal cancelado.', '');
+                },
+                onError: (error) => {
+                    console.error('[paypal-buttons]', error);
+                    setPaypalStatus(error?.message || 'Erro no pagamento PayPal.', 'error');
+                }
+            }).render('#paypalButtons');
+        } catch (error) {
+            console.error('[paypal-render]', error);
+            panel.classList.add('open');
+            setPaypalStatus(error.message || 'Não foi possível carregar o PayPal.', 'error');
+        }
+    }
+
     async function destroyPaymentBrick() {
         if (brickController && typeof brickController.unmount === 'function') {
             await brickController.unmount();
@@ -4023,6 +4199,12 @@
             console.error(error);
             setBrickStatus(error.message || 'Não foi possível abrir o checkout transparente.', 'error');
         }
+
+        try {
+            await renderPaypalButtons();
+        } catch (error) {
+            console.error('[paypal-open]', error);
+        }
     }
 
     async function closeTransparentCheckout() {
@@ -4037,6 +4219,7 @@
         document.body.style.overflow = '';
         stopPaymentStatusPolling();
         hidePixResult();
+        resetPaypalButtons();
         await destroyPaymentBrick();
     }
 
