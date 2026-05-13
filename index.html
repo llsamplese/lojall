@@ -98,6 +98,53 @@
         position: sticky;
         top: 12px;
         z-index: 180;
+        overflow: hidden;
+    }
+
+    .topbar::before {
+        content: "";
+        position: absolute;
+        inset: -1px;
+        border-radius: inherit;
+        padding: 1px;
+        background: conic-gradient(
+            from var(--shine-angle, 0deg),
+            transparent 0deg,
+            transparent 70deg,
+            rgba(255, 213, 79, 0.12) 105deg,
+            rgba(255, 213, 79, 0.95) 135deg,
+            rgba(255, 193, 7, 0.18) 165deg,
+            transparent 220deg,
+            transparent 360deg
+        );
+        -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        pointer-events: none;
+        animation: topbarBorderShine 4.8s linear infinite;
+    }
+
+    .topbar > * {
+        position: relative;
+        z-index: 1;
+    }
+
+    @property --shine-angle {
+        syntax: "<angle>";
+        inherits: false;
+        initial-value: 0deg;
+    }
+
+    @keyframes topbarBorderShine {
+        to {
+            --shine-angle: 360deg;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .topbar::before {
+            animation: none;
+        }
     }
 
     .brand {
