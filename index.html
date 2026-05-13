@@ -101,102 +101,102 @@
         overflow: hidden;
     }
 
-    .topbar::before {
-        content: "";
-        position: absolute;
-        z-index: 1;
-        width: 120px;
-        height: 2px;
-        left: -130px;
-        top: 0;
-        border-radius: 999px;
-        background: linear-gradient(90deg, transparent, rgba(255, 193, 7, 0.28), rgba(255, 236, 150, 1), rgba(255, 193, 7, 0.28), transparent);
-        box-shadow:
-            0 0 8px rgba(255, 193, 7, 0.42),
-            0 0 16px rgba(255, 193, 7, 0.22);
-        pointer-events: none;
-        animation: topbarBorderTrace 5.2s linear infinite;
-    }
-
-    @media (pointer: fine) {
-        .topbar::before {
-            animation-duration: 8s;
-        }
-    }
-
     .topbar > * {
         position: relative;
         z-index: 1;
     }
 
-    @keyframes topbarBorderTrace {
-        0% {
-            width: 120px;
-            height: 2px;
-            left: -130px;
-            top: 0;
-            transform: none;
-        }
-        32% {
-            width: 120px;
-            height: 2px;
-            left: 100%;
-            top: 0;
-            transform: none;
-        }
-        33% {
-            width: 2px;
-            height: 74px;
-            left: calc(100% - 2px);
-            top: -80px;
-            transform: none;
-            background: linear-gradient(180deg, transparent, rgba(255, 193, 7, 0.28), rgba(255, 236, 150, 1), rgba(255, 193, 7, 0.28), transparent);
-        }
-        49% {
-            width: 2px;
-            height: 74px;
-            left: calc(100% - 2px);
-            top: 100%;
-            transform: none;
-            background: linear-gradient(180deg, transparent, rgba(255, 193, 7, 0.28), rgba(255, 236, 150, 1), rgba(255, 193, 7, 0.28), transparent);
-        }
-        50% {
-            width: 120px;
-            height: 2px;
-            left: 100%;
-            top: calc(100% - 2px);
-            transform: none;
-            background: linear-gradient(270deg, transparent, rgba(255, 193, 7, 0.28), rgba(255, 236, 150, 1), rgba(255, 193, 7, 0.28), transparent);
-        }
-        82% {
-            width: 120px;
-            height: 2px;
-            left: -130px;
-            top: calc(100% - 2px);
-            transform: none;
-            background: linear-gradient(270deg, transparent, rgba(255, 193, 7, 0.28), rgba(255, 236, 150, 1), rgba(255, 193, 7, 0.28), transparent);
-        }
-        83% {
-            width: 2px;
-            height: 74px;
-            left: 0;
-            top: 100%;
-            transform: none;
-            background: linear-gradient(0deg, transparent, rgba(255, 193, 7, 0.28), rgba(255, 236, 150, 1), rgba(255, 193, 7, 0.28), transparent);
-        }
-        100% {
-            width: 2px;
-            height: 74px;
-            left: 0;
-            top: -80px;
-            transform: none;
-            background: linear-gradient(0deg, transparent, rgba(255, 193, 7, 0.28), rgba(255, 236, 150, 1), rgba(255, 193, 7, 0.28), transparent);
+    .topbar-shine {
+        position: absolute;
+        inset: 0;
+        z-index: 2;
+        border-radius: inherit;
+        pointer-events: none;
+    }
+
+    .topbar-shine span {
+        position: absolute;
+        display: block;
+        opacity: 0;
+        border-radius: 999px;
+        background: linear-gradient(90deg, transparent, rgba(255, 193, 7, 0.34), rgba(255, 240, 170, 1), rgba(255, 193, 7, 0.34), transparent);
+        box-shadow: 0 0 9px rgba(255, 193, 7, 0.35);
+        animation: topbarShineTop 5.6s linear infinite;
+        will-change: transform, opacity;
+    }
+
+    .topbar-shine .shine-top,
+    .topbar-shine .shine-bottom {
+        width: 112px;
+        height: 2px;
+        left: 0;
+    }
+
+    .topbar-shine .shine-top {
+        top: 0;
+        transform: translateX(-125px);
+    }
+
+    .topbar-shine .shine-bottom {
+        bottom: 0;
+        transform: translateX(calc(100vw));
+        animation-name: topbarShineBottom;
+    }
+
+    .topbar-shine .shine-right,
+    .topbar-shine .shine-left {
+        width: 2px;
+        height: 58px;
+        top: 0;
+        background: linear-gradient(180deg, transparent, rgba(255, 193, 7, 0.34), rgba(255, 240, 170, 1), rgba(255, 193, 7, 0.34), transparent);
+    }
+
+    .topbar-shine .shine-right {
+        right: 0;
+        transform: translateY(-70px);
+        animation-name: topbarShineRight;
+    }
+
+    .topbar-shine .shine-left {
+        left: 0;
+        transform: translateY(calc(100% + 70px));
+        animation-name: topbarShineLeft;
+    }
+
+    @media (pointer: fine) {
+        .topbar-shine span {
+            animation-duration: 8s;
         }
     }
 
+    @keyframes topbarShineTop {
+        0%, 4% { opacity: 0; transform: translateX(-125px); }
+        7%, 27% { opacity: 1; }
+        32%, 100% { opacity: 0; transform: translateX(calc(100vw + 125px)); }
+    }
+
+    @keyframes topbarShineRight {
+        0%, 32% { opacity: 0; transform: translateY(-70px); }
+        35%, 47% { opacity: 1; }
+        50%, 100% { opacity: 0; transform: translateY(calc(100% + 70px)); }
+    }
+
+    @keyframes topbarShineBottom {
+        0%, 50% { opacity: 0; transform: translateX(calc(100vw + 125px)); }
+        53%, 76% { opacity: 1; }
+        82%, 100% { opacity: 0; transform: translateX(-125px); }
+    }
+
+    @keyframes topbarShineLeft {
+        0%, 82% { opacity: 0; transform: translateY(calc(100% + 70px)); }
+        85%, 96% { opacity: 1; }
+        100% { opacity: 0; transform: translateY(-70px); }
+    }
+
     @media (prefers-reduced-motion: reduce) {
-        .topbar::before {
+        .topbar-shine span {
             animation: none;
+            opacity: 0;
         }
     }
 
@@ -2905,6 +2905,12 @@
 </div>
 <div class="container">
     <div class="topbar">
+        <div class="topbar-shine" aria-hidden="true">
+            <span class="shine-top"></span>
+            <span class="shine-right"></span>
+            <span class="shine-bottom"></span>
+            <span class="shine-left"></span>
+        </div>
         <div class="brand">
             <div class="brand-logo">
                 <img src="https://llsamplese.github.io/llcatalogo/Layer%205.png" alt="LL Samples">
