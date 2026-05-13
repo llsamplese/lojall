@@ -37,33 +37,34 @@
         color: #f7f0d0;
     }
 
-    @media (pointer: fine) {
-        body,
-        .topbar,
-        .search-filter,
-        .catalog-grid,
-        .sample-card,
-        .cart-summary,
-        .checkout-modal,
-        .available-coupons-panel,
-        .available-packages-panel {
-            user-select: none;
-            -webkit-user-select: none;
-        }
+    body,
+    .topbar,
+    .search-filter,
+    .catalog-grid,
+    .sample-card,
+    .cart-summary,
+    .checkout-modal,
+    .available-coupons-panel,
+    .available-packages-panel {
+        user-select: none;
+        -webkit-user-select: none;
+        -webkit-touch-callout: none;
+    }
 
-        input,
-        textarea,
-        .pix-copy,
-        [contenteditable="true"] {
-            user-select: text;
-            -webkit-user-select: text;
-        }
+    input,
+    textarea,
+    .pix-copy,
+    [contenteditable="true"] {
+        user-select: text;
+        -webkit-user-select: text;
+        -webkit-touch-callout: default;
+    }
 
-        button,
-        a {
-            user-select: none;
-            -webkit-user-select: none;
-        }
+    button,
+    a {
+        user-select: none;
+        -webkit-user-select: none;
+        -webkit-touch-callout: none;
     }
 
     .container {
