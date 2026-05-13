@@ -104,24 +104,31 @@
     .topbar::before {
         content: "";
         position: absolute;
-        inset: -1px;
-        border-radius: inherit;
-        padding: 1px;
-        background: conic-gradient(
-            from var(--shine-angle, 0deg),
-            transparent 0deg,
-            transparent 70deg,
-            rgba(255, 213, 79, 0.12) 105deg,
-            rgba(255, 213, 79, 0.95) 135deg,
-            rgba(255, 193, 7, 0.18) 165deg,
-            transparent 220deg,
-            transparent 360deg
-        );
-        -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-        -webkit-mask-composite: xor;
-        mask-composite: exclude;
+        inset: -70%;
+        z-index: 0;
+        background:
+            conic-gradient(
+                from 0deg,
+                transparent 0deg,
+                transparent 58deg,
+                rgba(255, 193, 7, 0.98) 78deg,
+                rgba(255, 236, 150, 0.98) 92deg,
+                rgba(255, 193, 7, 0.2) 112deg,
+                transparent 142deg,
+                transparent 360deg
+            );
         pointer-events: none;
-        animation: topbarBorderShine 4.8s linear infinite;
+        animation: topbarBorderShine 3.6s linear infinite;
+    }
+
+    .topbar::after {
+        content: "";
+        position: absolute;
+        inset: 1px;
+        z-index: 0;
+        border-radius: 21px;
+        background: rgba(10, 10, 10, 0.94);
+        pointer-events: none;
     }
 
     .topbar > * {
@@ -129,15 +136,9 @@
         z-index: 1;
     }
 
-    @property --shine-angle {
-        syntax: "<angle>";
-        inherits: false;
-        initial-value: 0deg;
-    }
-
     @keyframes topbarBorderShine {
         to {
-            --shine-angle: 360deg;
+            transform: rotate(360deg);
         }
     }
 
