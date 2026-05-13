@@ -484,12 +484,14 @@
     .checkout-brick-host {
         min-height: 0;
         width: 100%;
-        overflow: visible;
+        max-height: 430px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        border-radius: 18px;
     }
 
     #paymentBrick_container {
-        margin-top: -18px;
-        margin-bottom: -18px;
+        margin: 0;
     }
 
     .checkout-brick-status {
@@ -904,6 +906,16 @@
         display: grid;
         gap: 14px;
         align-items: start;
+    }
+
+    .search-filter.filters-hidden {
+        padding-block: 14px;
+        gap: 0;
+    }
+
+    .search-filter.filters-hidden .filter-toolbar,
+    .search-filter.filters-hidden .filters-panel {
+        display: none !important;
     }
     .product-focus-banner {
         display: none;
@@ -2493,13 +2505,14 @@
     .checkout-brick-host {
         overflow: visible;
         min-height: 0;
+        max-height: 72vh;
+        overflow-y: auto;
+        overflow-x: hidden;
     }
 
     #paymentBrick_container {
         margin-left: -6px;
         margin-right: -6px;
-        margin-top: -18px;
-        margin-bottom: -18px;
     }
 
     .checkout-brick-status:empty {
@@ -3224,6 +3237,11 @@
             if (!element) return;
             element.style.display = visible ? '' : 'none';
         });
+
+        const searchFilter = document.querySelector('.search-filter');
+        if (searchFilter) {
+            searchFilter.classList.toggle('filters-hidden', ui.showFiltersButton === false);
+        }
 
         const couponBox = document.getElementById('couponBox');
         if (couponBox) {
