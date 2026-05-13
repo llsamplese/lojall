@@ -104,31 +104,23 @@
     .topbar::before {
         content: "";
         position: absolute;
-        inset: 0;
-        z-index: 0;
-        border-radius: inherit;
-        border: 1px solid rgba(255, 193, 7, 0.34);
+        z-index: 1;
+        width: 120px;
+        height: 2px;
+        left: -130px;
+        top: 0;
+        border-radius: 999px;
+        background: linear-gradient(90deg, transparent, rgba(255, 193, 7, 0.28), rgba(255, 236, 150, 1), rgba(255, 193, 7, 0.28), transparent);
         box-shadow:
-            inset 0 0 0 1px rgba(255, 236, 150, 0.04),
-            0 0 0 rgba(255, 193, 7, 0),
-            0 0 18px rgba(255, 193, 7, 0.12);
+            0 0 8px rgba(255, 193, 7, 0.42),
+            0 0 16px rgba(255, 193, 7, 0.22);
         pointer-events: none;
-        animation: topbarBorderGlow 2.8s ease-in-out infinite;
-    }
-
-    .topbar::after {
-        content: "";
-        position: absolute;
-        inset: 2px;
-        z-index: 0;
-        border-radius: 20px;
-        background: rgba(10, 10, 10, 0.94);
-        pointer-events: none;
+        animation: topbarBorderTrace 5.2s linear infinite;
     }
 
     @media (pointer: fine) {
         .topbar::before {
-            animation-duration: 3.8s;
+            animation-duration: 8s;
         }
     }
 
@@ -137,27 +129,68 @@
         z-index: 1;
     }
 
-    @keyframes topbarBorderGlow {
+    @keyframes topbarBorderTrace {
         0% {
-            border-color: rgba(255, 193, 7, 0.22);
-            box-shadow:
-                inset 0 0 0 1px rgba(255, 236, 150, 0.03),
-                0 0 0 rgba(255, 193, 7, 0),
-                0 0 12px rgba(255, 193, 7, 0.08);
+            width: 120px;
+            height: 2px;
+            left: -130px;
+            top: 0;
+            transform: none;
+        }
+        32% {
+            width: 120px;
+            height: 2px;
+            left: 100%;
+            top: 0;
+            transform: none;
+        }
+        33% {
+            width: 2px;
+            height: 74px;
+            left: calc(100% - 2px);
+            top: -80px;
+            transform: none;
+            background: linear-gradient(180deg, transparent, rgba(255, 193, 7, 0.28), rgba(255, 236, 150, 1), rgba(255, 193, 7, 0.28), transparent);
+        }
+        49% {
+            width: 2px;
+            height: 74px;
+            left: calc(100% - 2px);
+            top: 100%;
+            transform: none;
+            background: linear-gradient(180deg, transparent, rgba(255, 193, 7, 0.28), rgba(255, 236, 150, 1), rgba(255, 193, 7, 0.28), transparent);
         }
         50% {
-            border-color: rgba(255, 213, 79, 0.72);
-            box-shadow:
-                inset 0 0 0 1px rgba(255, 236, 150, 0.18),
-                0 0 8px rgba(255, 193, 7, 0.26),
-                0 0 26px rgba(255, 193, 7, 0.2);
+            width: 120px;
+            height: 2px;
+            left: 100%;
+            top: calc(100% - 2px);
+            transform: none;
+            background: linear-gradient(270deg, transparent, rgba(255, 193, 7, 0.28), rgba(255, 236, 150, 1), rgba(255, 193, 7, 0.28), transparent);
+        }
+        82% {
+            width: 120px;
+            height: 2px;
+            left: -130px;
+            top: calc(100% - 2px);
+            transform: none;
+            background: linear-gradient(270deg, transparent, rgba(255, 193, 7, 0.28), rgba(255, 236, 150, 1), rgba(255, 193, 7, 0.28), transparent);
+        }
+        83% {
+            width: 2px;
+            height: 74px;
+            left: 0;
+            top: 100%;
+            transform: none;
+            background: linear-gradient(0deg, transparent, rgba(255, 193, 7, 0.28), rgba(255, 236, 150, 1), rgba(255, 193, 7, 0.28), transparent);
         }
         100% {
-            border-color: rgba(255, 193, 7, 0.22);
-            box-shadow:
-                inset 0 0 0 1px rgba(255, 236, 150, 0.03),
-                0 0 0 rgba(255, 193, 7, 0),
-                0 0 12px rgba(255, 193, 7, 0.08);
+            width: 2px;
+            height: 74px;
+            left: 0;
+            top: -80px;
+            transform: none;
+            background: linear-gradient(0deg, transparent, rgba(255, 193, 7, 0.28), rgba(255, 236, 150, 1), rgba(255, 193, 7, 0.28), transparent);
         }
     }
 
