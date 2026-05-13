@@ -104,8 +104,10 @@
     .topbar::before {
         content: "";
         position: absolute;
-        inset: -70%;
+        inset: -1px;
         z-index: 0;
+        padding: 1px;
+        border-radius: inherit;
         background:
             conic-gradient(
                 from 0deg,
@@ -117,6 +119,9 @@
                 transparent 142deg,
                 transparent 360deg
             );
+        -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
         pointer-events: none;
         animation: topbarBorderShine 3.6s linear infinite;
     }
@@ -129,6 +134,12 @@
         border-radius: 21px;
         background: rgba(10, 10, 10, 0.94);
         pointer-events: none;
+    }
+
+    @media (pointer: fine) {
+        .topbar::before {
+            animation-duration: 6.5s;
+        }
     }
 
     .topbar > * {
