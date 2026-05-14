@@ -2307,8 +2307,8 @@
     }
 
     .sample-name.marquee span {
-        animation: none;
-        transform: none;
+        animation: sampleMarquee 7s linear infinite alternate;
+        will-change: transform;
     }
 
     @keyframes sampleMarquee {
@@ -5268,6 +5268,31 @@
         });
     }
 
+    function updateNameMarquees() {
+        document.querySelectorAll('.sample-name').forEach((nameContainer) => {
+            const nameText = nameContainer.querySelector('span');
+            if (!nameText) return;
+            nameContainer.classList.remove('marquee');
+            nameContainer.style.removeProperty('--marquee-distance');
+            if (nameText.scrollWidth <= nameContainer.clientWidth + 8) return;
+            const overflow = nameText.scrollWidth - nameContainer.clientWidth;
+            nameContainer.style.setProperty('--marquee-distance', `-${overflow + 24}px`);
+            nameContainer.classList.add('marquee');
+        });
+    }
+
+    let nameMarqueeFrame = null;
+
+    function scheduleNameMarqueeUpdate() {
+        if (nameMarqueeFrame) {
+            cancelAnimationFrame(nameMarqueeFrame);
+        }
+        nameMarqueeFrame = requestAnimationFrame(() => {
+            nameMarqueeFrame = null;
+            updateNameMarquees();
+        });
+    }
+
 
 
     function toggleSample(index, cardElement) {
@@ -5592,6 +5617,7 @@
         }
         grid.appendChild(fragment);
         grid.classList.remove('is-loading');
+        scheduleNameMarqueeUpdate();
     }
 
     // ── Event Listeners ────────────────────────────────────────────────────────
@@ -5636,6 +5662,8 @@
             }
         });
     });
+
+    window.addEventListener('resize', scheduleNameMarqueeUpdate);
 
     // Renderiza catálogo inicial
     (async function initStorefront() {
