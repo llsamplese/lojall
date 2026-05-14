@@ -615,11 +615,11 @@
     }
 
     #paymentBrick_container.brick-crop-ready {
-        --brick-crop-top: 42px;
-        --brick-crop-bottom: 54px;
+        --brick-crop-top: 18px;
+        --brick-crop-bottom: 28px;
         margin-top: calc(var(--brick-crop-top) * -1);
         margin-bottom: calc(var(--brick-crop-bottom) * -1);
-        clip-path: inset(var(--brick-crop-top) 0 var(--brick-crop-bottom) 0 round 16px);
+        clip-path: inset(var(--brick-crop-top) 0 var(--brick-crop-bottom) 0 round 18px);
     }
 
     #paymentBrick_container :is(.mp-checkout-container, .mp-checkout, .mp-form, .mp-payment-methods, .mercadopago-checkout) {
@@ -663,11 +663,11 @@
 
     .paypal-checkout-panel {
         display: none;
-        gap: 10px;
-        margin-top: 10px;
-        padding: 16px;
+        gap: 8px;
+        margin-top: 8px;
+        padding: 12px;
         border: 1px solid rgba(255, 193, 7, 0.22);
-        border-radius: 18px;
+        border-radius: 16px;
         background: linear-gradient(135deg, #fff7df, #f0e4c4);
         color: #201703;
     }
@@ -679,17 +679,23 @@
     .paypal-checkout-title {
         font-weight: 900;
         color: #201703;
+        font-size: 0.98rem;
     }
 
     .paypal-checkout-total {
         display: flex;
         justify-content: space-between;
         gap: 12px;
-        padding: 10px 12px;
-        border-radius: 14px;
+        padding: 8px 10px;
+        border-radius: 12px;
         background: rgba(0,0,0,0.08);
         color: #201703;
         font-weight: 900;
+        font-size: 0.94rem;
+    }
+
+    #paypalButtons {
+        min-height: 0;
     }
 
     .paypal-checkout-total span {
@@ -3927,10 +3933,20 @@
             'Cartão de Débito Virtual CAIXA',
             'Boleto'
         ];
+        const blockedTexts = [
+            'Após receber o código Pix, você deve concluir o seu pagamento.',
+            'O Pix tem limite diário de transferências. Consulte o app do seu banco.'
+        ];
 
         container.querySelectorAll('*').forEach((node) => {
             const text = (node.textContent || '').trim();
             if (!text) return;
+            if (blockedTexts.some((blockedText) => text === blockedText || text.includes(blockedText))) {
+                if (node instanceof HTMLElement) {
+                    node.style.display = 'none';
+                }
+                return;
+            }
             if (!blockedLabels.includes(text)) return;
 
             const option = node.closest('label, li, button, div');
