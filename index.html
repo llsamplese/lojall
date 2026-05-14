@@ -5000,19 +5000,25 @@
         return 'home';
     }
 
-    async function trackStorefrontVisit() {
+    function trackStorefrontVisit() {
         if (window.__storefrontVisitTracked) return;
         window.__storefrontVisitTracked = true;
         try {
-            await fetch(STORE_CONFIG_ENDPOINT, {
+            const body = JSON.stringify({
+                action: 'track_visit',
+                pageType: getPageDisplayContext(),
+                path: `${window.location.pathname || '/'}${window.location.search || ''}`
+            });
+            if (navigator.sendBeacon) {
+                const sent = navigator.sendBeacon(STORE_CONFIG_ENDPOINT, new Blob([body], { type: 'application/json' }));
+                if (sent) return;
+            }
+            fetch(STORE_CONFIG_ENDPOINT, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    action: 'track_visit',
-                    pageType: getPageDisplayContext(),
-                    path: `${window.location.pathname || '/'}${window.location.search || ''}`
-                })
-            });
+                body,
+                keepalive: true
+            }).catch(() => {});
         } catch {}
     }
 
@@ -5220,6 +5226,18 @@
             toggleSample(index, card); // Passa o elemento do card
         });
         return card;
+    }
+
+    function refreshRenderedCatalogPrices() {
+        document.querySelectorAll('.sample-card[data-index]').forEach((card) => {
+            const index = Number(card.dataset.index);
+            const sample = samplesData[index];
+            const priceEl = card.querySelector('.sample-price');
+            if (!sample || !priceEl) return;
+            const effectivePrice = getEffectiveSamplePrice(sample);
+            const hasPromo = effectivePrice !== roundCurrency(sample.valor || 0);
+            priceEl.innerHTML = `${hasPromo ? `<s style="opacity:.45; margin-right:6px;">R$ ${Number(sample.valor || 0).toFixed(2)}</s>` : ''}R$ ${effectivePrice.toFixed(2)}`;
+        });
     }
 
 
@@ -5593,10 +5611,8 @@
 
     // Renderiza catálogo inicial
     (async function initStorefront() {
-        await loadStoreConfig();
         applyLinkedProductFromUrl();
         updateProductFocusBanner();
-        await trackStorefrontVisit();
         renderCatalog(document.getElementById('searchInput')?.value || '');
         requestAnimationFrame(() => {
             focusLinkedProductCard();
@@ -5604,6 +5620,15 @@
         updateCouponUI();
         updateCouponCountdowns();
         updatePackageCountdowns();
+        trackStorefrontVisit();
+        loadStoreConfig().then(() => {
+            applyLinkedProductFromUrl();
+            updateProductFocusBanner();
+            refreshRenderedCatalogPrices();
+            updateCouponUI();
+            updateCouponCountdowns();
+            updatePackageCountdowns();
+        });
         setInterval(() => {
             updateCouponCountdowns();
             updatePackageCountdowns();
