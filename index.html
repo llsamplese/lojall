@@ -28,8 +28,13 @@
        Cinza para texto secundário: #B0BEC5 (Light Blue Grey) ou #757575 (Grey)
     */
 
+    html {
+        background: #050505;
+    }
+
     body {
         font-family: 'Inter', sans-serif;
+        background-color: #050505;
         background:
             radial-gradient(circle at top, rgba(255, 193, 7, 0.12), transparent 22%),
             radial-gradient(circle at 20% 20%, rgba(255, 213, 79, 0.08), transparent 18%),
@@ -2212,7 +2217,7 @@
         position: relative;
         width: 52px;
         height: 52px;
-        background: #424242; /* Fundo cinza escuro para thumbnail padrão */
+        background: #080808; /* Evita flash claro enquanto a thumbnail carrega */
         display: flex;
         align-items: center;
         justify-content: center;
@@ -2227,6 +2232,8 @@
         width: 100%;
         height: 100%;
         object-fit: cover;
+        background: #080808;
+        display: block;
     }
 
     .catalog-grid.product-mode .sample-card.deep-linked .video-thumbnail {
@@ -5162,6 +5169,36 @@
         window.location.href = url.toString();
     }
 
+    let thumbnailObserver = null;
+
+    function loadCardThumbnail(image) {
+        if (!image || image.dataset.loaded === 'true') return;
+        const targetSrc = image.dataset.targetSrc;
+        image.dataset.loaded = 'true';
+        if (targetSrc && targetSrc !== FALLBACK_THUMBNAIL_URL) {
+            image.src = targetSrc;
+        }
+    }
+
+    function observeCardThumbnail(image) {
+        if (!image) return;
+        if (!('IntersectionObserver' in window)) {
+            loadCardThumbnail(image);
+            return;
+        }
+        if (!thumbnailObserver) {
+            thumbnailObserver = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (!entry.isIntersecting) return;
+                    const image = entry.target;
+                    thumbnailObserver.unobserve(image);
+                    loadCardThumbnail(image);
+                });
+            }, { rootMargin: '280px 0px' });
+        }
+        thumbnailObserver.observe(image);
+    }
+
     // Função para criar um único card HTML
     function createSampleCard(sample, globalIndex) {
         const isSelected = selectedSamples.has(globalIndex);
@@ -5176,7 +5213,7 @@
         const thumbnailUrl = getFastThumbnailUrl(sample.video);
         const displayName = getDisplaySampleName(sample.nome);
         const thumbnailContent = `
-            <img src="${FALLBACK_THUMBNAIL_URL}" data-target-src="${thumbnailUrl}" alt="${sample.nome}" loading="lazy">
+            <img src="${FALLBACK_THUMBNAIL_URL}" data-target-src="${thumbnailUrl}" alt="${sample.nome}" loading="lazy" decoding="async">
         `;
         card.innerHTML = `
             <div class="video-thumbnail ${sample.video ? '' : 'no-video'}">
@@ -5209,19 +5246,7 @@
             thumbnailImage.addEventListener('error', () => {
                 thumbnailImage.src = FALLBACK_THUMBNAIL_URL;
             }, { once: true });
-            const targetSrc = thumbnailImage.dataset.targetSrc;
-            if (targetSrc && targetSrc !== FALLBACK_THUMBNAIL_URL && !isExternalThumbnailUrl(targetSrc)) {
-                const preloadImage = new Image();
-                preloadImage.onload = () => {
-                    thumbnailImage.src = targetSrc;
-                };
-                preloadImage.onerror = () => {
-                    thumbnailImage.src = FALLBACK_THUMBNAIL_URL;
-                };
-                preloadImage.src = targetSrc;
-            } else if (targetSrc && targetSrc !== FALLBACK_THUMBNAIL_URL) {
-                thumbnailImage.src = targetSrc;
-            }
+            observeCardThumbnail(thumbnailImage);
         }
         // Adiciona o event listener diretamente ao botão dentro do card
         card.querySelector('.btn-select').addEventListener('click', (event) => {
