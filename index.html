@@ -604,26 +604,14 @@
     .checkout-brick-host {
         min-height: 0;
         width: 100%;
-        max-height: 390px;
+        max-height: 430px;
         overflow-y: auto;
         overflow-x: hidden;
-        border-radius: 16px;
+        border-radius: 18px;
     }
 
     #paymentBrick_container {
         margin: 0;
-    }
-
-    #paymentBrick_container :is(.mp-checkout-container, .mp-checkout, .mp-form, .mp-payment-methods, .mercadopago-checkout) {
-        padding-top: 8px !important;
-        padding-bottom: 8px !important;
-    }
-
-    #paymentBrick_container > div,
-    #paymentBrick_container form,
-    #paymentBrick_container section {
-        margin-top: 0 !important;
-        margin-bottom: 0 !important;
     }
 
     .checkout-brick-status {
@@ -651,11 +639,11 @@
 
     .paypal-checkout-panel {
         display: none;
-        gap: 8px;
-        margin-top: 8px;
-        padding: 12px;
+        gap: 10px;
+        margin-top: 10px;
+        padding: 16px;
         border: 1px solid rgba(255, 193, 7, 0.22);
-        border-radius: 16px;
+        border-radius: 18px;
         background: linear-gradient(135deg, #fff7df, #f0e4c4);
         color: #201703;
     }
@@ -667,23 +655,17 @@
     .paypal-checkout-title {
         font-weight: 900;
         color: #201703;
-        font-size: 0.98rem;
     }
 
     .paypal-checkout-total {
         display: flex;
         justify-content: space-between;
         gap: 12px;
-        padding: 8px 10px;
-        border-radius: 12px;
+        padding: 10px 12px;
+        border-radius: 14px;
         background: rgba(0,0,0,0.08);
         color: #201703;
         font-weight: 900;
-        font-size: 0.94rem;
-    }
-
-    #paypalButtons {
-        min-height: 0;
     }
 
     .paypal-checkout-total span {
@@ -1482,11 +1464,11 @@
         transform: translateX(-50%);
         z-index: 190;
         grid-template-columns: minmax(0, 1fr) auto;
-        gap: 10px;
+        gap: 12px;
         align-items: center;
-        width: min(360px, calc(100vw - 28px));
-        padding: 8px 10px;
-        border-radius: 16px;
+        width: min(420px, calc(100vw - 36px));
+        padding: 12px 14px;
+        border-radius: 18px;
         background: linear-gradient(145deg, rgba(20,20,20,0.98), rgba(12,12,12,0.98));
         border: 1px solid rgba(255, 193, 7, 0.16);
         box-shadow: 0 18px 40px rgba(0,0,0,0.35);
@@ -1494,15 +1476,6 @@
 
     .mobile-cart-bar.open {
         display: grid;
-    }
-
-    .mobile-cart-bar .btn-pay-pix {
-        min-height: 42px;
-        padding: 9px 18px;
-        border-radius: 14px;
-        font-size: 0.88rem;
-        box-shadow: 0 10px 18px rgba(255, 193, 7, 0.12);
-        white-space: nowrap;
     }
 
     .mobile-cart-bar-info {
@@ -1513,13 +1486,13 @@
 
     .mobile-cart-bar-count {
         color: #fff6d3;
-        font-size: 0.82rem;
+        font-size: 0.92rem;
         font-weight: 700;
     }
 
     .mobile-cart-bar-total {
         color: #ffd54f;
-        font-size: 0.9rem;
+        font-size: 1rem;
         font-weight: 900;
     }
 
@@ -2428,12 +2401,11 @@
 
 @media (max-width: 768px) {
     .mobile-cart-bar {
-        left: 50%;
-        right: auto;
-        bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+        left: 12px;
+        right: 12px;
+        bottom: calc(12px + env(safe-area-inset-bottom, 0px));
         width: auto;
-        min-width: min(330px, calc(100vw - 28px));
-        transform: translateX(-50%);
+        transform: none;
     }
 
     .topbar {
@@ -2694,7 +2666,7 @@
     .checkout-brick-host {
         overflow: visible;
         min-height: 0;
-        max-height: 66vh;
+        max-height: 72vh;
         overflow-y: auto;
         overflow-x: hidden;
     }
@@ -3921,44 +3893,15 @@
             'Cartão de Débito Virtual CAIXA',
             'Boleto'
         ];
-        const blockedTexts = [
-            'Após receber o código Pix, você deve concluir o seu pagamento.',
-            'O Pix tem limite diário de transferências. Consulte o app do seu banco.'
-        ];
 
         container.querySelectorAll('*').forEach((node) => {
             const text = (node.textContent || '').trim();
             if (!text) return;
-            if (blockedTexts.some((blockedText) => text === blockedText || text.includes(blockedText))) {
-                if (node instanceof HTMLElement) {
-                    node.style.display = 'none';
-                }
-                return;
-            }
             if (!blockedLabels.includes(text)) return;
 
             const option = node.closest('label, li, button, div');
             if (option instanceof HTMLElement) {
                 option.style.display = 'none';
-            }
-        });
-
-        compactPaymentBrickSpacing(container);
-    }
-
-    function compactPaymentBrickSpacing(container) {
-        const nodes = container.querySelectorAll('div, section, form, article');
-        nodes.forEach((node) => {
-            if (!(node instanceof HTMLElement)) return;
-            const style = window.getComputedStyle(node);
-            const paddingTop = parseFloat(style.paddingTop) || 0;
-            const paddingBottom = parseFloat(style.paddingBottom) || 0;
-
-            if (paddingTop >= 28) {
-                node.style.paddingTop = '12px';
-            }
-            if (paddingBottom >= 28) {
-                node.style.paddingBottom = '12px';
             }
         });
     }
