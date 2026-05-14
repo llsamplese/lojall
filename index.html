@@ -623,6 +623,13 @@
         min-height: auto !important;
     }
 
+    #paymentBrick_container > div,
+    #paymentBrick_container form,
+    #paymentBrick_container section {
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+    }
+
     .checkout-brick-status {
         margin-top: 12px;
         padding: 12px 14px;
@@ -3921,6 +3928,29 @@
             const option = node.closest('label, li, button, div');
             if (option instanceof HTMLElement) {
                 option.style.display = 'none';
+            }
+        });
+
+        compactPaymentBrickSpacing(container);
+    }
+
+    function compactPaymentBrickSpacing(container) {
+        const nodes = container.querySelectorAll('div, section, form, article');
+        nodes.forEach((node) => {
+            if (!(node instanceof HTMLElement)) return;
+            const style = window.getComputedStyle(node);
+            const paddingTop = parseFloat(style.paddingTop) || 0;
+            const paddingBottom = parseFloat(style.paddingBottom) || 0;
+            const minHeight = parseFloat(style.minHeight) || 0;
+
+            if (paddingTop >= 28) {
+                node.style.paddingTop = '12px';
+            }
+            if (paddingBottom >= 28) {
+                node.style.paddingBottom = '12px';
+            }
+            if (minHeight >= 420) {
+                node.style.minHeight = 'auto';
             }
         });
     }
