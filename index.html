@@ -614,6 +614,14 @@
         margin: 0;
     }
 
+    #paymentBrick_container.brick-crop-ready {
+        --brick-crop-top: 42px;
+        --brick-crop-bottom: 54px;
+        margin-top: calc(var(--brick-crop-top) * -1);
+        margin-bottom: calc(var(--brick-crop-bottom) * -1);
+        clip-path: inset(var(--brick-crop-top) 0 var(--brick-crop-bottom) 0 round 16px);
+    }
+
     #paymentBrick_container :is(.mp-checkout-container, .mp-checkout, .mp-form, .mp-payment-methods, .mercadopago-checkout) {
         padding-top: 8px !important;
         padding-bottom: 8px !important;
@@ -3935,6 +3943,7 @@
     }
 
     function compactPaymentBrickSpacing(container) {
+        container.classList.add('brick-crop-ready');
         const nodes = container.querySelectorAll('div, section, form, article');
         nodes.forEach((node) => {
             if (!(node instanceof HTMLElement)) return;
