@@ -604,14 +604,23 @@
     .checkout-brick-host {
         min-height: 0;
         width: 100%;
-        max-height: 430px;
+        max-height: 390px;
         overflow-y: auto;
         overflow-x: hidden;
-        border-radius: 18px;
+        border-radius: 16px;
     }
 
     #paymentBrick_container {
         margin: 0;
+    }
+
+    #paymentBrick_container :is(.mp-checkout-container, .mp-checkout, .mp-form, .mp-payment-methods, .mercadopago-checkout) {
+        padding-top: 8px !important;
+        padding-bottom: 8px !important;
+    }
+
+    #paymentBrick_container :is(.mp-checkout-container, .mp-checkout, .mercadopago-checkout) {
+        min-height: auto !important;
     }
 
     .checkout-brick-status {
@@ -1464,11 +1473,11 @@
         transform: translateX(-50%);
         z-index: 190;
         grid-template-columns: minmax(0, 1fr) auto;
-        gap: 12px;
+        gap: 10px;
         align-items: center;
-        width: min(420px, calc(100vw - 36px));
-        padding: 12px 14px;
-        border-radius: 18px;
+        width: min(360px, calc(100vw - 28px));
+        padding: 8px 10px;
+        border-radius: 16px;
         background: linear-gradient(145deg, rgba(20,20,20,0.98), rgba(12,12,12,0.98));
         border: 1px solid rgba(255, 193, 7, 0.16);
         box-shadow: 0 18px 40px rgba(0,0,0,0.35);
@@ -1476,6 +1485,15 @@
 
     .mobile-cart-bar.open {
         display: grid;
+    }
+
+    .mobile-cart-bar .btn-pay-pix {
+        min-height: 42px;
+        padding: 9px 18px;
+        border-radius: 14px;
+        font-size: 0.88rem;
+        box-shadow: 0 10px 18px rgba(255, 193, 7, 0.12);
+        white-space: nowrap;
     }
 
     .mobile-cart-bar-info {
@@ -1486,13 +1504,13 @@
 
     .mobile-cart-bar-count {
         color: #fff6d3;
-        font-size: 0.92rem;
+        font-size: 0.82rem;
         font-weight: 700;
     }
 
     .mobile-cart-bar-total {
         color: #ffd54f;
-        font-size: 1rem;
+        font-size: 0.9rem;
         font-weight: 900;
     }
 
@@ -2401,11 +2419,12 @@
 
 @media (max-width: 768px) {
     .mobile-cart-bar {
-        left: 12px;
-        right: 12px;
-        bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+        left: 50%;
+        right: auto;
+        bottom: calc(10px + env(safe-area-inset-bottom, 0px));
         width: auto;
-        transform: none;
+        min-width: min(330px, calc(100vw - 28px));
+        transform: translateX(-50%);
     }
 
     .topbar {
@@ -2666,7 +2685,7 @@
     .checkout-brick-host {
         overflow: visible;
         min-height: 0;
-        max-height: 72vh;
+        max-height: 66vh;
         overflow-y: auto;
         overflow-x: hidden;
     }
