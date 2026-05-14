@@ -614,21 +614,9 @@
         margin: 0;
     }
 
-    #paymentBrick_container.brick-crop-ready {
-        --brick-crop-top: 18px;
-        --brick-crop-bottom: 28px;
-        margin-top: calc(var(--brick-crop-top) * -1);
-        margin-bottom: calc(var(--brick-crop-bottom) * -1);
-        clip-path: inset(var(--brick-crop-top) 0 var(--brick-crop-bottom) 0 round 18px);
-    }
-
     #paymentBrick_container :is(.mp-checkout-container, .mp-checkout, .mp-form, .mp-payment-methods, .mercadopago-checkout) {
         padding-top: 8px !important;
         padding-bottom: 8px !important;
-    }
-
-    #paymentBrick_container :is(.mp-checkout-container, .mp-checkout, .mercadopago-checkout) {
-        min-height: auto !important;
     }
 
     #paymentBrick_container > div,
@@ -3959,23 +3947,18 @@
     }
 
     function compactPaymentBrickSpacing(container) {
-        container.classList.add('brick-crop-ready');
         const nodes = container.querySelectorAll('div, section, form, article');
         nodes.forEach((node) => {
             if (!(node instanceof HTMLElement)) return;
             const style = window.getComputedStyle(node);
             const paddingTop = parseFloat(style.paddingTop) || 0;
             const paddingBottom = parseFloat(style.paddingBottom) || 0;
-            const minHeight = parseFloat(style.minHeight) || 0;
 
             if (paddingTop >= 28) {
                 node.style.paddingTop = '12px';
             }
             if (paddingBottom >= 28) {
                 node.style.paddingBottom = '12px';
-            }
-            if (minHeight >= 420) {
-                node.style.minHeight = 'auto';
             }
         });
     }
