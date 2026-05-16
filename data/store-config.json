@@ -77,7 +77,7 @@
     "LL10": {
       "code": "LL10",
       "label": "Bem-vindo 10%",
-      "active": true,
+      "active": false,
       "type": "percent",
       "value": 10,
       "minSubtotal": 0,
@@ -90,7 +90,7 @@
         "157633622387"
       ],
       "expiredAt": "2026-05-12T01:21:03.648Z",
-      "hidden": false,
+      "hidden": true,
       "allowWithPackage": false
     },
     "LLOFF10": {
