@@ -137,7 +137,7 @@
     "LL20": {
       "code": "LL20",
       "label": "20%OFF",
-      "active": false,
+      "active": true,
       "type": "percent",
       "value": 20,
       "minSubtotal": 0,
@@ -150,7 +150,7 @@
       "usedCount": 2,
       "expiredAt": "2026-05-10T01:21:27.876Z",
       "usageLimit": 6,
-      "hidden": true,
+      "hidden": false,
       "allowWithPackage": false
     }
   },
