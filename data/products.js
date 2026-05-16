@@ -1,10 +1,5 @@
 const LL_PRODUCTS = [
   {
-    "nome": "TESTE",
-    "valor": 70,
-    "video": ""
-  },
-  {
     "nome": "LL Drums Menos é Mais",
     "valor": 75,
     "video": "https://youtu.be/mJjQR7U2kAw"
