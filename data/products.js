@@ -221,7 +221,7 @@ const LL_PRODUCTS = [
   },
   {
     "nome": "LL Guitarra Arrocha v2 – Seresta",
-    "valor": 70,
+    "valor": 80,
     "video": "https://youtu.be/uZHO0a083Oo?si=jHw5I-r7somFev9x"
   },
   {
