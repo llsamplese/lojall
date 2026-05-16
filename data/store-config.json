@@ -96,7 +96,7 @@
     "LLOFF10": {
       "code": "LLOFF10",
       "label": "LL10",
-      "active": true,
+      "active": false,
       "type": "fixed",
       "value": 10,
       "minSubtotal": 0,
