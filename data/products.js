@@ -1,13 +1,13 @@
 const LL_PRODUCTS = [
   {
-    "nome": "LL Drums Menos é Mais",
-    "valor": 75,
-    "video": "https://youtu.be/mJjQR7U2kAw"
-  },
-  {
     "nome": "TESTE",
     "valor": 70,
     "video": ""
+  },
+  {
+    "nome": "LL Drums Menos é Mais",
+    "valor": 75,
+    "video": "https://youtu.be/mJjQR7U2kAw"
   },
   {
     "nome": "LL Drums Filho do Piseiro",
