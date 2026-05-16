@@ -136,7 +136,7 @@ const LL_PRODUCTS = [
   },
   {
     "nome": "LL Pacote Producao Arrasta-Pe (Completo)",
-    "valor": 70,
+    "valor": 100,
     "video": "https://www.youtube.com/watch?v=B-VnCfYLIj8"
   },
   {
