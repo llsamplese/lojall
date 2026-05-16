@@ -437,6 +437,47 @@
       cursor: pointer;
     }
     .sample-action:hover { filter: brightness(1.06); }
+    .product-admin-card {
+      display: grid;
+      gap: 12px;
+      border-radius: 18px;
+      padding: 14px;
+      background: rgba(255,255,255,.025);
+      border: 1px solid rgba(255,255,255,.06);
+    }
+    .product-admin-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .product-admin-title strong { display: block; color: #fff4ca; }
+    .product-admin-title small { display: block; color: var(--muted); margin-top: 4px; line-height: 1.45; }
+    .product-admin-grid {
+      display: grid;
+      grid-template-columns: 84px minmax(0, 2fr) minmax(110px, .7fr) minmax(90px, .45fr);
+      gap: 10px;
+      align-items: center;
+    }
+    .product-admin-links {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 10px;
+    }
+    .product-thumb {
+      width: 72px;
+      height: 46px;
+      object-fit: cover;
+      border-radius: 12px;
+      border: 1px solid rgba(255,193,7,.18);
+      background: rgba(0,0,0,.35);
+    }
+    @media (max-width: 780px) {
+      .product-admin-grid,
+      .product-admin-links { grid-template-columns: 1fr; }
+      .product-thumb { width: 100%; height: 120px; }
+    }
     .subhead { color: #fff4ca; font-size: .94rem; font-weight: 800; margin-bottom: 10px; }
     .empty { padding: 18px; border-radius: 16px; border: 1px dashed rgba(255,193,7,.14); color: var(--muted); text-align: center; line-height: 1.5; }
     .hero-kicker {
@@ -659,6 +700,26 @@
         <details class="section-card">
           <summary>
             <div class="section-title">
+              <strong>Produtos / Samples</strong>
+              <span>Cadastre novos samples, edite preço, vídeo, link de download e ordem na loja.</span>
+            </div>
+            <span class="section-chevron">v</span>
+          </summary>
+          <div class="section-content">
+            <div class="actions compact">
+              <input id="productAdminSearch" type="text" placeholder="Buscar sample para editar" oninput="renderProductAdmin()">
+              <button class="ghost" type="button" onclick="addProductDraft()">Novo sample</button>
+              <button class="primary" type="button" onclick="saveProductCatalog()">Salvar samples</button>
+            </div>
+            <div class="empty" style="margin-bottom:12px;text-align:left;">
+              A capa é gerada automaticamente pela thumb do YouTube. O link individual também é gerado pelo nome do sample.
+            </div>
+            <div class="scroll"><div id="productAdminList" class="promo-list"></div></div>
+          </div>
+        </details>
+        <details class="section-card">
+          <summary>
+            <div class="section-title">
               <strong>Links de produto</strong>
               <span>Gere o link individual de um sample para divulgar no YouTube, WhatsApp ou campanha.</span>
             </div>
@@ -763,6 +824,7 @@
 const ADMIN_CUSTOMERS_ENDPOINT='/api/admin-customers';
 const STORE_CONFIG_ENDPOINT='/api/store-config';
 const CUSTOMER_UPDATE_ENDPOINT='/api/admin-customer-update';
+const ADMIN_PRODUCTS_ENDPOINT='/api/store-config?view=products';
 const ADMIN_PANEL_PASSWORD='3007';
 const ADMIN_PANEL_SESSION_KEY='llsamples-admin-panel-unlocked';
 const UI_FIELDS=[
@@ -828,8 +890,15 @@ function updateTrafficStats(stats){const events=stats?.checkout_events||{};traff
 function renderProductSelectOptions(selectedLabel='Selecionar sample'){const options=['<option value="">'+escapeHtml(selectedLabel)+'</option>'];productsCache.forEach(product=>{options.push(`<option value="${escapeHtml(product.nome)}">${escapeHtml(product.nome)} • ${money(product.valor)}</option>`);});return options.join('');}
 function renderProductLinkOptions(){const select=document.getElementById('productLinkSelect');if(!select)return;const currentValue=String(select.value||'').trim();const query=removerAcentos(String(document.getElementById('productLinkSearch')?.value||'')).toLowerCase().trim();const options=['<option value="">Selecionar produto para gerar o link</option>'];productsCache.filter(product=>!query||removerAcentos(String(product.nome||'')).toLowerCase().includes(query)).forEach(product=>{options.push(`<option value="${escapeHtml(product.nome)}">${escapeHtml(product.nome)} • ${money(product.valor)}</option>`);});select.innerHTML=options.join('');if(currentValue&&Array.from(select.options).some(option=>option.value===currentValue)){select.value=currentValue;}updateProductLinkPreview();}
 function getProductLinkByName(name){const product=productsCache.find((item)=>item.nome===name);if(!product)return'';const slug=slugifyProductName(product.nome);return `https://llsamples.com/?produto=${encodeURIComponent(slug)}&sample=${encodeURIComponent(product.nome)}`;}
+function getYoutubeVideoId(url){const raw=String(url||'').trim();if(!raw)return'';try{const parsed=new URL(raw);if(parsed.hostname.includes('youtu.be'))return parsed.pathname.replace('/','').split(/[?&/]/)[0];if(parsed.searchParams.get('v'))return parsed.searchParams.get('v');const embedMatch=parsed.pathname.match(/\/embed\/([^/?#]+)/);if(embedMatch)return embedMatch[1];}catch{}const fallback=raw.match(/(?:youtu\.be\/|v=|embed\/)([A-Za-z0-9_-]{6,})/);return fallback?fallback[1]:'';}
+function getProductThumb(product){const id=getYoutubeVideoId(product?.video);return id?`https://img.youtube.com/vi/${id}/mqdefault.jpg`:'https://llsamplese.github.io/llcatalogo/Layer%205.png';}
 function updateProductLinkPreview(){const select=document.getElementById('productLinkSelect');const output=document.getElementById('productLinkOutput');const preview=document.getElementById('productLinkPreviewButton');const link=getProductLinkByName(select?.value||'');if(output)output.value=link;if(preview){preview.href=link||'#';preview.style.pointerEvents=link?'auto':'none';preview.style.opacity=link?'1':'0.55';}}
 function copyProductLink(){const output=document.getElementById('productLinkOutput');const link=String(output?.value||'').trim();if(!link){setStatus('Selecione um produto para gerar o link.','error');return;}copyText(link,'Link do produto copiado.');}
+function updateProductDraft(index,field,value){const product=productsCache[index];if(!product)return;product[field]=field==='valor'||field==='order'?value:String(value||'');}
+function addProductDraft(){const nextOrder=productsCache.reduce((max,product)=>Math.max(max,Number(product.order||0)),0)+1;productsCache.unshift({nome:'',valor:70,video:'',downloadUrl:'',order:nextOrder,originalName:''});renderProductAdmin();setStatus('Novo sample criado no painel. Preencha os dados e clique em Salvar samples.','ok');}
+function removeProductDraft(index){const product=productsCache[index];if(!product)return;if(!confirm(`Remover o sample "${product.nome||'novo sample'}" da loja?`))return;productsCache=productsCache.filter((_,itemIndex)=>itemIndex!==index);renderProductAdmin();renderProducts();renderProductLinkOptions();renderManualCustomerItems();setStatus('Sample removido da lista local. Clique em Salvar samples para aplicar na loja.','ok');}
+function renderProductAdmin(){const host=document.getElementById('productAdminList');if(!host)return;const query=removerAcentos(String(document.getElementById('productAdminSearch')?.value||'')).toLowerCase().trim();const rows=productsCache.map((product,index)=>({product,index})).filter(({product})=>!query||removerAcentos(String(product.nome||'')).toLowerCase().includes(query));if(!rows.length){host.innerHTML='<div class="empty">Nenhum sample encontrado para edição.</div>';return;}host.innerHTML=rows.map(({product,index})=>{const link=getProductLinkByName(product.nome);return `<div class="product-admin-card"><div class="product-admin-head"><div class="product-admin-title"><strong>${escapeHtml(product.nome||'Novo sample sem nome')}</strong><small>Link: ${link?escapeHtml(link):'preencha o nome para gerar'}</small></div><div class="actions compact"><button class="ghost" type="button" onclick="copyText('${escapeHtml(link)}','Link do produto copiado.')" ${link?'':'disabled'}>Copiar link</button><a class="button ghost" href="${escapeHtml(link||'#')}" target="_blank" rel="noopener" style="${link?'':'pointer-events:none;opacity:.55;'}">Abrir</a><button class="danger" type="button" onclick="removeProductDraft(${index})">Remover</button></div></div><div class="product-admin-grid"><img class="product-thumb" src="${escapeHtml(getProductThumb(product))}" alt="Thumb"><input value="${escapeHtml(product.nome||'')}" placeholder="Nome do sample" oninput="updateProductDraft(${index},'nome',this.value)"><input type="number" min="0" step="0.01" value="${escapeHtml(product.valor??'')}" placeholder="Preço" oninput="updateProductDraft(${index},'valor',this.value)"><input type="number" min="1" step="1" value="${escapeHtml(product.order??index+1)}" placeholder="Ordem" oninput="updateProductDraft(${index},'order',this.value)"></div><div class="product-admin-links"><input value="${escapeHtml(product.video||'')}" placeholder="Link do YouTube / vídeo de demonstração" oninput="updateProductDraft(${index},'video',this.value)"><input value="${escapeHtml(product.downloadUrl||'')}" placeholder="Link de download para entrega automática" oninput="updateProductDraft(${index},'downloadUrl',this.value)"></div></div>`;}).join('');}
+async function saveProductCatalog(){const sanitized=productsCache.map((product,index)=>({originalName:String(product.originalName||product.nome||'').trim(),nome:String(product.nome||'').trim(),valor:Number(String(product.valor||0).replace(',', '.'))||0,video:String(product.video||'').trim(),downloadUrl:String(product.downloadUrl||'').trim(),order:Number.parseInt(String(product.order||index+1),10)||index+1})).filter(product=>product.nome);if(!sanitized.length){setStatus('Cadastre pelo menos um sample antes de salvar.','error');return;}setStatus('Salvando catálogo de samples no GitHub...','');try{const response=await fetch(ADMIN_PRODUCTS_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'save_products',products:sanitized})});const data=await response.json();if(!response.ok)throw new Error(data.error||'Não foi possível salvar os samples.');productsCache=Array.isArray(data.products)?data.products:sanitized;renderProductAdmin();renderProducts();renderProductLinkOptions();renderManualCustomerItems();updateStats(customersCache);setStatus('Samples salvos. A Vercel fará o deploy da loja com o catálogo atualizado.','ok');}catch(error){setStatus(error.message||'Erro ao salvar samples.','error');}}
 function getPackageRouteSlug(pkg){return normalizePackageRouteSlug(pkg?.routeSlug||'')||normalizePackageRouteSlug(pkg?.code||'');}
 function getPackageDirectLink(pkg){const slug=getPackageRouteSlug(pkg);return slug?`https://llsamples.com/${slug}`:'';}
 function copyPackageLink(code){const pkg=packagesCache[code];const link=getPackageDirectLink(pkg);if(!link){setStatus('Preencha a rota do pacote para gerar o link direto.','error');return;}copyText(link,'Link do pacote copiado.');}
@@ -872,7 +941,7 @@ async function saveGlobalPricing(){const current=storeConfigCache.globalPricing|
 async function saveCoupons(){const sanitized={};Object.values(couponsCache).forEach(coupon=>{const code=normalizeCouponCode(coupon.code||coupon.codeDraft);if(!code) return;const parseDecimal=value=>Number(String(value||0).replace(',', '.'))||0;const parseInteger=value=>parseInt(String(value||0),10)||0;const minItems=Math.max(1,parseInteger(coupon.minItems||1));const usageLimit=parseInteger(coupon.usageLimit||0);const validUntil=String(coupon.validUntil||'').trim();sanitized[code]={...coupon,code,label:coupon.label||code,active:Boolean(coupon.active),hidden:Boolean(coupon.hidden),type:coupon.type==='fixed_per_item'?'fixed_per_item':(coupon.type==='fixed'?'fixed':'percent'),value:parseDecimal(coupon.value),minSubtotal:parseDecimal(coupon.minSubtotal),minItems,usageLimit:usageLimit>0?usageLimit:'',usedCount:parseInteger(coupon.usedCount||0),usedPayments:Array.isArray(coupon.usedPayments)?coupon.usedPayments:[],allowWithPackage:coupon.allowWithPackage!==false,expiredAt:String(coupon.expiredAt||'').trim(),validUntil};delete sanitized[code].codeDraft;});couponsCache=sanitized;await saveStoreConfig({coupons:couponsCache},'Cupons salvos.');}
 async function savePackages(){const sanitized={};Object.values(packagesCache).forEach(pkg=>{const code=normalizePackageCode(pkg.code||pkg.codeDraft);if(!code) return;const parseDecimal=value=>Number(String(value||0).replace(',', '.'))||0;const parseInteger=value=>parseInt(String(value||0),10)||0;const mode=pkg.mode==='fixed_set'?'fixed_set':'custom_choice';const visibility=pkg.visibility==='direct_only'?'direct_only':'public';const includedItems=Array.isArray(pkg.includedItems)?pkg.includedItems.map(item=>String(item||'').trim()).filter(Boolean):[];const normalizedRouteSlug=visibility==='direct_only'?(normalizePackageRouteSlug(pkg.routeSlug||'')||normalizePackageRouteSlug(code)):'';const validUntil=String(pkg.validUntil||'').trim();sanitized[code]={...pkg,code,label:String(pkg.label||code).trim()||code,mode,visibility,routeSlug:normalizedRouteSlug,active:Boolean(pkg.active),quantity:mode==='fixed_set'?includedItems.length:parseInteger(pkg.quantity),fixedPrice:parseDecimal(pkg.fixedPrice),includedItems:mode==='fixed_set'?includedItems:[],validUntil};delete sanitized[code].codeDraft;});packagesCache=sanitized;await saveStoreConfig({packages:packagesCache},'Pacotes salvos.');}
 async function saveProductOverrides(){const sanitized={};Object.entries(storeConfigCache.productOverrides||{}).forEach(([name,o])=>{if(!o) return;const promoPrice=Number(o.promoPrice);if(o.active||promoPrice>0) sanitized[name]={active:Boolean(o.active),promoPrice:promoPrice>0?promoPrice:''};});await saveStoreConfig({productOverrides:sanitized},'Promoções salvas.');}
-async function saveStoreConfig(partial,successMessage){setStatus('Salvando painel...','');try{const nextConfig={...storeConfigCache,...partial,ui:{...(storeConfigCache.ui||{}),...(partial.ui||{})},globalPricing:partial.globalPricing!==undefined?partial.globalPricing:(storeConfigCache.globalPricing||{}),coupons:partial.coupons!==undefined?partial.coupons:couponsCache,packages:partial.packages!==undefined?partial.packages:packagesCache,productOverrides:partial.productOverrides!==undefined?partial.productOverrides:(storeConfigCache.productOverrides||{})};const response=await fetch(STORE_CONFIG_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({config:nextConfig})});const data=await response.json();if(!response.ok) throw new Error(data.error||'Não foi possível salvar a configuração.');storeConfigCache=data.config||nextConfig;couponsCache=data.coupons||couponsCache;packagesCache=storeConfigCache.packages||packagesCache;renderUiToggles();renderGlobalPricing();renderCoupons();renderPackages();renderProducts();setStatus(successMessage||'Configuração salva.','ok');}catch(error){setStatus(error.message||'Erro ao salvar configuração.','error');}}
+async function saveStoreConfig(partial,successMessage){setStatus('Salvando painel...','');try{const nextConfig={...storeConfigCache,...partial,ui:{...(storeConfigCache.ui||{}),...(partial.ui||{})},globalPricing:partial.globalPricing!==undefined?partial.globalPricing:(storeConfigCache.globalPricing||{}),coupons:partial.coupons!==undefined?partial.coupons:couponsCache,packages:partial.packages!==undefined?partial.packages:packagesCache,productOverrides:partial.productOverrides!==undefined?partial.productOverrides:(storeConfigCache.productOverrides||{})};const response=await fetch(STORE_CONFIG_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({config:nextConfig})});const data=await response.json();if(!response.ok) throw new Error(data.error||'Não foi possível salvar a configuração.');storeConfigCache=data.config||nextConfig;couponsCache=data.coupons||couponsCache;packagesCache=storeConfigCache.packages||packagesCache;renderUiToggles();renderGlobalPricing();renderCoupons();renderPackages();renderProducts();renderProductAdmin();setStatus(successMessage||'Configuração salva.','ok');}catch(error){setStatus(error.message||'Erro ao salvar configuração.','error');}}
 async function saveCustomer(originalEmail,index){const payload={action:'update',originalEmail,name:document.getElementById(`customerName-${index}`)?.value||'',email:document.getElementById(`customerEmail-${index}`)?.value||'',phone:document.getElementById(`customerPhone-${index}`)?.value||'',access_code:document.getElementById(`customerCode-${index}`)?.value||''};setStatus(`Salvando cliente ${payload.email||originalEmail}...`,'');try{const response=await fetch(CUSTOMER_UPDATE_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});const data=await response.json();if(!response.ok) throw new Error(data.error||'Não foi possível atualizar o cliente.');setStatus(`Cliente ${data.customer?.email||payload.email} atualizado com sucesso.`,'ok');await loadCustomers();}catch(error){setStatus(error.message||'Erro ao atualizar cliente.','error');}}
 async function createManualCustomer(){const payload={action:'create',name:document.getElementById('manualCustomerName')?.value||'',email:document.getElementById('manualCustomerEmail')?.value||'',phone:document.getElementById('manualCustomerPhone')?.value||'',access_code:document.getElementById('manualCustomerCode')?.value||'',items:[...manualCustomerItems]};setStatus(`Criando cliente ${payload.email||''}...`,'');try{const response=await fetch(CUSTOMER_UPDATE_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});const data=await response.json();if(!response.ok) throw new Error(data.error||'Não foi possível criar o cliente.');['manualCustomerName','manualCustomerEmail','manualCustomerPhone','manualCustomerCode'].forEach(id=>{const field=document.getElementById(id);if(field) field.value='';});manualCustomerItems=[];renderManualCustomerItems();setStatus(`Cliente ${data.customer?.email||payload.email} criado com sucesso.`,'ok');await loadCustomers();}catch(error){setStatus(error.message||'Erro ao criar cliente.','error');}}
 async function deleteCustomer(email){if(!confirm(`Excluir o cliente ${email} e todos os registros dele?`)) return;setStatus(`Excluindo cliente ${email}...`,'');try{const response=await fetch(CUSTOMER_UPDATE_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'delete',email})});const data=await response.json();if(!response.ok) throw new Error(data.error||'Não foi possível excluir o cliente.');setStatus(`Cliente ${email} excluído com sucesso.`,`ok`);await loadCustomers();}catch(error){setStatus(error.message||'Erro ao excluir cliente.','error');}}
@@ -880,8 +949,8 @@ async function addSampleToCustomer(email,index){const select=document.getElement
 async function removeCustomerSample(email,paymentId,title){if(!confirm(`Remover o sample "${title}" do cliente ${email}?`)) return;setStatus(`Removendo sample ${title}...`,'');try{const response=await fetch(CUSTOMER_UPDATE_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'remove_sample',email,payment_id:paymentId,title})});const data=await response.json();if(!response.ok) throw new Error(data.error||'Não foi possível remover o sample.');setStatus(`Sample removido de ${email}.`,'ok');await loadCustomers();}catch(error){setStatus(error.message||'Erro ao remover sample.','error');}}
 async function loadCustomers(){const response=await fetch(ADMIN_CUSTOMERS_ENDPOINT,{cache:'no-store'});const data=await response.json();if(!response.ok) throw new Error(data.error||'Não foi possível carregar clientes.');customersCache=Array.isArray(data.customers)?data.customers:[];applyCustomerFilters();}
 async function loadTrafficStats(){const response=await fetch(`${STORE_CONFIG_ENDPOINT}?view=traffic`,{cache:'no-store'});const data=await response.json();if(!response.ok) throw new Error(data.error||'Não foi possível carregar visitas.');updateTrafficStats(data.stats||{});}
-async function loadStoreData(){const localPackages={...(packagesCache||{})};const [configResponse,productsResponse]=await Promise.all([fetch(STORE_CONFIG_ENDPOINT,{cache:'no-store'}),fetch(`${STORE_CONFIG_ENDPOINT}?view=products`,{cache:'no-store'})]);const configData=await configResponse.json();const productsData=await productsResponse.json();if(!configResponse.ok) throw new Error(configData.error||'Não foi possível carregar a configuração da loja.');if(!productsResponse.ok) throw new Error(productsData.error||'Não foi possível carregar os produtos.');storeConfigCache=configData.config||storeConfigCache;couponsCache=configData.coupons||{};packagesCache=mergeLocalPackages(storeConfigCache.packages||{},localPackages);storeConfigCache.packages=packagesCache;productsCache=Array.isArray(productsData.products)?productsData.products:[];renderUiToggles();renderGlobalPricing();renderCoupons();renderPackages();renderProducts();renderManualCustomerItems();renderProductLinkOptions();}
-async function loadDashboard(showSuccess=false){setStatus('Carregando painel...','');try{await Promise.all([loadStoreData(),loadCustomers(),loadTrafficStats()]);setStatus(showSuccess?'Painel atualizado.':'Painel carregado com sucesso.','ok');}catch(error){customersCache=[];productsCache=[];updateTrafficStats({});renderCustomers([]);renderProducts();setStatus(error.message||'Erro ao carregar painel.','error');}}
+async function loadStoreData(){const localPackages={...(packagesCache||{})};const [configResponse,productsResponse]=await Promise.all([fetch(STORE_CONFIG_ENDPOINT,{cache:'no-store'}),fetch(ADMIN_PRODUCTS_ENDPOINT,{cache:'no-store'})]);const configData=await configResponse.json();const productsData=await productsResponse.json();if(!configResponse.ok) throw new Error(configData.error||'Não foi possível carregar a configuração da loja.');if(!productsResponse.ok) throw new Error(productsData.error||'Não foi possível carregar os produtos.');storeConfigCache=configData.config||storeConfigCache;couponsCache=configData.coupons||{};packagesCache=mergeLocalPackages(storeConfigCache.packages||{},localPackages);storeConfigCache.packages=packagesCache;productsCache=Array.isArray(productsData.products)?productsData.products:[];renderUiToggles();renderGlobalPricing();renderCoupons();renderPackages();renderProducts();renderProductAdmin();renderManualCustomerItems();renderProductLinkOptions();}
+async function loadDashboard(showSuccess=false){setStatus('Carregando painel...','');try{await Promise.all([loadStoreData(),loadCustomers(),loadTrafficStats()]);setStatus(showSuccess?'Painel atualizado.':'Painel carregado com sucesso.','ok');}catch(error){customersCache=[];productsCache=[];updateTrafficStats({});renderCustomers([]);renderProducts();renderProductAdmin();setStatus(error.message||'Erro ao carregar painel.','error');}}
 document.getElementById('searchInput').addEventListener('input',applyCustomerFilters);
 document.getElementById('statusFilter').addEventListener('change',applyCustomerFilters);
 document.getElementById('whatsappSendButton').addEventListener('click',sendPendingWhatsAppMessage);

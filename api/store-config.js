@@ -1,8 +1,19 @@
 const { getStoreConfig, saveStoreConfig } = require("../lib/store-config");
 const { getCouponsMap } = require("../lib/coupon-utils");
 const BASE_COUPONS = require("../data/coupons");
+const DOWNLOAD_LINKS = require("../data/download-links");
 const { loadCatalogFromIndex } = require("../lib/product-catalog");
 const { appendSiteVisit, appendTrafficRecord, getTrafficStats, isGithubTrafficConfigured } = require("../lib/github-traffic-log");
+const {
+  isGithubConfigured,
+  getRepo,
+  getBranch,
+  getExistingFile,
+  writeFile
+} = require("../lib/github-repo");
+
+const PRODUCTS_PATH = "data/products.js";
+const DOWNLOAD_LINKS_PATH = "data/download-links.js";
 
 function parseBody(req) {
   if (!req.body) return {};
@@ -16,12 +27,154 @@ function parseBody(req) {
   return req.body;
 }
 
+function normalizePrice(value) {
+  return Number(String(value ?? 0).replace(",", ".")) || 0;
+}
+
+function getProductsWithDownloads() {
+  return loadCatalogFromIndex().map((product, index) => {
+    const nome = String(product?.nome || "").trim();
+    return {
+      nome,
+      valor: normalizePrice(product?.valor),
+      video: String(product?.video || "").trim(),
+      downloadUrl: String(DOWNLOAD_LINKS?.[nome] || "").trim(),
+      order: index + 1,
+      originalName: nome
+    };
+  });
+}
+
+function normalizeProduct(product, index) {
+  return {
+    originalName: String(product?.originalName || product?.nome || "").trim(),
+    nome: String(product?.nome || "").trim(),
+    valor: normalizePrice(product?.valor),
+    video: String(product?.video || "").trim(),
+    downloadUrl: String(product?.downloadUrl || product?.download_url || "").trim(),
+    order: Number.parseInt(String(product?.order || index + 1), 10) || index + 1
+  };
+}
+
+function normalizeProductList(inputProducts) {
+  if (!Array.isArray(inputProducts)) {
+    throw new Error("Envie a lista de produtos para salvar.");
+  }
+
+  const products = inputProducts
+    .map(normalizeProduct)
+    .filter((product) => product.nome)
+    .sort((a, b) => a.order - b.order || a.nome.localeCompare(b.nome, "pt-BR"));
+
+  if (!products.length) {
+    throw new Error("Cadastre pelo menos um sample.");
+  }
+
+  const names = new Set();
+  products.forEach((product) => {
+    const key = product.nome.toLowerCase();
+    if (names.has(key)) {
+      throw new Error(`Produto duplicado: ${product.nome}`);
+    }
+    names.add(key);
+  });
+
+  return products.map((product, index) => ({
+    ...product,
+    order: index + 1
+  }));
+}
+
+function serializeProducts(products) {
+  const publicProducts = products.map((product) => ({
+    nome: product.nome,
+    valor: product.valor,
+    video: product.video
+  }));
+
+  return `const LL_PRODUCTS = ${JSON.stringify(publicProducts, null, 2)};\n\nif (typeof module !== "undefined" && module.exports) {\n  module.exports = LL_PRODUCTS;\n}\n\nif (typeof window !== "undefined") {\n  window.LL_PRODUCTS = LL_PRODUCTS;\n}\n`;
+}
+
+function serializeDownloadLinks(downloadLinks) {
+  return `module.exports = ${JSON.stringify(downloadLinks, null, 2)};\n`;
+}
+
+function buildNextDownloadLinks(products) {
+  const nextLinks = { ...(DOWNLOAD_LINKS || {}) };
+  const activeNames = new Set(products.map((product) => product.nome));
+  const previousNames = new Set(loadCatalogFromIndex().map((product) => product.nome));
+
+  products.forEach((product) => {
+    if (product.originalName && product.originalName !== product.nome) {
+      delete nextLinks[product.originalName];
+    }
+
+    if (product.downloadUrl) {
+      nextLinks[product.nome] = product.downloadUrl;
+    } else {
+      delete nextLinks[product.nome];
+    }
+  });
+
+  previousNames.forEach((name) => {
+    if (!activeNames.has(name)) {
+      delete nextLinks[name];
+    }
+  });
+
+  const orderedLinks = products.reduce((acc, product) => {
+    if (nextLinks[product.nome]) acc[product.nome] = nextLinks[product.nome];
+    return acc;
+  }, {});
+
+  Object.keys(nextLinks).sort((a, b) => a.localeCompare(b, "pt-BR")).forEach((name) => {
+    if (!orderedLinks[name]) orderedLinks[name] = nextLinks[name];
+  });
+
+  return orderedLinks;
+}
+
+async function saveProductsToGithub(inputProducts) {
+  if (!isGithubConfigured()) {
+    throw new Error("GitHub não está configurado na Vercel para salvar produtos.");
+  }
+
+  const products = normalizeProductList(inputProducts);
+  const downloadLinks = buildNextDownloadLinks(products);
+  const repo = getRepo();
+  const branch = getBranch();
+  const [productsFile, downloadLinksFile] = await Promise.all([
+    getExistingFile(repo, PRODUCTS_PATH, branch),
+    getExistingFile(repo, DOWNLOAD_LINKS_PATH, branch)
+  ]);
+
+  await writeFile(
+    repo,
+    PRODUCTS_PATH,
+    branch,
+    serializeProducts(products),
+    productsFile.sha,
+    "Update product catalog"
+  );
+
+  await writeFile(
+    repo,
+    DOWNLOAD_LINKS_PATH,
+    branch,
+    serializeDownloadLinks(downloadLinks),
+    downloadLinksFile.sha,
+    "Update product download links"
+  );
+
+  return products;
+}
+
 module.exports = async (req, res) => {
   if (req.method === "GET") {
     try {
       const view = String(req.query?.view || "").trim().toLowerCase();
       if (view === "products") {
-        const products = loadCatalogFromIndex();
+        const products = getProductsWithDownloads();
         return res.status(200).json({ ok: true, products });
       }
       if (view === "traffic") {
@@ -96,6 +249,10 @@ module.exports = async (req, res) => {
         });
 
         return res.status(200).json({ ok: true });
+      }
+      if (String(body.action || "").trim() === "save_products") {
+        const products = await saveProductsToGithub(body.products);
+        return res.status(200).json({ ok: true, products });
       }
       const nextConfig = body.config || body;
       if (nextConfig && nextConfig.coupons && typeof nextConfig.coupons === "object") {
