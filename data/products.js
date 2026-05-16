@@ -613,6 +613,11 @@ const LL_PRODUCTS = [
     "nome": "LL Sax v1.5",
     "valor": 60,
     "video": "https://youtu.be/YotFGV5IQl8?si=4ahVjkVZTQeqbfmK"
+  },
+  {
+    "nome": "TESTE",
+    "valor": 70,
+    "video": ""
   }
 ];
 
