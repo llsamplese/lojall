@@ -83,7 +83,7 @@
       "minSubtotal": 0,
       "minItems": 1,
       "validUntil": "2026-05-18T23:59",
-      "usageLimit": 6,
+      "usageLimit": "",
       "usedCount": 2,
       "usedPayments": [
         "157067961813",
