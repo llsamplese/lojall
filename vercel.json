@@ -1,4 +1,11 @@
 {
+  "redirects": [
+    {
+      "source": "/suporte",
+      "destination": "https://wa.me/5585988608620",
+      "permanent": false
+    }
+  ],
   "rewrites": [
     {
       "source": "/:packageSlug((?!api|clientes|sucesso|falha|pendente|index|favicon)[^/.]+)",
