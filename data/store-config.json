@@ -44,7 +44,7 @@
       "minItems": 1,
       "validUntil": "",
       "usageLimit": "",
-      "usedCount": 7,
+      "usedCount": 8,
       "usedPayments": [
         "156281036638",
         "158213356094",
@@ -52,7 +52,8 @@
         "157897616291",
         "paypal-1LL949563N965532P",
         "paypal-9J011977X25992610",
-        "paypal-6EG97746XM055621M"
+        "paypal-6EG97746XM055621M",
+        "160194089039"
       ],
       "expiredAt": "",
       "hidden": true,
