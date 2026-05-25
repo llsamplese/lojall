@@ -1,6 +1,7 @@
 const crypto = require('node:crypto');
-const { appendOrderLead, hasApprovedPaymentLog, hasSuccessfulEmailLog } = require('../lib/github-order-log');
+const { appendOrderLead, hasApprovedPaymentLog, hasSuccessfulEmailLog, hasSuccessfulWhatsAppLog } = require('../lib/github-order-log');
 const { sendPurchaseApprovedEmail } = require('../lib/email-delivery');
+const { buildWhatsappConfirmationFromPayment, enviarWhatsappConfirmacaoCompra } = require('../lib/whatsapp-delivery');
 const { registerCouponUsage } = require('../lib/coupon-utils');
 
 const PAYMENT_API_BASE = 'https://api.mercadopago.com/v1/payments';
@@ -181,6 +182,7 @@ module.exports = async (req, res) => {
     }
 
     let email = { sent: false, skipped: true, reason: 'payment_not_approved' };
+    let whatsapp = { sent: false, skipped: true, reason: 'payment_not_approved' };
     if (normalizedPayment.status === 'approved') {
       const couponCode = normalizedPayment.metadata?.coupon_code || '';
       if (couponCode) {
@@ -191,8 +193,10 @@ module.exports = async (req, res) => {
         }
       }
       const alreadySent = await hasSuccessfulEmailLog(normalizedPayment.id);
+      const alreadyWhatsappSent = await hasSuccessfulWhatsAppLog(normalizedPayment.id);
       if (alreadySent) {
         email = { sent: false, skipped: true, reason: 'already_sent' };
+        whatsapp = { sent: false, skipped: true, reason: 'already_processed' };
       } else {
         try {
           email = await sendPurchaseApprovedEmail(normalizedPayment);
@@ -224,6 +228,54 @@ module.exports = async (req, res) => {
           });
           console.error('[purchase-email]', emailError);
         }
+
+        if (alreadyWhatsappSent) {
+          whatsapp = { sent: false, skipped: true, reason: 'already_sent' };
+        } else {
+          try {
+            const whatsappPayload = buildWhatsappConfirmationFromPayment(normalizedPayment);
+            whatsapp = await enviarWhatsappConfirmacaoCompra(whatsappPayload);
+            if (whatsapp.sent) {
+              await appendOrderLead({
+                created_at: new Date().toISOString(),
+                event: 'whatsapp_sent',
+                payment_id: normalizedPayment.id,
+                customer_email: normalizedPayment.metadata?.customer_email || normalizedPayment.payer?.email || '',
+                customer_name: normalizedPayment.metadata?.customer_name || '',
+                customer_phone: normalizedPayment.metadata?.customer_phone || '',
+                whatsapp_message_id: whatsapp.id || '',
+                whatsapp_to: whatsapp.to || '',
+                delivery_url: whatsappPayload.link || ''
+              });
+            } else if (!whatsapp.skipped || whatsapp.reason === 'whatsapp_not_configured') {
+              await appendOrderLead({
+                created_at: new Date().toISOString(),
+                event: 'whatsapp_error',
+                payment_id: normalizedPayment.id,
+                customer_email: normalizedPayment.metadata?.customer_email || normalizedPayment.payer?.email || '',
+                customer_name: normalizedPayment.metadata?.customer_name || '',
+                customer_phone: normalizedPayment.metadata?.customer_phone || '',
+                error: whatsapp.reason || 'whatsapp_not_sent'
+              });
+            }
+          } catch (whatsappError) {
+            whatsapp = {
+              sent: false,
+              skipped: false,
+              reason: whatsappError.message || 'whatsapp_send_failed'
+            };
+            await appendOrderLead({
+              created_at: new Date().toISOString(),
+              event: 'whatsapp_error',
+              payment_id: normalizedPayment.id,
+              customer_email: normalizedPayment.metadata?.customer_email || normalizedPayment.payer?.email || '',
+              customer_name: normalizedPayment.metadata?.customer_name || '',
+              customer_phone: normalizedPayment.metadata?.customer_phone || '',
+              error: whatsapp.reason
+            });
+            console.error('[purchase-whatsapp]', whatsappError);
+          }
+        }
       }
     }
 
@@ -234,14 +286,16 @@ module.exports = async (req, res) => {
       resourceId,
       signature,
       payment: normalizedPayment,
-      email
+      email,
+      whatsapp
     }));
 
     return res.status(200).json({
       ok: true,
       notificationType,
       payment: normalizedPayment,
-      email
+      email,
+      whatsapp
     });
   } catch (error) {
     console.error('[mercado-pago-webhook]', error);

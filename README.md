@@ -26,6 +26,11 @@ Cadastre em `Settings > Environment Variables`:
 - `RESEND_API_KEY` (para envio automático de e-mail após pagamento aprovado)
 - `EMAIL_FROM` (ex.: `LL Samples <entrega@llsamples.com>`)
 - `SITE_BASE_URL` (ex.: `https://llsamples.com`)
+- `WHATSAPP_TOKEN` (token permanente da WhatsApp Cloud API)
+- `WHATSAPP_PHONE_NUMBER_ID`
+- `WHATSAPP_BUSINESS_ACCOUNT_ID`
+- `WHATSAPP_TEMPLATE_NAME`
+- `WHATSAPP_TEMPLATE_LANG`
 
 ## Webhook
 
@@ -38,7 +43,8 @@ Quando a notificação for do tipo `payment`, o backend:
 1. valida a assinatura se `MP_WEBHOOK_SECRET` estiver configurado;
 2. consulta `GET /v1/payments/{id}` no Mercado Pago;
 3. registra no log da Vercel/GitHub um JSON normalizado com status, valor, payer e metadata;
-4. quando o pagamento chega como `approved`, envia o e-mail de compra automaticamente via Resend.
+4. quando o pagamento chega como `approved`, envia o e-mail de compra automaticamente via Resend;
+5. em seguida, envia uma confirmacao via WhatsApp Cloud API usando o link unico de entrega da compra.
 
 ## Próximo passo para entrega automática
 
