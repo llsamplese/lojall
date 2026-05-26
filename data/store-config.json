@@ -120,7 +120,7 @@
       "value": 15,
       "minSubtotal": 0,
       "minItems": 1,
-      "usageLimit": 10,
+      "usageLimit": "",
       "usedCount": 9,
       "usedPayments": [
         "157228849830",
