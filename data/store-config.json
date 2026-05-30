@@ -158,7 +158,7 @@
       "usedCount": 0,
       "usedPayments": [],
       "hidden": true,
-      "allowWithPackage": false
+      "allowWithPackage": true
     }
   },
   "productOverrides": {},
