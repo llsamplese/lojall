@@ -144,9 +144,9 @@
       "hidden": false,
       "allowWithPackage": false
     },
-    "LL30OFF": {
-      "code": "LL30OFF",
-      "label": "LL30",
+    "LL30": {
+      "code": "LL30",
+      "label": "LL 30‰ OFF",
       "active": true,
       "type": "percent",
       "value": 30,
