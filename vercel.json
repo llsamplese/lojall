@@ -10,17 +10,24 @@
       "use": "@vercel/static"
     }
   ],
-  "redirects": [
+  "routes": [
     {
-      "source": "/suporte",
-      "destination": "https://wa.me/5585988608620",
-      "permanent": false
-    }
-  ],
-  "rewrites": [
+      "src": "/suporte",
+      "status": 307,
+      "headers": {
+        "Location": "https://wa.me/5585988608620"
+      }
+    },
     {
-      "source": "/:packageSlug((?!api|clientes|sucesso|falha|pendente|index|favicon)[^/.]+)",
-      "destination": "/index.html"
+      "src": "/api/(.*)",
+      "dest": "/api/$1.js"
+    },
+    {
+      "handle": "filesystem"
+    },
+    {
+      "src": "/((?!api|clientes|sucesso|falha|pendente|index|favicon)[^/.]+)",
+      "dest": "/index.html"
     }
   ]
 }
