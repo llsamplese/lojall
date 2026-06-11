@@ -277,6 +277,20 @@
         "LL Bass Arrocha v2 – Seresta"
       ],
       "validUntil": ""
+    },
+    "ORCAMENTO1LLDRUMSL": {
+      "code": "ORCAMENTO1LLDRUMSL",
+      "label": "Orçamento 1 sample",
+      "mode": "fixed_set",
+      "visibility": "direct_only",
+      "routeSlug": "orcamento-1-ll-drums-leo-foguete-5000",
+      "active": true,
+      "quantity": 1,
+      "fixedPrice": 50,
+      "includedItems": [
+        "LL Drums Leo Foguete"
+      ],
+      "validUntil": ""
     }
   }
 }
