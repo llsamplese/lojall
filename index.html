@@ -933,6 +933,47 @@
         line-height: 1.45;
     }
 
+    body.checkout-direct-mode {
+        overflow: auto !important;
+    }
+
+    body.checkout-direct-mode .checkout-overlay,
+    body.checkout-direct-mode .topbar,
+    body.checkout-direct-mode .available-coupons-panel,
+    body.checkout-direct-mode .available-packages-panel,
+    body.checkout-direct-mode .product-focus-banner,
+    body.checkout-direct-mode .search-filter,
+    body.checkout-direct-mode .cart-summary,
+    body.checkout-direct-mode .catalog-grid,
+    body.checkout-direct-mode .site-footer,
+    body.checkout-direct-mode .container,
+    body.checkout-direct-mode .mobile-cart-bar {
+        display: none !important;
+    }
+
+    body.checkout-direct-mode .checkout-modal {
+        position: static;
+        transform: none;
+        width: 100%;
+        max-height: none;
+        min-height: 100vh;
+        display: block;
+        opacity: 1;
+        pointer-events: auto;
+        border-radius: 28px;
+        margin: 0 auto;
+    }
+
+    body.checkout-direct-mode .checkout-modal-header {
+        position: sticky;
+        top: 0;
+        z-index: 2;
+    }
+
+    body.checkout-direct-mode .checkout-close {
+        display: none;
+    }
+
     .purchase-history-list {
         display: grid;
         gap: 12px;
@@ -3287,6 +3328,7 @@
         if (!cleanPath || cleanPath.includes('.') || cleanPath.startsWith('api/')) return '';
         return normalizePackageRouteSlug(cleanPath);
     })();
+    const checkoutDirectRequested = new URLSearchParams(window.location.search).get('checkout') === '1';
     let transparentCheckoutConfig = null;
     let brickController = null;
     let currentPaymentId = null;
@@ -3330,6 +3372,10 @@
         coupons: {},
         packages: {}
     };
+
+    if (checkoutDirectRequested) {
+        document.body.classList.add('checkout-direct-mode');
+    }
 
     function roundCurrency(value) {
         return Math.round((Number(value) + Number.EPSILON) * 100) / 100;
@@ -4422,7 +4468,9 @@
         overlay?.classList.add('open');
         modal?.classList.add('open');
         modal?.setAttribute('aria-hidden', 'false');
-        document.body.style.overflow = 'hidden';
+        if (!checkoutDirectRequested) {
+            document.body.style.overflow = 'hidden';
+        }
         updateTransparentCheckoutSummary();
         setBrickStatus('Carregando checkout transparente...', '');
         trackCheckoutEvent('checkout_opened');
@@ -4450,7 +4498,9 @@
         overlay?.classList.remove('open');
         modal?.classList.remove('open');
         modal?.setAttribute('aria-hidden', 'true');
-        document.body.style.overflow = '';
+        if (!checkoutDirectRequested) {
+            document.body.style.overflow = '';
+        }
         stopPaymentStatusPolling();
         hidePixResult();
         resetPaypalButtons();
@@ -5158,8 +5208,66 @@
         }
     }
 
+    function getDirectPackageFromUrl() {
+        if (!currentPackageRouteSlug) return null;
+        return Object.values(storeConfig.packages || {}).find((pkg) => {
+            if (!pkg || !pkg.active) return false;
+            if ((pkg.visibility || 'public') !== 'direct_only') return false;
+            const validUntil = parseCouponDate(pkg.validUntil);
+            if (validUntil && Date.now() > validUntil.getTime()) return false;
+            const routeSlug = getPackageRouteSlug(pkg);
+            return routeSlug && routeSlug === currentPackageRouteSlug;
+        }) || null;
+    }
+
+    function applyDirectCheckoutSelection() {
+        if (!checkoutDirectRequested) return false;
+        selectedSamples.clear();
+
+        if (isProductMode()) {
+            selectedSamples.add(linkedProductIndex);
+            selectedPackageCode = '';
+            updateCart();
+            return true;
+        }
+
+        const pkg = getDirectPackageFromUrl();
+        if (!pkg) {
+            setCheckoutStatus('Não encontramos esse combo para abrir o checkout.', 'error');
+            return false;
+        }
+
+        if ((pkg.mode || 'custom_choice') !== 'fixed_set') {
+            setCheckoutStatus('Esse combo precisa ter samples definidos para abrir direto no checkout.', 'error');
+            return false;
+        }
+
+        const includedItems = Array.isArray(pkg.includedItems) ? pkg.includedItems.map((item) => String(item || '').trim()).filter(Boolean) : [];
+        includedItems.forEach((title) => {
+            const index = samplesData.findIndex((sample) => String(sample.nome || '').trim() === title);
+            if (index >= 0) {
+                selectedSamples.add(index);
+            }
+        });
+
+        selectedPackageCode = String(pkg.code || '').trim().toUpperCase();
+        updateCart();
+        return selectedSamples.size > 0;
+    }
+
+    async function openDirectCheckoutIfRequested() {
+        if (!checkoutDirectRequested || window.__directCheckoutOpened) return;
+        window.__directCheckoutOpened = true;
+        const ready = applyDirectCheckoutSelection();
+        if (!ready) return;
+        requestAnimationFrame(() => {
+            openTransparentCheckout();
+        });
+    }
+
     function openFullCatalog() {
         const url = new URL(window.location.href);
+        url.searchParams.delete('checkout');
         url.searchParams.delete('produto');
         url.searchParams.delete('product');
         url.searchParams.delete('sample');
@@ -5682,6 +5790,7 @@
             updateCouponUI();
             updateCouponCountdowns();
             updatePackageCountdowns();
+            openDirectCheckoutIfRequested();
         });
         setInterval(() => {
             updateCouponCountdowns();
@@ -5693,7 +5802,3 @@
 
 
 </body></html>
-
-
-
-
