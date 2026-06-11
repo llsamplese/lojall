@@ -204,6 +204,21 @@
       "fixedPrice": 100,
       "includedItems": [],
       "validUntil": "2026-04-25T23:59"
+    },
+    "ORCAMENTO2LLDRUMSC": {
+      "code": "ORCAMENTO2LLDRUMSC",
+      "label": "Orçamento 2 samples",
+      "mode": "fixed_set",
+      "visibility": "direct_only",
+      "routeSlug": "orcamento-2-ll-drums-chicotada-ll-drums-menos-e-mais-15000",
+      "active": true,
+      "quantity": 2,
+      "fixedPrice": 150,
+      "includedItems": [
+        "LL Drums Chicotada",
+        "LL Drums Menos é Mais"
+      ],
+      "validUntil": ""
     }
   }
 }
