@@ -234,6 +234,21 @@
         "LL Drums Menos é Mais"
       ],
       "validUntil": ""
+    },
+    "ORCAMENTO2LLGUITAR": {
+      "code": "ORCAMENTO2LLGUITAR",
+      "label": "Orçamento 2 samples",
+      "mode": "fixed_set",
+      "visibility": "direct_only",
+      "routeSlug": "orcamento-2-ll-guitarra-arrocha-v2-seresta-ll-guitarra-arrocha-12000",
+      "active": true,
+      "quantity": 2,
+      "fixedPrice": 120,
+      "includedItems": [
+        "LL Guitarra Arrocha v2 – Seresta",
+        "LL Guitarra Arrocha"
+      ],
+      "validUntil": ""
     }
   }
 }
