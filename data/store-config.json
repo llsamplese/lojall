@@ -307,6 +307,20 @@
         "LL Drums Filho do Piseiro"
       ],
       "validUntil": ""
+    },
+    "ORCAMENTO1LLPISEIR": {
+      "code": "ORCAMENTO1LLPISEIR",
+      "label": "Orçamento 1 sample",
+      "mode": "fixed_set",
+      "visibility": "direct_only",
+      "routeSlug": "orcamento-1-ll-piseiro-drums-cyber-5000",
+      "active": true,
+      "quantity": 1,
+      "fixedPrice": 50,
+      "includedItems": [
+        "LL Piseiro Drums Cyber"
+      ],
+      "validUntil": ""
     }
   }
 }
