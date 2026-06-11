@@ -291,6 +291,22 @@
         "LL Drums Leo Foguete"
       ],
       "validUntil": ""
+    },
+    "ORCAMENTO3LLDRUMSC": {
+      "code": "ORCAMENTO3LLDRUMSC",
+      "label": "Orçamento 3 samples",
+      "mode": "fixed_set",
+      "visibility": "direct_only",
+      "routeSlug": "orcamento-3-ll-drums-chicotada-ll-acordeon-forro-v2-ll-drums-filho-do-piseiro-17200",
+      "active": true,
+      "quantity": 3,
+      "fixedPrice": 172,
+      "includedItems": [
+        "LL Drums Chicotada",
+        "LL Acordeon Forró v2",
+        "LL Drums Filho do Piseiro"
+      ],
+      "validUntil": ""
     }
   }
 }
