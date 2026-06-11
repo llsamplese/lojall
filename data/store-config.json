@@ -249,6 +249,20 @@
         "LL Guitarra Arrocha"
       ],
       "validUntil": ""
+    },
+    "ORCAMENTO1LLGUITAR": {
+      "code": "ORCAMENTO1LLGUITAR",
+      "label": "Orçamento 1 sample",
+      "mode": "fixed_set",
+      "visibility": "direct_only",
+      "routeSlug": "orcamento-1-ll-guitarra-arrocha-v2-seresta-6000",
+      "active": true,
+      "quantity": 1,
+      "fixedPrice": 60,
+      "includedItems": [
+        "LL Guitarra Arrocha v2 – Seresta"
+      ],
+      "validUntil": ""
     }
   }
 }
