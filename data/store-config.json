@@ -263,6 +263,20 @@
         "LL Guitarra Arrocha v2 – Seresta"
       ],
       "validUntil": ""
+    },
+    "ORCAMENTO1LLBASSAR": {
+      "code": "ORCAMENTO1LLBASSAR",
+      "label": "Orçamento 1 sample",
+      "mode": "fixed_set",
+      "visibility": "direct_only",
+      "routeSlug": "orcamento-1-ll-bass-arrocha-v2-seresta-5000",
+      "active": true,
+      "quantity": 1,
+      "fixedPrice": 50,
+      "includedItems": [
+        "LL Bass Arrocha v2 – Seresta"
+      ],
+      "validUntil": ""
     }
   }
 }
