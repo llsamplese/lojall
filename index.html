@@ -346,6 +346,7 @@
         padding: 22px;
         transform: translateX(104%);
         transition: transform 0.28s ease;
+        text-align: center;
     }
 
     .menu-panel.open {
@@ -781,6 +782,12 @@
         align-items: center;
         justify-content: space-between;
         margin-bottom: 22px;
+        gap: 16px;
+        text-align: center;
+    }
+
+    .menu-header > div {
+        flex: 1;
     }
 
     .menu-title {
@@ -826,6 +833,7 @@
         background: rgba(255,255,255,0.03);
         border: 1px solid rgba(255,255,255,0.06);
         margin-bottom: 14px;
+        text-align: center;
     }
 
     .customer-area-card {
@@ -868,6 +876,7 @@
     .auth-form {
         display: grid;
         gap: 10px;
+        justify-items: center;
     }
 
     .auth-form input {
@@ -878,6 +887,7 @@
         color: #fff4cc;
         padding: 13px 14px;
         font-size: 0.95rem;
+        text-align: center;
     }
 
     .auth-form input::placeholder {
@@ -999,12 +1009,14 @@
         display: grid;
         gap: 12px;
         margin-top: 14px;
+        text-align: center;
     }
 
     .purchase-history-empty {
         color: #a59667;
         font-size: 0.9rem;
         line-height: 1.5;
+        text-align: center;
     }
 
     .purchase-history-item {
@@ -1014,21 +1026,24 @@
         border: 1px solid rgba(255,255,255,0.06);
         display: grid;
         gap: 10px;
+        text-align: center;
     }
 
     .purchase-history-head {
         display: flex;
         align-items: center;
-        justify-content: space-between;
+        justify-content: center;
         gap: 12px;
         color: #fff6cf;
         font-weight: 700;
+        flex-wrap: wrap;
     }
 
     .purchase-history-meta {
         color: #9f9161;
         font-size: 0.82rem;
         line-height: 1.45;
+        text-align: center;
     }
 
     .purchase-history-links {
@@ -1039,7 +1054,7 @@
     .purchase-history-link {
         display: flex;
         align-items: center;
-        justify-content: space-between;
+        justify-content: center;
         gap: 10px;
         padding: 10px 12px;
         border-radius: 14px;
@@ -1048,6 +1063,8 @@
         text-decoration: none;
         color: #fff4cc;
         font-size: 0.88rem;
+        text-align: center;
+        flex-wrap: wrap;
     }
 
     .purchase-history-link span:last-child {
@@ -1075,6 +1092,7 @@
         border: 1px solid rgba(255,255,255,0.06);
         color: #d9c995;
         font-size: 0.88rem;
+        text-align: center;
     }
 
     .search-filter {
@@ -2922,7 +2940,6 @@
     </div>
     <div class="auth-card customer-area-card">
         <div id="customerPaneEmail" class="customer-pane active">
-            <h3>Entrar</h3>
             <div class="auth-form">
                 <input id="customerLookupEmail" type="email" placeholder="E-mail da compra">
                 <input id="customerLookupCode" type="password" placeholder="Código de acesso do cliente">
