@@ -694,7 +694,6 @@
         <div class="stat"><div class="stat-label">Produtos</div><strong id="statProducts">0</strong></div>
         <div class="stat"><div class="stat-label">Visitas da loja</div><strong id="statVisits">0</strong></div>
         <div class="stat"><div class="stat-label">Pix gerados</div><strong id="statPixCreated">0</strong></div>
-        <div class="stat"><div class="stat-label">Falhas no Pix</div><strong id="statPixFailed">0</strong></div>
       </div>
       <div id="statusBox" class="status-box">Carregando painel...</div>
     </div>
@@ -874,18 +873,6 @@
                 <div class="actions compact">
                   <button class="ghost" type="button" onclick="clearQuoteSelection()">Limpar seleção</button>
                 </div>
-              </div>
-            </div>
-            <div class="subcard">
-              <strong>Criar combo de checkout</strong>
-              <small>Selecione dois ou mais samples, defina nome, rota e preço para salvar um pacote fechado com link direto de pagamento.</small>
-              <div class="form-grid">
-                <input id="quoteComboName" type="text" placeholder="Nome do combo">
-                <input id="quoteComboRoute" type="text" placeholder="Rota do combo (ex: combochicotada)">
-                <input id="quoteComboPrice" type="text" inputmode="decimal" placeholder="Preço fixo do combo">
-              </div>
-              <div class="actions compact">
-                <button class="primary" type="button" onclick="createQuoteComboPackage()">Criar combo e salvar</button>
               </div>
             </div>
             <div class="subcard">
