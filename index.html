@@ -3530,7 +3530,7 @@
                 : pageContext === 'product_direct'
                     ? ui.showCouponBoxProductDirect !== false
                     : ui.showCouponBoxHome !== false;
-            couponBox.style.display = couponBoxVisible && !shouldAutoHideHomeCoupons() ? '' : 'none';
+            couponBox.style.display = couponBoxVisible ? '' : 'none';
         }
     }
 
@@ -3556,10 +3556,6 @@
             if (validUntil && now > validUntil.getTime()) return false;
             return true;
         }).sort((a, b) => String(a.code || '').localeCompare(String(b.code || ''), 'pt-BR'));
-    }
-
-    function shouldAutoHideHomeCoupons() {
-        return getPageDisplayContext() === 'home' && storeConfig?.couponRuntime?.hideHomeCouponsAfterExpiry === true;
     }
 
     function getPublicPackages() {
@@ -3705,15 +3701,6 @@
             }
             if (Date.now() > date.getTime()) {
                 element.textContent = 'Encerrado';
-                if (getPageDisplayContext() === 'home' && !getPublicCoupons().length) {
-                    storeConfig.couponRuntime = {
-                        ...(storeConfig.couponRuntime || {}),
-                        hideHomeCouponsAfterExpiry: true,
-                        lastAutoExpiredAt: new Date().toISOString()
-                    };
-                    applyStoreUiConfig();
-                    renderAvailableCouponsPanel();
-                }
                 return;
             }
             element.textContent = `Encerra em ${formatCountdownParts(date)}`;
@@ -3785,7 +3772,7 @@
                 ? ui.showAvailableCouponsPanelProductDirect !== false
                 : ui.showAvailableCouponsPanelHome !== false;
 
-        if (!panelVisible || shouldAutoHideHomeCoupons()) {
+        if (!panelVisible) {
             panel.style.display = 'none';
             return;
         }

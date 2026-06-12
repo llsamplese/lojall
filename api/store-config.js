@@ -184,8 +184,8 @@ module.exports = async (req, res) => {
         const stats = await getTrafficStats();
         return res.status(200).json({ ok: true, stats });
       }
-      const config = await getStoreConfig();
       const coupons = await getCouponsMap();
+      const config = await getStoreConfig();
       return res.status(200).json({ ok: true, config, coupons });
     } catch (error) {
       return res.status(500).json({ error: error.message || "Erro ao carregar configuração da loja." });
@@ -259,11 +259,8 @@ module.exports = async (req, res) => {
         const currentCodes = new Set(Object.keys(nextConfig.coupons).map((code) => String(code || "").trim().toUpperCase()).filter(Boolean));
         nextConfig.deletedCoupons = Object.keys(BASE_COUPONS).filter((code) => !currentCodes.has(String(code || "").trim().toUpperCase()));
         nextConfig.couponRuntime = nextConfig.couponRuntime && typeof nextConfig.couponRuntime === "object" ? nextConfig.couponRuntime : {};
-        const hasPublicActiveCoupons = Object.values(nextConfig.coupons).some((coupon) => coupon && coupon.active && !coupon.hidden);
-        if (hasPublicActiveCoupons) {
-          nextConfig.couponRuntime.hideHomeCouponsAfterExpiry = false;
-          nextConfig.couponRuntime.lastAutoExpiredAt = "";
-        }
+        nextConfig.couponRuntime.hideHomeCouponsAfterExpiry = false;
+        nextConfig.couponRuntime.lastAutoExpiredAt = "";
       }
       const config = await saveStoreConfig(nextConfig);
       const coupons = await getCouponsMap();
