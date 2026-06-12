@@ -21,8 +21,8 @@
     "showPackagesPanelDirect": true
   },
   "couponRuntime": {
-    "hideHomeCouponsAfterExpiry": true,
-    "lastAutoExpiredAt": "2026-06-12T03:52:20.398Z"
+    "hideHomeCouponsAfterExpiry": false,
+    "lastAutoExpiredAt": ""
   },
   "globalPricing": {
     "active": false,
@@ -128,12 +128,12 @@
     "LL20": {
       "code": "LL20",
       "label": "20%OFF",
-      "active": false,
+      "active": true,
       "type": "percent",
       "value": 20,
       "minSubtotal": 0,
       "minItems": 1,
-      "validUntil": "",
+      "validUntil": "2026-06-12T23:59",
       "usedPayments": [
         "155988280750",
         "155667933469",
