@@ -225,39 +225,54 @@
     .topbar-actions {
         display: flex;
         align-items: center;
-        gap: 12px;
+        gap: 10px;
         grid-column: 3;
         justify-self: end;
     }
 
     .icon-button {
-        width: 54px;
-        height: 54px;
-        border-radius: 16px;
-        border: 1px solid rgba(255,255,255,0.08);
-        background: rgba(255,255,255,0.04);
+        width: 42px;
+        height: 42px;
+        border: 0;
+        background: transparent;
         color: #fff3c1;
         display: grid;
         place-items: center;
         cursor: pointer;
-        transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+        transition: transform 0.2s ease, opacity 0.2s ease, filter 0.2s ease;
         position: relative;
         text-decoration: none;
         font-size: 1.08rem;
+        padding: 0;
     }
 
     .topbar-actions .icon-button {
-        font-size: 1.24rem;
+        font-size: 1.5rem;
     }
 
     .topbar-actions .icon-button.whatsapp-button {
-        font-size: 1.42rem;
         line-height: 1;
     }
 
     .topbar-actions .icon-button.whatsapp-button img {
-        width: 35px;
-        height: 35px;
+        width: 40px;
+        height: 40px;
+        display: block;
+    }
+
+    .topbar-actions .icon-button.social-button img {
+        width: 32px;
+        height: 32px;
+        display: block;
+    }
+
+    .topbar-actions .icon-button.menu-button {
+        font-size: 1.85rem;
+        font-weight: 800;
+        line-height: 1;
+    }
+
+    .topbar-actions .icon-button img {
         display: block;
     }
 
@@ -275,7 +290,8 @@
     }
 
     .product-direct-mode .topbar-actions .cart-button,
-    .product-direct-mode .topbar-actions .menu-button {
+    .product-direct-mode .topbar-actions .menu-button,
+    .product-direct-mode .topbar-actions .social-button {
         display: none !important;
     }
 
@@ -286,7 +302,6 @@
         transform: translateY(-50%);
         width: 44px;
         height: 44px;
-        border-radius: 14px;
     }
 
     .product-direct-mode .topbar-actions .whatsapp-button:hover {
@@ -295,8 +310,8 @@
 
     .icon-button:hover {
         transform: translateY(-2px);
-        border-color: rgba(255, 193, 7, 0.3);
-        background: rgba(255, 193, 7, 0.08);
+        opacity: 0.92;
+        filter: brightness(1.08);
     }
 
     .cart-badge {
@@ -2477,10 +2492,9 @@
         grid-column: 1;
         justify-self: stretch;
         justify-content: center;
-        background: rgba(255,255,255,0.03);
-        border: 1px solid rgba(255,255,255,0.06);
-        border-radius: 16px;
-        padding: 10px 12px;
+        background: transparent;
+        border: 0;
+        padding: 2px 0;
     }
 
     .brand-copy strong {
@@ -2497,18 +2511,27 @@
     }
 
     .icon-button {
-        width: 48px;
-        height: 48px;
-        border-radius: 14px;
-        font-size: 1.08rem;
+        width: 38px;
+        height: 38px;
+        font-size: 1.32rem;
     }
 
     .topbar-actions .icon-button {
-        font-size: 1.14rem;
+        font-size: 1.32rem;
     }
 
-    .topbar-actions .icon-button.whatsapp-button {
-        font-size: 1.32rem;
+    .topbar-actions .icon-button.whatsapp-button img {
+        width: 38px;
+        height: 38px;
+    }
+
+    .topbar-actions .icon-button.social-button img {
+        width: 29px;
+        height: 29px;
+    }
+
+    .topbar-actions .icon-button.menu-button {
+        font-size: 1.7rem;
     }
 
     .product-direct-mode .topbar {
@@ -2998,6 +3021,15 @@
             </button>
             <a class="icon-button whatsapp-button" href="https://wa.me/5585988608620" target="_blank" rel="noopener noreferrer" aria-label="Abrir WhatsApp da loja" title="WhatsApp da loja">
                 <img src="/assets/whatsapp.svg" alt="" aria-hidden="true">
+            </a>
+            <a class="icon-button social-button" href="https://www.instagram.com/llsamples_/" target="_blank" rel="noopener noreferrer" aria-label="Abrir Instagram da LL Samples" title="Instagram">
+                <img src="/assets/instagram.svg" alt="" aria-hidden="true">
+            </a>
+            <a class="icon-button social-button" href="https://www.youtube.com/@llsamples" target="_blank" rel="noopener noreferrer" aria-label="Abrir YouTube da LL Samples" title="YouTube">
+                <img src="/assets/youtube.svg" alt="" aria-hidden="true">
+            </a>
+            <a class="icon-button social-button" href="https://www.tiktok.com/@ll.samples" target="_blank" rel="noopener noreferrer" aria-label="Abrir TikTok da LL Samples" title="TikTok">
+                <img src="/assets/tiktok.svg" alt="" aria-hidden="true">
             </a>
             <button id="accountMenuButton" class="icon-button menu-button" type="button" onclick="toggleMenu(true)" aria-label="Abrir menu">
                 ☰
