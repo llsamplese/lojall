@@ -670,7 +670,6 @@
         <img src="https://llsamplese.github.io/llcatalogo/Layer%205.png" alt="LL Samples">
         <div>
           <strong>Loja LL Samples</strong>
-          <span>Painel de controle da loja, clientes e entregas</span>
         </div>
       </div>
       <div class="actions">
@@ -683,8 +682,6 @@
       <div class="card-head">
         <div>
           <div class="hero-kicker">Painel administrativo</div>
-          <h1>Painel de controle</h1>
-          <p>Aqui você controla visibilidade da interface, cupons, promoções por produto, promoção global e os dados dos clientes já gravados no GitHub.</p>
         </div>
       </div>
       <div class="stats">
@@ -703,7 +700,6 @@
           <summary>
             <div class="section-title">
               <strong>Visibilidade da interface</strong>
-              <span>Ligue e desligue blocos da loja principal sem editar o código.</span>
             </div>
             <span class="section-chevron">v</span>
           </summary>
@@ -716,7 +712,6 @@
           <summary>
             <div class="section-title">
               <strong>Cupons</strong>
-              <span>Crie, ative, desative e ajuste cupons diretamente por aqui.</span>
             </div>
             <span class="section-chevron">v</span>
           </summary>
@@ -732,7 +727,6 @@
           <summary>
             <div class="section-title">
               <strong>Pacotes</strong>
-              <span>Configure ofertas como 10 samples por um valor fixo e controle a exibição na loja.</span>
             </div>
             <span class="section-chevron">v</span>
           </summary>
@@ -748,7 +742,6 @@
           <summary>
             <div class="section-title">
               <strong>Promoção global</strong>
-              <span>Aplicar desconto percentual, desconto fixo ou preço final fixo para todos os samples.</span>
             </div>
             <span class="section-chevron">v</span>
           </summary>
@@ -761,7 +754,6 @@
           <summary>
             <div class="section-title">
               <strong>Promoções por produto</strong>
-              <span>Defina um preço promocional por sample e ative quando quiser.</span>
             </div>
             <span class="section-chevron">v</span>
           </summary>
@@ -777,7 +769,6 @@
           <summary>
             <div class="section-title">
               <strong>Produtos / Samples</strong>
-              <span>Cadastre novos samples, edite preço, vídeo, link de download e ordem na loja.</span>
             </div>
             <span class="section-chevron">v</span>
           </summary>
@@ -787,9 +778,6 @@
               <button class="ghost" type="button" onclick="addProductDraft()">Novo sample</button>
               <button class="primary" type="button" onclick="saveProductCatalog()">Salvar samples</button>
             </div>
-            <div class="empty" style="margin-bottom:12px;text-align:left;">
-              A capa é gerada automaticamente pela thumb do YouTube. O link individual também é gerado pelo nome do sample.
-            </div>
             <div class="scroll"><div id="productAdminList" class="promo-list"></div></div>
           </div>
         </details>
@@ -797,14 +785,12 @@
           <summary>
             <div class="section-title">
               <strong>Links de produto</strong>
-              <span>Gere o link individual de um sample para divulgar no YouTube, WhatsApp ou campanha.</span>
             </div>
             <span class="section-chevron">v</span>
           </summary>
           <div class="section-content">
               <div class="subcard link-generator-card">
                 <strong>Gerar URL do produto</strong>
-                <small>Selecione um sample e copie o link direto. O visitante abre o produto em destaque, com opção de ver o catálogo completo.</small>
                 <div class="form-grid">
                   <input id="productLinkSearch" type="text" placeholder="Buscar sample para gerar o link" oninput="renderProductLinkOptions()">
                   <select id="productLinkSelect" onchange="updateProductLinkPreview()">
@@ -817,7 +803,6 @@
                 <button class="ghost" type="button" onclick="copyProductCheckoutLink()">Copiar checkout do produto</button>
                 <a id="productLinkPreviewButton" class="button ghost" href="#" target="_blank" rel="noopener" style="pointer-events:none;opacity:.55;">Abrir prévia</a>
               </div>
-              <div class="link-preview-note">Formato usado: <code>?produto=slug-do-sample</code></div>
             </div>
           </div>
         </details>
@@ -825,14 +810,12 @@
           <summary>
             <div class="section-title">
               <strong>Gerador de orçamentos</strong>
-              <span>Monte uma proposta com os samples do painel, aplique desconto manual e copie o texto para o cliente.</span>
             </div>
             <span class="section-chevron">v</span>
           </summary>
           <div class="section-content">
             <div class="subcard">
               <strong>Dados do orçamento</strong>
-              <small>Os valores usam o preço atual da loja, incluindo promoção por produto e promoção global quando estiverem ativas.</small>
               <div class="form-grid">
                 <select id="quoteTextMode" onchange="updateQuotePreview()">
                   <option value="purchase">✨ Orçamento / compra</option>
@@ -858,7 +841,6 @@
             <div class="quote-workspace">
               <div class="subcard">
                 <strong>Selecionar samples</strong>
-                <small>Busque no catálogo atual e adicione ao orçamento.</small>
                 <input id="quoteProductSearch" type="text" placeholder="Buscar sample" oninput="renderQuoteGenerator()">
                 <div id="quoteProductPicker" class="quote-product-picker">
                   <div class="empty">Carregando samples...</div>
@@ -866,7 +848,6 @@
               </div>
               <div class="subcard">
                 <strong>Samples no orçamento</strong>
-                <small>Remova itens ou limpe a seleção quando quiser.</small>
                 <div id="quoteSelectedList" class="quote-selected-list">
                   <div class="empty">Nenhum sample selecionado.</div>
                 </div>
@@ -877,7 +858,6 @@
             </div>
             <div class="subcard">
               <strong>Prévia para copiar</strong>
-              <small>Texto pronto para WhatsApp, direct ou e-mail. Não há geração de impressão nesta versão.</small>
               <textarea id="quotePreview" class="quote-preview" readonly placeholder="Selecione samples para gerar a prévia do orçamento."></textarea>
               <div class="actions compact">
                 <button class="primary" type="button" onclick="copyQuoteText()">Copiar orçamento</button>
@@ -893,7 +873,6 @@
           <summary>
             <div class="section-title">
               <strong>Clientes</strong>
-              <span>Abra só quando for gerenciar clientes, compras aprovadas, exclusão ou cadastro manual.</span>
             </div>
             <span class="section-chevron">v</span>
           </summary>
@@ -902,7 +881,6 @@
               <summary>
                 <div class="subcard-toggle-copy">
                   <strong>Adicionar cliente manualmente</strong>
-                  <small>Cria um cliente no log mesmo sem compra. Útil para organizar acesso e histórico antes do cadastro real.</small>
                 </div>
                 <span class="subcard-toggle-chevron">v</span>
               </summary>
@@ -929,7 +907,6 @@
             </details>
             <div class="subcard">
               <strong>Buscar e filtrar</strong>
-              <small>Encontre clientes por nome, e-mail, telefone, código ou sample entregue.</small>
               <div class="form-grid">
                 <input id="searchInput" type="text" placeholder="Buscar por nome, e-mail, telefone, código ou sample">
                 <select id="statusFilter">
@@ -941,7 +918,6 @@
             </div>
             <div class="subcard">
               <strong>Lista de clientes</strong>
-              <small>Abra cada cliente para editar dados, revisar compras aprovadas e copiar links.</small>
               <div class="scroll"><div id="customerList" class="customer-list"></div></div>
             </div>
           </div>
@@ -1098,9 +1074,9 @@ function copyPackageCheckoutLink(code){const pkg=packagesCache[code];const link=
 function renderManualCustomerItems(){const host=document.getElementById('manualCustomerProductList');const select=document.getElementById('manualCustomerProductSelect');if(select){select.innerHTML=renderProductSelectOptions('Selecionar sample para esse cliente');}if(!host)return;if(!manualCustomerItems.length){host.innerHTML='<div class="empty">Nenhum sample separado para este novo cliente.</div>';return;}host.innerHTML=manualCustomerItems.map((name,index)=>`<div class="sample-item"><span>${escapeHtml(name)}</span><span class="price">Manual</span><div class="sample-item-actions"><button class="sample-action" type="button" onclick="removeManualCustomerItem(${index})">Remover</button></div></div>`).join('');}
 function addManualCustomerSelectedProduct(){const select=document.getElementById('manualCustomerProductSelect');const value=String(select?.value||'').trim();if(!value)return;if(!manualCustomerItems.includes(value)){manualCustomerItems.push(value);}renderManualCustomerItems();if(select){select.value='';}}
 function removeManualCustomerItem(index){manualCustomerItems=manualCustomerItems.filter((_,i)=>i!==index);renderManualCustomerItems();}
-function renderUiToggles(){const host=document.getElementById('uiToggleList');const ui=storeConfigCache.ui||{};host.innerHTML=UI_FIELDS.map(f=>`<div class="toggle-item"><div class="toggle-copy"><strong>${escapeHtml(f.label)}</strong><span>${escapeHtml(f.help)}</span></div><button class="switch ${ui[f.key]!==false?'active':''}" type="button" onclick="toggleUiField('${f.key}')"></button></div>`).join('');}
+function renderUiToggles(){const host=document.getElementById('uiToggleList');const ui=storeConfigCache.ui||{};host.innerHTML=UI_FIELDS.map(f=>`<div class="toggle-item"><div class="toggle-copy"><strong>${escapeHtml(f.label)}</strong></div><button class="switch ${ui[f.key]!==false?'active':''}" type="button" onclick="toggleUiField('${f.key}')"></button></div>`).join('');}
 function toggleUiField(key){const current=storeConfigCache.ui?.[key];storeConfigCache.ui={...(storeConfigCache.ui||{}),[key]:current===false};renderUiToggles();}
-function renderGlobalPricing(){const host=document.getElementById('globalPricingCard');const pricing=storeConfigCache.globalPricing||{active:false,type:'percent',value:0};const activeText=pricing.active?'Promoção global ativa':'Promoção global inativa';const helpText=pricing.type==='fixed_price'?'Define o mesmo preço final para todos, sem aumentar itens que já são mais baratos.' : pricing.type==='fixed'?'Desconta um valor fixo de cada sample.' : 'Aplica um percentual de desconto em cada sample.';host.innerHTML=`<div><strong>${escapeHtml(activeText)}</strong><small>${escapeHtml(helpText)}</small></div><div class="row"><select onchange="updateGlobalPricingField('type',this.value)"><option value="percent" ${pricing.type==='percent'?'selected':''}>Percentual</option><option value="fixed" ${pricing.type==='fixed'?'selected':''}>Desconto fixo</option><option value="fixed_price" ${pricing.type==='fixed_price'?'selected':''}>Preço final fixo</option></select><input type="text" inputmode="decimal" value="${escapeHtml(pricing.value??'')}" placeholder="${pricing.type==='fixed_price'?'Preço final para todos':'Valor do desconto'}" oninput="updateGlobalPricingField('value',this.value)"><button class="${pricing.active?'primary':'ghost'}" type="button" onclick="toggleGlobalPricing()">${pricing.active?'Desativar promoção':'Ativar promoção'}</button></div>`;}
+function renderGlobalPricing(){const host=document.getElementById('globalPricingCard');const pricing=storeConfigCache.globalPricing||{active:false,type:'percent',value:0};const activeText=pricing.active?'Promoção global ativa':'Promoção global inativa';host.innerHTML=`<div><strong>${escapeHtml(activeText)}</strong></div><div class="row"><select onchange="updateGlobalPricingField('type',this.value)"><option value="percent" ${pricing.type==='percent'?'selected':''}>Percentual</option><option value="fixed" ${pricing.type==='fixed'?'selected':''}>Desconto fixo</option><option value="fixed_price" ${pricing.type==='fixed_price'?'selected':''}>Preço final fixo</option></select><input type="text" inputmode="decimal" value="${escapeHtml(pricing.value??'')}" placeholder="${pricing.type==='fixed_price'?'Preço final para todos':'Valor do desconto'}" oninput="updateGlobalPricingField('value',this.value)"><button class="${pricing.active?'primary':'ghost'}" type="button" onclick="toggleGlobalPricing()">${pricing.active?'Desativar promoção':'Ativar promoção'}</button></div>`;}
 function updateGlobalPricingField(field,value){const current=storeConfigCache.globalPricing||{active:false,type:'percent',value:0};storeConfigCache.globalPricing={...current,[field]:value};if(field!=='value'){renderGlobalPricing();}renderQuoteGenerator();}
 function toggleGlobalPricing(){const current=storeConfigCache.globalPricing||{active:false,type:'percent',value:0};storeConfigCache.globalPricing={...current,active:!current.active};renderGlobalPricing();renderQuoteGenerator();}
 function isAdminDateExpired(value){const raw=String(value||'').trim();if(!raw)return false;const parsed=new Date(raw);return !Number.isNaN(parsed.getTime())&&Date.now()>parsed.getTime();}
