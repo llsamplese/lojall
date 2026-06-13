@@ -92,34 +92,88 @@
 
     .site-footer {
         margin: 22px 0 8px;
-        padding: 16px 18px;
-        border: 1px solid rgba(255, 193, 7, 0.12);
-        border-radius: 20px;
-        background: rgba(10, 10, 10, 0.78);
+        padding: 14px 18px;
         color: #a99a69;
         display: flex;
-        flex-wrap: wrap;
         justify-content: center;
         align-items: center;
-        gap: 12px;
-        font-size: 0.86rem;
+        gap: 18px;
+        position: relative;
+    }
+
+    .footer-icon-link,
+    .footer-more-button {
+        width: 42px;
+        height: 42px;
+        border: 0;
+        background: transparent;
+        display: grid;
+        place-items: center;
+        cursor: pointer;
+        text-decoration: none;
+        transition: transform 0.2s ease, opacity 0.2s ease, filter 0.2s ease;
+        padding: 0;
+    }
+
+    .footer-icon-link img {
+        display: block;
+        width: 34px;
+        height: 34px;
+    }
+
+    .footer-more {
+        position: relative;
+    }
+
+    .footer-more-button {
+        color: #1b1503;
+        background: linear-gradient(135deg, #ffe27a, #ffc107);
+        border-radius: 999px;
+        font-size: 2rem;
+        font-weight: 900;
+        line-height: 1;
+        box-shadow: 0 10px 28px rgba(255, 193, 7, 0.22);
+    }
+
+    .footer-icon-link:hover,
+    .footer-more-button:hover {
+        transform: translateY(-2px);
+        opacity: 0.94;
+        filter: brightness(1.08);
     }
 
     .site-footer-links {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 10px;
+        position: absolute;
+        right: 0;
+        bottom: calc(100% + 10px);
+        min-width: 220px;
+        display: none;
+        grid-template-columns: 1fr;
+        gap: 8px;
+        padding: 12px;
+        border: 1px solid rgba(255, 193, 7, 0.18);
+        border-radius: 16px;
+        background: rgba(10, 10, 10, 0.96);
+        box-shadow: 0 18px 40px rgba(0,0,0,0.36);
+        z-index: 30;
     }
 
-    .site-footer a {
+    .site-footer-links.open {
+        display: grid;
+    }
+
+    .site-footer-links a {
         color: #ffd76d;
         text-decoration: none;
-        font-weight: 750;
+        font-weight: 800;
+        padding: 10px 12px;
+        border-radius: 12px;
+        text-align: center;
+        background: rgba(255,255,255,0.04);
     }
 
-    .site-footer a:hover {
-        text-decoration: underline;
+    .site-footer-links a:hover {
+        background: rgba(255, 193, 7, 0.1);
     }
 
     .topbar {
@@ -260,12 +314,6 @@
         display: block;
     }
 
-    .topbar-actions .icon-button.social-button img {
-        width: 32px;
-        height: 32px;
-        display: block;
-    }
-
     .topbar-actions .icon-button.menu-button {
         font-size: 1.85rem;
         font-weight: 800;
@@ -290,8 +338,7 @@
     }
 
     .product-direct-mode .topbar-actions .cart-button,
-    .product-direct-mode .topbar-actions .menu-button,
-    .product-direct-mode .topbar-actions .social-button {
+    .product-direct-mode .topbar-actions .menu-button {
         display: none !important;
     }
 
@@ -2543,11 +2590,6 @@
         height: 38px;
     }
 
-    .topbar-actions .icon-button.social-button img {
-        width: 29px;
-        height: 29px;
-    }
-
     .topbar-actions .icon-button.menu-button {
         font-size: 1.7rem;
     }
@@ -3039,15 +3081,6 @@
             <a class="icon-button whatsapp-button" href="https://wa.me/5585988608620" target="_blank" rel="noopener noreferrer" aria-label="Abrir WhatsApp da loja" title="WhatsApp da loja">
                 <img src="/assets/whatsapp.svg" alt="" aria-hidden="true">
             </a>
-            <a class="icon-button social-button" href="https://www.instagram.com/llsamples_/" target="_blank" rel="noopener noreferrer" aria-label="Abrir Instagram da LL Samples" title="Instagram">
-                <img src="/assets/instagram.svg" alt="" aria-hidden="true">
-            </a>
-            <a class="icon-button social-button" href="https://www.youtube.com/@llsamples" target="_blank" rel="noopener noreferrer" aria-label="Abrir YouTube da LL Samples" title="YouTube">
-                <img src="/assets/youtube.svg" alt="" aria-hidden="true">
-            </a>
-            <a class="icon-button social-button" href="https://www.tiktok.com/@llsamples" target="_blank" rel="noopener noreferrer" aria-label="Abrir TikTok da LL Samples" title="TikTok">
-                <img src="/assets/tiktok.svg" alt="" aria-hidden="true">
-            </a>
             <button id="accountMenuButton" class="icon-button menu-button" type="button" onclick="toggleMenu(true)" aria-label="Abrir menu">
                 ☰
             </button>
@@ -3178,11 +3211,23 @@
     </div>
     <div class="catalog-grid is-loading" id="catalogGrid"></div>
     <footer class="site-footer">
-        <div class="site-footer-links">
-            <a href="/privacidade.html">Política de privacidade</a>
-            <a href="/termos.html">Termos de uso</a>
-            <a href="/contato.html">Contato</a>
-            <a href="https://wa.me/5585988608620" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+        <a class="footer-icon-link" href="https://www.instagram.com/llsamples_/" target="_blank" rel="noopener noreferrer" aria-label="Abrir Instagram da LL Samples" title="Instagram">
+            <img src="/assets/instagram.svg" alt="" aria-hidden="true">
+        </a>
+        <a class="footer-icon-link" href="https://www.youtube.com/@llsamples" target="_blank" rel="noopener noreferrer" aria-label="Abrir YouTube da LL Samples" title="YouTube">
+            <img src="/assets/youtube.svg" alt="" aria-hidden="true">
+        </a>
+        <a class="footer-icon-link" href="https://www.tiktok.com/@llsamples" target="_blank" rel="noopener noreferrer" aria-label="Abrir TikTok da LL Samples" title="TikTok">
+            <img src="/assets/tiktok.svg" alt="" aria-hidden="true">
+        </a>
+        <div class="footer-more">
+            <button class="footer-more-button" type="button" onclick="toggleFooterLinks()" aria-label="Abrir links da loja" aria-expanded="false">+</button>
+            <div id="footerLinksMenu" class="site-footer-links">
+                <a href="/privacidade.html">Política de privacidade</a>
+                <a href="/termos.html">Termos de uso</a>
+                <a href="/contato.html">Contato</a>
+                <a href="https://wa.me/5585988608620" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+            </div>
         </div>
     </footer>
 </div>
@@ -4609,6 +4654,17 @@
         document.body.style.overflow = shouldOpen ? 'hidden' : '';
     }
 
+    function toggleFooterLinks(forceOpen) {
+        const menu = document.getElementById('footerLinksMenu');
+        const button = document.querySelector('.footer-more-button');
+        if (!menu || !button) return;
+        const shouldOpen = typeof forceOpen === 'boolean'
+            ? forceOpen
+            : !menu.classList.contains('open');
+        menu.classList.toggle('open', shouldOpen);
+        button.setAttribute('aria-expanded', shouldOpen ? 'true' : 'false');
+    }
+
     function buildPurchaseHistoryMarkup(purchases, prefix) {
         return purchases.map((purchase, purchaseIndex) => {
             const deliveredItems = Array.isArray(purchase.items) ? purchase.items.filter(item => item.delivered && item.link) : [];
@@ -5804,6 +5860,19 @@
                 lookupEmailPurchases();
             }
         });
+    });
+
+    document.addEventListener('click', function(event) {
+        const footerMore = event.target.closest('.footer-more');
+        if (!footerMore) {
+            toggleFooterLinks(false);
+        }
+    });
+
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            toggleFooterLinks(false);
+        }
     });
 
     window.addEventListener('resize', scheduleNameMarqueeUpdate);
