@@ -3665,12 +3665,10 @@
     function getPackageMetaLines(pkg) {
         const lines = pkg.mode === 'custom_choice'
             ? [
-                `Cliente escolhe ${Number(pkg.quantity || 0)} sample${Number(pkg.quantity || 0) > 1 ? 's' : ''}.`,
-                `Preço fechado de ${formatCurrency(Number(pkg.fixedPrice || 0))}.`
+                `Escolha ${Number(pkg.quantity || 0)} sample${Number(pkg.quantity || 0) > 1 ? 's' : ''}.`
             ]
             : [
-            `${Number(pkg.quantity || 0)} sample${Number(pkg.quantity || 0) > 1 ? 's' : ''} incluído${Number(pkg.quantity || 0) > 1 ? 's' : ''}.`,
-            `Preço fechado de ${formatCurrency(Number(pkg.fixedPrice || 0))}.`
+            `${Number(pkg.quantity || 0)} sample${Number(pkg.quantity || 0) > 1 ? 's' : ''} incluído${Number(pkg.quantity || 0) > 1 ? 's' : ''}.`
         ];
         if (pkg.validUntil) {
             lines.push(`Válido até ${formatCouponDate(pkg.validUntil)}.`);
@@ -3846,7 +3844,6 @@
             const meta = getPackageMetaLines(pkg);
             const isActive = String(pkg.code || '').trim().toUpperCase() === selectedPackageCode;
             const countdown = pkg.validUntil ? `<div class="coupon-countdown" data-package-countdown="${pkg.validUntil}"></div>` : '';
-            const routeBadge = currentPackageRouteSlug ? `<div class="available-package-meta"><div>Oferta exclusiva deste link.</div></div>` : '';
             const statusLine = isActive && packageState
                 ? (packageState.eligible
                     ? `<div class="available-package-meta"><div>Pacote pronto para este carrinho.</div></div>`
@@ -3857,13 +3854,11 @@
                     <div class="available-package-top">
                         <div class="available-package-label">
                             <div class="available-package-code">${pkg.code}</div>
-                            <div class="available-package-name">${pkg.label || pkg.code}</div>
                         </div>
                         <div class="available-package-value">${Number(pkg.quantity || 0)} por ${formatCurrency(Number(pkg.fixedPrice || 0))}</div>
                     </div>
                     ${countdown}
                     <div class="available-package-meta">${meta.map((line) => `<div>${line}</div>`).join('')}</div>
-                    ${routeBadge}
                     ${statusLine}
                     <button class="available-package-select ${isActive ? 'active' : ''}" type="button" onclick="selectPackage('${String(pkg.code || '').replace(/'/g, "\\'")}')">${isActive ? 'Remover pacote' : 'Usar pacote'}</button>
                 </article>
