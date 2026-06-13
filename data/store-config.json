@@ -133,7 +133,7 @@
       "value": 20,
       "minSubtotal": 0,
       "minItems": 1,
-      "validUntil": "",
+      "validUntil": "2026-06-12T23:59",
       "usedPayments": [
         "155988280750",
         "155667933469",
@@ -141,7 +141,7 @@
         "162430460852"
       ],
       "usedCount": 4,
-      "expiredAt": "2026-06-13T00:40:09.404Z",
+      "expiredAt": "2026-06-05T01:31:07.127Z",
       "usageLimit": "",
       "hidden": false,
       "allowWithPackage": false
@@ -191,7 +191,7 @@
       "mode": "custom_choice",
       "visibility": "direct_only",
       "routeSlug": "combo1",
-      "validUntil": "2026-06-12T23:59"
+      "validUntil": "2026-06-13T23:59"
     },
     "COMBO3": {
       "code": "COMBO3",
