@@ -128,7 +128,7 @@
     "LL20": {
       "code": "LL20",
       "label": "20%OFF",
-      "active": false,
+      "active": true,
       "type": "percent",
       "value": 20,
       "minSubtotal": 0,
