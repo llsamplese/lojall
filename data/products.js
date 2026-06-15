@@ -1,13 +1,13 @@
 const LL_PRODUCTS = [
   {
-    "nome": "LL Drums Chicotada",
-    "valor": 75,
-    "video": "https://youtu.be/-oZgNdH86sk"
-  },
-  {
     "nome": "LL Pacote Produção Chicotada",
     "valor": 75,
     "video": "https://youtu.be/NnV6T2BvubA"
+  },
+  {
+    "nome": "LL Drums Chicotada",
+    "valor": 75,
+    "video": "https://youtu.be/-oZgNdH86sk"
   },
   {
     "nome": "LL Drums Menos é Mais",
