@@ -81,12 +81,12 @@
     "LL10": {
       "code": "LL10",
       "label": "Bem-vindo 10%",
-      "active": true,
+      "active": false,
       "type": "percent",
       "value": 10,
       "minSubtotal": 0,
       "minItems": 1,
-      "validUntil": "2026-06-15T23:59",
+      "validUntil": "",
       "usageLimit": "",
       "usedCount": 3,
       "usedPayments": [
@@ -94,7 +94,7 @@
         "157633622387",
         "159361582283"
       ],
-      "expiredAt": "2026-06-15T12:44:18.494Z",
+      "expiredAt": "2026-06-16T01:03:31.301Z",
       "hidden": false,
       "allowWithPackage": false
     },
