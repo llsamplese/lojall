@@ -324,6 +324,20 @@
         "LL Piseiro Drums Cyber"
       ],
       "validUntil": ""
+    },
+    "ORCAMENTO1LLDRUMSR": {
+      "code": "ORCAMENTO1LLDRUMSR",
+      "label": "Orçamento 1 sample",
+      "mode": "fixed_set",
+      "visibility": "direct_only",
+      "routeSlug": "orcamento-1-ll-drums-rey-vaqueiro-5600",
+      "active": true,
+      "quantity": 1,
+      "fixedPrice": 56,
+      "includedItems": [
+        "LL Drums Rey Vaqueiro"
+      ],
+      "validUntil": ""
     }
   }
 }
