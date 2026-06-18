@@ -101,7 +101,7 @@
     "LL15": {
       "code": "LL15",
       "label": "Bem-vindo 15%",
-      "active": true,
+      "active": false,
       "type": "percent",
       "value": 15,
       "minSubtotal": 0,
@@ -121,8 +121,8 @@
         "161419267246"
       ],
       "hidden": false,
-      "validUntil": "2026-06-17T23:59",
-      "expiredAt": "2026-06-17T00:43:57.421Z",
+      "validUntil": "",
+      "expiredAt": "2026-06-18T08:17:08.808Z",
       "allowWithPackage": false
     },
     "LL20": {
