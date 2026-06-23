@@ -338,6 +338,20 @@
         "LL Drums Rey Vaqueiro"
       ],
       "validUntil": ""
+    },
+    "ORCAMENTO1LLBASSAR2": {
+      "code": "ORCAMENTO1LLBASSAR2",
+      "label": "Orçamento 1 sample",
+      "mode": "fixed_set",
+      "visibility": "direct_only",
+      "routeSlug": "orcamento-1-ll-bass-arrocha-v2-seresta-6000",
+      "active": true,
+      "quantity": 1,
+      "fixedPrice": 60,
+      "includedItems": [
+        "LL Bass Arrocha v2 – Seresta"
+      ],
+      "validUntil": ""
     }
   }
 }
