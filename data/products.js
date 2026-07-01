@@ -2,7 +2,7 @@ const LL_PRODUCTS = [
   {
     "nome": "LL Pacote Produção Raphaela Santos",
     "valor": 70,
-    "video": ""
+    "video": "https://youtu.be/7mpxyfpzqCw"
   },
   {
     "nome": "LL Drums Raphaela Santos",
