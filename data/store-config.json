@@ -267,20 +267,6 @@
       ],
       "validUntil": ""
     },
-    "ORCAMENTO1LLBASSAR": {
-      "code": "ORCAMENTO1LLBASSAR",
-      "label": "Orçamento 1 sample",
-      "mode": "fixed_set",
-      "visibility": "direct_only",
-      "routeSlug": "orcamento-1-ll-bass-arrocha-v2-seresta-5000",
-      "active": true,
-      "quantity": 1,
-      "fixedPrice": 50,
-      "includedItems": [
-        "LL Bass Arrocha v2 – Seresta"
-      ],
-      "validUntil": ""
-    },
     "ORCAMENTO1LLDRUMSL": {
       "code": "ORCAMENTO1LLDRUMSL",
       "label": "Orçamento 1 sample",
@@ -341,7 +327,7 @@
     },
     "ORCAMENTO1LLBASSAR2": {
       "code": "ORCAMENTO1LLBASSAR2",
-      "label": "Orçamento 1 sample",
+      "label": "Orçamento 2 samples",
       "mode": "fixed_set",
       "visibility": "direct_only",
       "routeSlug": "orcamento-1-ll-bass-arrocha-v2-seresta-6000",
@@ -364,6 +350,20 @@
       "fixedPrice": 50,
       "includedItems": [
         "LL Bass Piseiro v2"
+      ],
+      "validUntil": ""
+    },
+    "PACOTE PRODUÇÃO RAPHAELA SANTOS": {
+      "code": "PACOTE PRODUÇÃO RAPHAELA SANTOS",
+      "label": "Orçamento 1 sample",
+      "mode": "fixed_set",
+      "visibility": "direct_only",
+      "routeSlug": "orcamento-1-ll-bass-arrocha-v2-seresta-5000",
+      "active": true,
+      "quantity": 1,
+      "fixedPrice": 50,
+      "includedItems": [
+        "LL Bass Arrocha v2 – Seresta"
       ],
       "validUntil": ""
     }
