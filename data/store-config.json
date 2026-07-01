@@ -339,29 +339,15 @@
       ],
       "validUntil": ""
     },
-    "PACOTE PRODUÇÃO RAPHAELA SANTOS": {
-      "code": "PACOTE PRODUÇÃO RAPHAELA SANTOS",
-      "label": "Orçamento 1 sample",
-      "mode": "fixed_set",
-      "visibility": "direct_only",
-      "routeSlug": "orcamento-1-ll-bass-arrocha-v2-seresta-5000",
-      "active": true,
-      "quantity": 1,
-      "fixedPrice": 50,
-      "includedItems": [
-        "LL Bass Arrocha v2 – Seresta"
-      ],
-      "validUntil": ""
-    },
     "PACOTE PRODUÇÃO RAPHAELA SANTOS (COMPLETO)": {
       "code": "PACOTE PRODUÇÃO RAPHAELA SANTOS (COMPLETO)",
-      "label": "Orçamento 2 samples",
+      "label": "Pacote Raphaela Santos (Completo)",
       "mode": "fixed_set",
       "visibility": "direct_only",
-      "routeSlug": "orcamento-1-ll-bass-arrocha-v2-seresta-6000",
+      "routeSlug": "pacote-producao-raphaela-santos-completo",
       "active": true,
       "quantity": 2,
-      "fixedPrice": 100,
+      "fixedPrice": 250,
       "includedItems": [
         "LL Pacote Produção Raphaela Santos",
         "LL Drums Raphaela Santos"
