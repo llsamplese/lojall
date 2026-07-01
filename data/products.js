@@ -5,6 +5,11 @@ const LL_PRODUCTS = [
     "video": "https://www.youtube.com/watch?v=XV1VpT9n5uk"
   },
   {
+    "nome": "LL Pacote Produção Raphaela Santos",
+    "valor": 70,
+    "video": ""
+  },
+  {
     "nome": "LL Pacote Produção Chicotada",
     "valor": 75,
     "video": "https://youtu.be/NnV6T2BvubA"
