@@ -352,6 +352,20 @@
         "LL Bass Arrocha v2 – Seresta"
       ],
       "validUntil": ""
+    },
+    "ORCAMENTO1LLBASSPI": {
+      "code": "ORCAMENTO1LLBASSPI",
+      "label": "Orçamento 1 sample",
+      "mode": "fixed_set",
+      "visibility": "direct_only",
+      "routeSlug": "orcamento-1-ll-bass-piseiro-v2-5000",
+      "active": true,
+      "quantity": 1,
+      "fixedPrice": 50,
+      "includedItems": [
+        "LL Bass Piseiro v2"
+      ],
+      "validUntil": ""
     }
   }
 }
