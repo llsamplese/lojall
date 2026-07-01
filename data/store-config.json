@@ -332,10 +332,11 @@
       "visibility": "direct_only",
       "routeSlug": "orcamento-1-ll-bass-arrocha-v2-seresta-6000",
       "active": true,
-      "quantity": 1,
-      "fixedPrice": 60,
+      "quantity": 2,
+      "fixedPrice": 100,
       "includedItems": [
-        "LL Bass Arrocha v2 – Seresta"
+        "LL Pacote Produção Raphaela Santos",
+        "LL Drums Raphaela Santos"
       ],
       "validUntil": ""
     },
