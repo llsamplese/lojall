@@ -8,7 +8,7 @@
     "showAvailableCouponsPanelPackageDirect": false,
     "showPackagesPanel": true,
     "showPackagesPanelHome": false,
-    "showPackagesPanelProductDirect": false,
+    "showPackagesPanelProductDirect": true,
     "showPackagesPanelPackageDirect": true,
     "showCopyNamesButton": false,
     "showCopyOrderButton": false,
