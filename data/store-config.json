@@ -356,6 +356,21 @@
         "LL Drums Raphaela Santos"
       ],
       "validUntil": ""
+    },
+    "ORCAMENTO2LLDRUMSG": {
+      "code": "ORCAMENTO2LLDRUMSG",
+      "label": "Orçamento 2 samples",
+      "mode": "fixed_set",
+      "visibility": "direct_only",
+      "routeSlug": "orcamento-2-ll-drums-guilherme-silva-ll-drums-chicotada-11000",
+      "active": true,
+      "quantity": 2,
+      "fixedPrice": 110,
+      "includedItems": [
+        "LL Drums Guilherme Silva",
+        "LL Drums Chicotada"
+      ],
+      "validUntil": ""
     }
   }
 }
