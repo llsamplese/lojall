@@ -373,6 +373,23 @@
         "LL Drums Chicotada"
       ],
       "validUntil": ""
+    },
+    "ORCAMENTO4LLWSDRUM": {
+      "code": "ORCAMENTO4LLWSDRUM",
+      "label": "Orçamento 4 samples",
+      "mode": "fixed_set",
+      "visibility": "direct_only",
+      "routeSlug": "orcamento-4-ll-ws-drums-ll-drums-nattan-forro-ll-acordeon-forro-v2-ll-bass-forro-19000",
+      "active": true,
+      "quantity": 4,
+      "fixedPrice": 190,
+      "includedItems": [
+        "LL WS Drums",
+        "LL Drums Nattan Forró",
+        "LL Acordeon Forró v2",
+        "LL Bass Forró"
+      ],
+      "validUntil": ""
     }
   }
 }
