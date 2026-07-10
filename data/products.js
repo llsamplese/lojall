@@ -1,5 +1,11 @@
 const LL_PRODUCTS = [
   {
+    "nome": "LL Guitarra Arrocha v3",
+    "valor": 80,
+    "video": "",
+    "launchAt": ""
+  },
+  {
     "nome": "LL Bass Arrocha v3",
     "valor": 80,
     "video": "https://youtu.be/zsQqggDEqzMw",
