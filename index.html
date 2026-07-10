@@ -2086,6 +2086,30 @@
         font-weight: 800;
     }
 
+    .global-promotion-card .available-coupon-code {
+        color: #ffc107;
+        font-size: clamp(1.05rem, 1.8vw, 1.32rem);
+        line-height: 1.15;
+        white-space: pre-line;
+        text-shadow: 0 0 18px rgba(255, 193, 7, 0.16);
+    }
+
+    .global-promotion-card .available-coupon-name {
+        color: #e8d38e;
+        font-weight: 700;
+    }
+
+    .global-promotion-card .available-coupon-value {
+        min-height: 38px;
+        padding: 0 16px;
+        background: linear-gradient(135deg, #ffe082, #ffbf00);
+        border-color: rgba(255, 193, 7, 0.62);
+        color: #211900;
+        font-size: 0.95rem;
+        font-weight: 950;
+        box-shadow: 0 12px 28px rgba(255, 193, 7, 0.14);
+    }
+
     .available-coupon-meta {
         display: grid;
         gap: 4px;
@@ -2137,6 +2161,14 @@
         font-size: 0.86rem;
         font-weight: 800;
         letter-spacing: 0.02em;
+    }
+
+    .global-promotion-card .coupon-countdown {
+        padding: 8px 14px;
+        background: rgba(255, 193, 7, 0.16);
+        border-color: rgba(255, 193, 7, 0.34);
+        color: #fff0bb;
+        box-shadow: 0 10px 24px rgba(255, 193, 7, 0.1);
     }
 
     .available-packages-panel {
@@ -3957,7 +3989,7 @@
         }
         empty.style.display = 'none';
         const globalPricingMarkup = globalPricing ? `
-            <article class="available-coupon-card">
+            <article class="available-coupon-card global-promotion-card">
                 <div class="available-coupon-top">
                     <div class="available-coupon-label">
                         <div class="available-coupon-code">${escapeHtml(globalPricing.label || 'Promoção global')}</div>
