@@ -830,16 +830,21 @@
     }
 
     .menu-header {
-        display: flex;
+        display: grid;
+        grid-template-columns: 42px minmax(0, 1fr) 42px;
         align-items: center;
-        justify-content: space-between;
         margin-bottom: 22px;
-        gap: 16px;
+        gap: 10px;
         text-align: center;
     }
 
     .menu-header > div {
-        flex: 1;
+        grid-column: 2;
+        min-width: 0;
+    }
+
+    .menu-header > button {
+        grid-column: 3;
     }
 
     .menu-title {
@@ -929,6 +934,8 @@
         display: grid;
         gap: 10px;
         justify-items: center;
+        width: min(100%, 520px);
+        margin-inline: auto;
     }
 
     .auth-form input {
@@ -1145,6 +1152,10 @@
         color: #d9c995;
         font-size: 0.88rem;
         text-align: center;
+    }
+
+    .purchase-history-status:empty {
+        display: none;
     }
 
     .search-filter {
@@ -3038,7 +3049,7 @@
                 <input id="customerLookupCode" type="password" placeholder="Código de acesso do cliente">
                 <button class="auth-cta primary" type="button" onclick="lookupEmailPurchases()">Entrar</button>
             </div>
-            <div id="emailPurchaseStatus" class="purchase-history-status">Informe o e-mail e o código para carregar as compras desse cliente.</div>
+            <div id="emailPurchaseStatus" class="purchase-history-status"></div>
             <div id="emailPurchaseContent" class="purchase-history-empty" style="margin-top:14px;">Nenhuma compra carregada ainda.</div>
         </div>
     </div>
