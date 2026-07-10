@@ -1,4 +1,4 @@
-const { getStoreConfig, saveStoreConfig } = require("../lib/store-config");
+const { getStoreConfig, saveStoreConfig, saveStoreConfigPatch } = require("../lib/store-config");
 const { getCouponsMap } = require("../lib/coupon-utils");
 const BASE_COUPONS = require("../data/coupons");
 const DOWNLOAD_LINKS = require("../data/download-links");
@@ -29,6 +29,18 @@ function parseBody(req) {
 
 function normalizePrice(value) {
   return Number(String(value ?? 0).replace(",", ".")) || 0;
+}
+
+function prepareConfigForSave(config) {
+  const nextConfig = config && typeof config === "object" ? { ...config } : {};
+  if (nextConfig.coupons && typeof nextConfig.coupons === "object") {
+    const currentCodes = new Set(Object.keys(nextConfig.coupons).map((code) => String(code || "").trim().toUpperCase()).filter(Boolean));
+    nextConfig.deletedCoupons = Object.keys(BASE_COUPONS).filter((code) => !currentCodes.has(String(code || "").trim().toUpperCase()));
+    nextConfig.couponRuntime = nextConfig.couponRuntime && typeof nextConfig.couponRuntime === "object" ? nextConfig.couponRuntime : {};
+    nextConfig.couponRuntime.hideHomeCouponsAfterExpiry = false;
+    nextConfig.couponRuntime.lastAutoExpiredAt = "";
+  }
+  return nextConfig;
 }
 
 function getProductsWithDownloads() {
@@ -254,15 +266,11 @@ module.exports = async (req, res) => {
         const products = await saveProductsToGithub(body.products);
         return res.status(200).json({ ok: true, products });
       }
-      const nextConfig = body.config || body;
-      if (nextConfig && nextConfig.coupons && typeof nextConfig.coupons === "object") {
-        const currentCodes = new Set(Object.keys(nextConfig.coupons).map((code) => String(code || "").trim().toUpperCase()).filter(Boolean));
-        nextConfig.deletedCoupons = Object.keys(BASE_COUPONS).filter((code) => !currentCodes.has(String(code || "").trim().toUpperCase()));
-        nextConfig.couponRuntime = nextConfig.couponRuntime && typeof nextConfig.couponRuntime === "object" ? nextConfig.couponRuntime : {};
-        nextConfig.couponRuntime.hideHomeCouponsAfterExpiry = false;
-        nextConfig.couponRuntime.lastAutoExpiredAt = "";
-      }
-      const config = await saveStoreConfig(nextConfig);
+      const hasPartial = body.partial && typeof body.partial === "object" && !Array.isArray(body.partial);
+      const nextConfig = prepareConfigForSave(hasPartial ? body.partial : (body.config || body));
+      const config = hasPartial
+        ? await saveStoreConfigPatch(nextConfig)
+        : await saveStoreConfig(nextConfig);
       const coupons = await getCouponsMap();
       return res.status(200).json({ ok: true, config, coupons });
     } catch (error) {

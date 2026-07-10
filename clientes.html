@@ -982,6 +982,7 @@ let pendingWhatsAppPayload=null;
 let selectedQuoteProductNames=[];
 let quoteCheckoutComboTimer=null;
 let quoteCheckoutComboInFlight='';
+let saveConfigQueue=Promise.resolve();
 const money=v=>Number(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
 const escapeHtml=v=>String(v||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 const quoteJs=v=>JSON.stringify(String(v||''));
@@ -1110,7 +1111,35 @@ async function saveGlobalPricing(){const current=storeConfigCache.globalPricing|
 async function saveCoupons(){const sanitized={};Object.values(couponsCache).forEach(coupon=>{const code=normalizeCouponCode(coupon.code||coupon.codeDraft);if(!code) return;const parseDecimal=value=>Number(String(value||0).replace(',', '.'))||0;const parseInteger=value=>parseInt(String(value||0),10)||0;const minItems=Math.max(1,parseInteger(coupon.minItems||1));const usageLimit=parseInteger(coupon.usageLimit||0);const validUntil=String(coupon.validUntil||'').trim();sanitized[code]={...coupon,code,label:coupon.label||code,active:Boolean(coupon.active),hidden:Boolean(coupon.hidden),type:coupon.type==='fixed_per_item'?'fixed_per_item':(coupon.type==='fixed'?'fixed':'percent'),value:parseDecimal(coupon.value),minSubtotal:parseDecimal(coupon.minSubtotal),minItems,usageLimit:usageLimit>0?usageLimit:'',usedCount:parseInteger(coupon.usedCount||0),usedPayments:Array.isArray(coupon.usedPayments)?coupon.usedPayments:[],allowWithPackage:coupon.allowWithPackage!==false,expiredAt:String(coupon.expiredAt||'').trim(),validUntil};delete sanitized[code].codeDraft;});couponsCache=sanitized;await saveStoreConfig({coupons:couponsCache},'Cupons salvos.');}
 async function savePackages(){const sanitized={};Object.values(packagesCache).forEach(pkg=>{const code=normalizePackageCode(pkg.code||pkg.codeDraft);if(!code) return;const parseDecimal=value=>Number(String(value||0).replace(',', '.'))||0;const parseInteger=value=>parseInt(String(value||0),10)||0;const mode=pkg.mode==='fixed_set'?'fixed_set':'custom_choice';const visibility=pkg.visibility==='direct_only'?'direct_only':'public';const includedItems=Array.isArray(pkg.includedItems)?pkg.includedItems.map(item=>String(item||'').trim()).filter(Boolean):[];const normalizedRouteSlug=visibility==='direct_only'?(normalizePackageRouteSlug(pkg.routeSlug||'')||normalizePackageRouteSlug(code)):'';const validUntil=String(pkg.validUntil||'').trim();sanitized[code]={...pkg,code,label:String(pkg.label||code).trim()||code,mode,visibility,routeSlug:normalizedRouteSlug,active:Boolean(pkg.active),quantity:mode==='fixed_set'?includedItems.length:parseInteger(pkg.quantity),fixedPrice:parseDecimal(pkg.fixedPrice),includedItems:mode==='fixed_set'?includedItems:[],validUntil};delete sanitized[code].codeDraft;});packagesCache=sanitized;return await saveStoreConfig({packages:packagesCache},'Pacotes salvos.');}
 async function saveProductOverrides(){const sanitized={};Object.entries(storeConfigCache.productOverrides||{}).forEach(([name,o])=>{if(!o) return;const promoPrice=Number(o.promoPrice);if(o.active||promoPrice>0) sanitized[name]={active:Boolean(o.active),promoPrice:promoPrice>0?promoPrice:''};});await saveStoreConfig({productOverrides:sanitized},'Promoções salvas.');}
-async function saveStoreConfig(partial,successMessage){setStatus('Salvando painel...','');try{const nextConfig={...storeConfigCache,...partial,ui:{...(storeConfigCache.ui||{}),...(partial.ui||{})},globalPricing:partial.globalPricing!==undefined?partial.globalPricing:(storeConfigCache.globalPricing||{}),coupons:partial.coupons!==undefined?partial.coupons:couponsCache,packages:partial.packages!==undefined?partial.packages:packagesCache,productOverrides:partial.productOverrides!==undefined?partial.productOverrides:(storeConfigCache.productOverrides||{})};const response=await fetch(STORE_CONFIG_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({config:nextConfig})});const data=await readApiJson(response,'Não foi possível salvar a configuração.');if(!response.ok) throw new Error(data.error||'Não foi possível salvar a configuração.');storeConfigCache=data.config||nextConfig;couponsCache=data.coupons||couponsCache;packagesCache=storeConfigCache.packages||packagesCache;renderUiToggles();renderGlobalPricing();renderCoupons();renderPackages();renderProducts();renderProductAdmin();renderQuoteGenerator();setStatus(successMessage||'Configuração salva.','ok');return true;}catch(error){setStatus(error.message||'Erro ao salvar configuração.','error');return false;}}
+async function saveStoreConfig(partial,successMessage){
+const partialSnapshot=JSON.parse(JSON.stringify(partial||{}));
+const runSave=async()=>{
+setStatus('Salvando painel...','');
+try{
+const nextConfig={...storeConfigCache,...partialSnapshot,ui:{...(storeConfigCache.ui||{}),...(partialSnapshot.ui||{})},globalPricing:partialSnapshot.globalPricing!==undefined?partialSnapshot.globalPricing:(storeConfigCache.globalPricing||{}),coupons:partialSnapshot.coupons!==undefined?partialSnapshot.coupons:couponsCache,packages:partialSnapshot.packages!==undefined?partialSnapshot.packages:packagesCache,productOverrides:partialSnapshot.productOverrides!==undefined?partialSnapshot.productOverrides:(storeConfigCache.productOverrides||{})};
+const response=await fetch(STORE_CONFIG_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({partial:partialSnapshot})});
+const data=await readApiJson(response,'Não foi possível salvar a configuração.');
+if(!response.ok) throw new Error(data.error||'Não foi possível salvar a configuração.');
+storeConfigCache=data.config||nextConfig;
+couponsCache=data.coupons||storeConfigCache.coupons||couponsCache;
+packagesCache=storeConfigCache.packages||packagesCache;
+renderUiToggles();
+renderGlobalPricing();
+renderCoupons();
+renderPackages();
+renderProducts();
+renderProductAdmin();
+renderQuoteGenerator();
+setStatus(successMessage||'Configuração salva.','ok');
+return true;
+}catch(error){
+setStatus(error.message||'Erro ao salvar configuração.','error');
+return false;
+}
+};
+saveConfigQueue=saveConfigQueue.then(runSave,runSave);
+return saveConfigQueue;
+}
 async function saveCustomer(originalEmail,index){const payload={action:'update',originalEmail,name:document.getElementById(`customerName-${index}`)?.value||'',email:document.getElementById(`customerEmail-${index}`)?.value||'',phone:document.getElementById(`customerPhone-${index}`)?.value||'',access_code:document.getElementById(`customerCode-${index}`)?.value||''};setStatus(`Salvando cliente ${payload.email||originalEmail}...`,'');try{const response=await fetch(CUSTOMER_UPDATE_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});const data=await readApiJson(response,'Não foi possível atualizar o cliente.');if(!response.ok) throw new Error(data.error||'Não foi possível atualizar o cliente.');setStatus(`Cliente ${data.customer?.email||payload.email} atualizado com sucesso.`,'ok');await loadCustomers();}catch(error){setStatus(error.message||'Erro ao atualizar cliente.','error');}}
 async function createManualCustomer(){const payload={action:'create',name:document.getElementById('manualCustomerName')?.value||'',email:document.getElementById('manualCustomerEmail')?.value||'',phone:document.getElementById('manualCustomerPhone')?.value||'',access_code:document.getElementById('manualCustomerCode')?.value||'',items:[...manualCustomerItems]};setStatus(`Criando cliente ${payload.email||''}...`,'');try{const response=await fetch(CUSTOMER_UPDATE_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});const data=await readApiJson(response,'Não foi possível criar o cliente.');if(!response.ok) throw new Error(data.error||'Não foi possível criar o cliente.');['manualCustomerName','manualCustomerEmail','manualCustomerPhone','manualCustomerCode'].forEach(id=>{const field=document.getElementById(id);if(field) field.value='';});manualCustomerItems=[];renderManualCustomerItems();setStatus(`Cliente ${data.customer?.email||payload.email} criado com sucesso.`,'ok');await loadCustomers();}catch(error){setStatus(error.message||'Erro ao criar cliente.','error');}}
 async function deleteCustomer(email){if(!confirm(`Excluir o cliente ${email} e todos os registros dele?`)) return;setStatus(`Excluindo cliente ${email}...`,'');try{const response=await fetch(CUSTOMER_UPDATE_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'delete',email})});const data=await readApiJson(response,'Não foi possível excluir o cliente.');if(!response.ok) throw new Error(data.error||'Não foi possível excluir o cliente.');setStatus(`Cliente ${email} excluído com sucesso.`,`ok`);await loadCustomers();}catch(error){setStatus(error.message||'Erro ao excluir cliente.','error');}}
@@ -1119,7 +1148,17 @@ async function removeCustomerSample(email,paymentId,title){if(!confirm(`Remover 
 async function loadCustomers(){const response=await fetch(ADMIN_CUSTOMERS_ENDPOINT,{cache:'no-store'});const data=await readApiJson(response,'Não foi possível carregar clientes.');if(!response.ok) throw new Error(data.error||'Não foi possível carregar clientes.');customersCache=Array.isArray(data.customers)?data.customers:[];applyCustomerFilters();}
 async function loadTrafficStats(){const response=await fetch(`${STORE_CONFIG_ENDPOINT}?view=traffic`,{cache:'no-store'});const data=await readApiJson(response,'Não foi possível carregar visitas.');if(!response.ok) throw new Error(data.error||'Não foi possível carregar visitas.');updateTrafficStats(data.stats||{});}
 async function loadStoreData(){const localPackages={...(packagesCache||{})};const [configResponse,productsResponse]=await Promise.all([fetch(STORE_CONFIG_ENDPOINT,{cache:'no-store'}),fetch(ADMIN_PRODUCTS_ENDPOINT,{cache:'no-store'})]);const configData=await readApiJson(configResponse,'Não foi possível carregar a configuração da loja.');const productsData=await readApiJson(productsResponse,'Não foi possível carregar os produtos.');if(!configResponse.ok) throw new Error(configData.error||'Não foi possível carregar a configuração da loja.');if(!productsResponse.ok) throw new Error(productsData.error||'Não foi possível carregar os produtos.');storeConfigCache=configData.config||storeConfigCache;couponsCache=configData.coupons||{};packagesCache=mergeLocalPackages(storeConfigCache.packages||{},localPackages);storeConfigCache.packages=packagesCache;productsCache=Array.isArray(productsData.products)?productsData.products:[];selectedQuoteProductNames=selectedQuoteProductNames.filter(name=>productsCache.some(product=>product.nome===name));renderUiToggles();renderGlobalPricing();renderCoupons();renderPackages();renderProducts();renderProductAdmin();renderManualCustomerItems();renderProductLinkOptions();renderQuoteGenerator();}
-async function loadDashboard(showSuccess=false){setStatus('Carregando painel...','');try{await Promise.all([loadStoreData(),loadCustomers(),loadTrafficStats()]);setStatus(showSuccess?'Painel atualizado.':'Painel carregado com sucesso.','ok');}catch(error){customersCache=[];productsCache=[];updateTrafficStats({});renderCustomers([]);renderProducts();renderProductAdmin();renderQuoteGenerator();setStatus(error.message||'Erro ao carregar painel.','error');}}
+async function loadDashboard(showSuccess=false){
+setStatus('Carregando painel...','');
+const results=await Promise.allSettled([loadStoreData(),loadCustomers(),loadTrafficStats()]);
+const failed=results.filter(result=>result.status==='rejected');
+if(!failed.length){
+setStatus(showSuccess?'Painel atualizado.':'Painel carregado com sucesso.','ok');
+return;
+}
+const messages=failed.map(result=>result.reason?.message).filter(Boolean);
+setStatus(messages[0]||'Parte do painel não carregou. Tente atualizar novamente.','error');
+}
 document.getElementById('searchInput').addEventListener('input',applyCustomerFilters);
 document.getElementById('statusFilter').addEventListener('change',applyCustomerFilters);
 document.getElementById('whatsappSendButton').addEventListener('click',sendPendingWhatsAppMessage);
