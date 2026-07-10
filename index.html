@@ -2458,6 +2458,22 @@
         font-weight: 800;
         color: #ffc94a;
         margin-bottom: 0;
+        display: flex;
+        align-items: baseline;
+        gap: 6px;
+        flex-wrap: nowrap;
+        min-width: 0;
+        white-space: nowrap;
+    }
+
+    .sample-price-old {
+        opacity: 0.45;
+        flex: 0 1 auto;
+    }
+
+    .sample-price-current {
+        flex: 0 0 auto;
+        white-space: nowrap;
     }
 
     .card-actions {
@@ -5404,10 +5420,16 @@
     }
 
     // Função para criar um único card HTML
+    function getCatalogPriceMarkup(sample, effectivePrice) {
+        const hasPromo = effectivePrice !== roundCurrency(sample.valor || 0);
+        const oldPrice = Number(sample.valor || 0).toFixed(2);
+        const currentPrice = effectivePrice.toFixed(2);
+        return `${hasPromo ? `<s class="sample-price-old">R$ ${oldPrice}</s>` : ''}<span class="sample-price-current">R$ ${currentPrice}</span>`;
+    }
+
     function createSampleCard(sample, globalIndex) {
         const isSelected = selectedSamples.has(globalIndex);
         const effectivePrice = getEffectiveSamplePrice(sample);
-        const hasPromo = effectivePrice !== roundCurrency(sample.valor || 0);
         const card = document.createElement('div');
         card.className = `sample-card ${isSelected ? 'selected' : ''}`;
         card.dataset.index = globalIndex; // Adiciona o índice como um atributo de dado
@@ -5425,7 +5447,7 @@
             </div>
             <div class="card-content">
                 <div class="sample-name"><span>${displayName}</span></div>
-                <div class="sample-price">${hasPromo ? `<s style="opacity:.45; margin-right:6px;">R$ ${Number(sample.valor || 0).toFixed(2)}</s>` : ''}R$ ${effectivePrice.toFixed(2)}</div>
+                <div class="sample-price">${getCatalogPriceMarkup(sample, effectivePrice)}</div>
                 <div class="card-actions">
                     <button class="btn-preview" type="button" ${sample.video ? `data-video="${sample.video}"` : 'disabled'} aria-label="Ouvir prévia">▶</button>
                     <button class="btn-select ${isSelected ? 'remove' : 'add'}" data-index="${globalIndex}">
@@ -5467,8 +5489,7 @@
             const priceEl = card.querySelector('.sample-price');
             if (!sample || !priceEl) return;
             const effectivePrice = getEffectiveSamplePrice(sample);
-            const hasPromo = effectivePrice !== roundCurrency(sample.valor || 0);
-            priceEl.innerHTML = `${hasPromo ? `<s style="opacity:.45; margin-right:6px;">R$ ${Number(sample.valor || 0).toFixed(2)}</s>` : ''}R$ ${effectivePrice.toFixed(2)}`;
+            priceEl.innerHTML = getCatalogPriceMarkup(sample, effectivePrice);
         });
     }
 
