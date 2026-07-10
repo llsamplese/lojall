@@ -17,6 +17,11 @@ function parseBody(req) {
   return req.body;
 }
 
+function normalizeClientRequestId(value) {
+  const clean = String(value || "").trim().replace(/[^a-zA-Z0-9_-]/g, "").slice(0, 48);
+  return clean || `${Date.now()}-${Math.random().toString(36).slice(2, 12)}`;
+}
+
 function applyGlobalPricing(basePrice, globalPricing = {}) {
   const numericBase = roundCurrency(basePrice || 0);
   if (!globalPricing?.active || numericBase <= 0) {
@@ -190,7 +195,7 @@ function buildDescription(items) {
   return `Pedido LL Samples (${items.length} itens)`;
 }
 
-function buildPaymentBody(formData, items, totals, customerData = {}, customerAccessCode = "") {
+function buildPaymentBody(formData, items, totals, customerData = {}, customerAccessCode = "", clientRequestId = "") {
   const paymentMethodId = String(formData?.payment_method_id || "").trim();
   if (!paymentMethodId) {
     throw new Error("Método de pagamento não informado pelo checkout.");
@@ -234,7 +239,7 @@ function buildPaymentBody(formData, items, totals, customerData = {}, customerAc
       total_pix: totals.pix,
       total_card: totals.card
     },
-    external_reference: `llsamples-transparent-${Date.now()}`,
+    external_reference: `llsamples-transparent-${clientRequestId}`,
     notification_url: process.env.MP_NOTIFICATION_URL
   };
 
@@ -333,7 +338,9 @@ module.exports = async (req, res) => {
     const totals = await buildTotals(items, body.coupon?.code, body.packageSelection?.code);
     const payerEmail = String(body?.formData?.payer?.email || "").trim();
     const customerAccess = await assignCustomerAccessCode(payerEmail);
-    const paymentBody = buildPaymentBody(body.formData || {}, items, totals, body.customer || {}, customerAccess.code);
+    const clientRequestId = normalizeClientRequestId(body.clientRequestId);
+    const idempotencyKey = `llsamples-payment-${clientRequestId}`;
+    const paymentBody = buildPaymentBody(body.formData || {}, items, totals, body.customer || {}, customerAccess.code, clientRequestId);
     const githubLog = await appendOrderLead(buildLeadRecord(paymentBody, items, totals));
     await trackPaymentEvent("process_payment_started", paymentBody, items, totals, {
       pageType: body.context?.pageType,
@@ -345,7 +352,7 @@ module.exports = async (req, res) => {
       headers: {
         Authorization: `Bearer ${process.env.MP_ACCESS_TOKEN}`,
         "Content-Type": "application/json",
-        "X-Idempotency-Key": `llsamples-payment-${Date.now()}-${Math.random().toString(36).slice(2)}`
+        "X-Idempotency-Key": idempotencyKey
       },
       body: JSON.stringify(paymentBody)
     });
@@ -407,4 +414,3 @@ module.exports = async (req, res) => {
     });
   }
 };
-

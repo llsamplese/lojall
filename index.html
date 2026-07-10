@@ -3457,9 +3457,11 @@
     let paymentStatusPoll = null;
     let lastTransparentFormData = null;
     let paymentSubmitInProgress = false;
+    let currentPaymentRequestId = '';
+    let currentPaymentRequestSignature = '';
     let paypalConfig = null;
     let paypalSdkPromise = null;
-    const PAYMENT_REQUEST_TIMEOUT_MS = 30000;
+    const PAYMENT_REQUEST_TIMEOUT_MS = 60000;
     let mobileCartOpen = false;
     let storeConfig = {
         ui: {
@@ -3988,6 +3990,21 @@
         return { signal: controller.signal, timeoutId };
     }
 
+    function createPaymentRequestId() {
+        if (window.crypto?.randomUUID) {
+            return window.crypto.randomUUID();
+        }
+        return `ll-${Date.now()}-${Math.random().toString(36).slice(2, 12)}`;
+    }
+
+    function getPaymentRequestId(signature) {
+        if (!currentPaymentRequestId || currentPaymentRequestSignature !== signature) {
+            currentPaymentRequestId = createPaymentRequestId();
+            currentPaymentRequestSignature = signature;
+        }
+        return currentPaymentRequestId;
+    }
+
     function setAccessCodeNotice(code) {
         const notice = document.getElementById('checkoutAccessCodeNotice');
         if (!notice) {
@@ -4411,6 +4428,20 @@
         const totals = getCartTotals();
         const { signal, timeoutId } = createTimeoutSignal(PAYMENT_REQUEST_TIMEOUT_MS);
         const paymentMethodId = String(formData?.payment_method_id || '').trim();
+        const paymentRequestSignature = JSON.stringify({
+            paymentMethodId,
+            customer,
+            items: items.map(item => ({
+                title: item.nome,
+                unit_price: item.valor,
+                quantity: 1
+            })),
+            couponCode: appliedCoupon?.code || '',
+            packageCode: selectedPackageCode || '',
+            pixTotal: totals.pix,
+            cardTotal: totals.card
+        });
+        const clientRequestId = getPaymentRequestId(paymentRequestSignature);
 
         try {
             const response = await fetch(TRANSPARENT_PAYMENT_ENDPOINT, {
@@ -4427,6 +4458,7 @@
                     })),
                     coupon: appliedCoupon ? { code: appliedCoupon.code } : null,
                     packageSelection: selectedPackageCode ? { code: selectedPackageCode } : null,
+                    clientRequestId,
                     context: {
                         pageType: getPageDisplayContext(),
                         path: `${window.location.pathname || '/'}${window.location.search || ''}`
@@ -4467,10 +4499,10 @@
         } catch (error) {
             const timedOut = error?.name === 'AbortError';
             const message = timedOut
-                ? 'O Mercado Pago demorou para responder. Tente gerar o Pix novamente.'
+                ? 'O Mercado Pago ainda está processando. Aguarde alguns segundos ou tente gerar o Pix novamente.'
                 : (error.message || 'Não conseguimos gerar o pagamento agora.');
             setBrickStatus(message, 'error');
-            setCheckoutRetryPanel(true, 'Se o QR Code não apareceu, tente novamente. Se já pagou, use o botão "Já paguei" quando ele aparecer.');
+            setCheckoutRetryPanel(true, 'Se o QR Code não apareceu, tente novamente. Vamos reaproveitar a mesma tentativa de pagamento.');
             if (paymentMethodId === 'pix' || paymentMethodId === 'bank_transfer') {
                 trackCheckoutEvent('pix_failed', {
                     paymentMethodId,
@@ -4514,6 +4546,8 @@
         currentCustomerAccessCode = '';
         lastTransparentFormData = null;
         paymentSubmitInProgress = false;
+        currentPaymentRequestId = '';
+        currentPaymentRequestSignature = '';
         setAccessCodeNotice('');
 
         const mp = new MercadoPago(config.publicKey, { locale: 'pt-BR' });
