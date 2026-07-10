@@ -147,9 +147,8 @@ function resolvePackageForItems(items, packageCode, packages = {}) {
   };
 }
 
-async function sanitizeItems(items) {
+async function sanitizeItems(items, config = null) {
   if (!Array.isArray(items)) return [];
-  const config = await getStoreConfig();
   const overrides = config?.productOverrides || {};
   const globalPricing = config?.globalPricing || {};
   return items
@@ -168,15 +167,15 @@ async function sanitizeItems(items) {
     .filter((item) => item.title && item.unit_price > 0 && item.quantity > 0);
 }
 
-async function buildTotals(items, couponCode, packageCode) {
+async function buildTotals(items, couponCode, packageCode, config = null) {
   const subtotal = roundCurrency(items.reduce((sum, item) => sum + (item.unit_price * item.quantity), 0));
-  const config = await getStoreConfig();
   const packageState = resolvePackageForItems(items, packageCode, config?.packages || {});
   const couponSubtotal = packageState?.eligible ? packageState.appliedSubtotal : subtotal;
   const couponResult = await validateCoupon(couponCode, {
     subtotal: couponSubtotal,
     itemsCount: items.reduce((sum, item) => sum + item.quantity, 0),
-    hasPackage: Boolean(packageState?.eligible)
+    hasPackage: Boolean(packageState?.eligible),
+    storeConfig: config
   });
 
   if (couponCode && !couponResult.valid) {
@@ -331,6 +330,27 @@ async function trackPaymentEvent(eventName, paymentBody = {}, items = [], totals
   }
 }
 
+async function runAfterResponse(tasks, label = "checkout-post-response") {
+  for (let index = 0; index < tasks.length; index += 1) {
+    try {
+      await tasks[index]();
+    } catch (error) {
+      console.error(`[${label}:${index}]`, error);
+    }
+  }
+}
+
+function scheduleAfterResponse(tasks, label = "checkout-post-response") {
+  const promise = runAfterResponse(tasks, label);
+  if (typeof globalThis.waitUntil === "function") {
+    globalThis.waitUntil(promise);
+    return;
+  }
+  promise.catch((error) => {
+    console.error(`[${label}]`, error);
+  });
+}
+
 module.exports = async (req, res) => {
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
@@ -343,22 +363,27 @@ module.exports = async (req, res) => {
 
   try {
     const body = parseBody(req);
-    const items = await sanitizeItems(body.items);
+    const payerEmail = String(body?.formData?.payer?.email || "").trim();
+    const configPromise = getStoreConfig();
+    const customerAccessPromise = assignCustomerAccessCode(payerEmail)
+      .then((access) => ({ access }))
+      .catch((error) => ({ error }));
+    const config = await configPromise;
+    const items = await sanitizeItems(body.items, config);
     if (!items.length) {
       throw new Error("Nenhum item válido foi enviado.");
     }
 
-    const totals = await buildTotals(items, body.coupon?.code, body.packageSelection?.code);
-    const payerEmail = String(body?.formData?.payer?.email || "").trim();
-    const customerAccess = await assignCustomerAccessCode(payerEmail);
+    const totals = await buildTotals(items, body.coupon?.code, body.packageSelection?.code, config);
+    const customerAccessResult = await customerAccessPromise;
+    if (customerAccessResult.error) {
+      throw customerAccessResult.error;
+    }
+    const customerAccess = customerAccessResult.access;
     const clientRequestId = normalizeClientRequestId(body.clientRequestId);
     const idempotencyKey = `llsamples-payment-${clientRequestId}`;
     const paymentBody = buildPaymentBody(body.formData || {}, items, totals, body.customer || {}, customerAccess.code, clientRequestId);
-    const githubLog = await appendOrderLead(buildLeadRecord(paymentBody, items, totals));
-    await trackPaymentEvent("process_payment_started", paymentBody, items, totals, {
-      pageType: body.context?.pageType,
-      path: body.context?.path
-    });
+    const leadRecord = buildLeadRecord(paymentBody, items, totals);
 
     const response = await fetch(PAYMENT_API, {
       method: "POST",
@@ -372,39 +397,35 @@ module.exports = async (req, res) => {
 
     const data = await response.json();
     if (!response.ok) {
-      if (paymentBody.payment_method_id === "pix") {
-        await trackPaymentEvent("pix_failed", paymentBody, items, totals, {
-          pageType: body.context?.pageType,
-          path: body.context?.path,
-          status: data?.status,
-          statusDetail: data?.status_detail,
-          errorMessage: data?.message || "Mercado Pago rejeitou o pagamento."
-        });
-      }
-      return res.status(response.status).json({
+      const errorPayload = {
         error: data?.message || "Mercado Pago rejeitou o pagamento.",
         details: data
-      });
+      };
+      if (paymentBody.payment_method_id === "pix") {
+        res.status(response.status).json(errorPayload);
+        scheduleAfterResponse([
+          () => trackPaymentEvent("pix_failed", paymentBody, items, totals, {
+            pageType: body.context?.pageType,
+            path: body.context?.path,
+            status: data?.status,
+            statusDetail: data?.status_detail,
+            errorMessage: data?.message || "Mercado Pago rejeitou o pagamento."
+          })
+        ], "payment-failed-log");
+        return;
+      }
+      return res.status(response.status).json(errorPayload);
     }
 
-    if (paymentBody.payment_method_id === "pix") {
-      await trackPaymentEvent("pix_created", paymentBody, items, totals, {
-        pageType: body.context?.pageType,
-        path: body.context?.path,
-        paymentId: data.id,
-        status: data.status,
-        statusDetail: data.status_detail
-      });
-    }
-
-    return res.status(200).json({
+    res.status(200).json({
       payment_id: data.id,
       status: data.status,
       status_detail: data.status_detail,
       payment_type_id: data.payment_type_id,
       point_of_interaction_type: data?.point_of_interaction?.type || "",
-      github_logged: githubLog.saved,
-      github_log_path: githubLog.path || "",
+      github_logged: false,
+      github_log_pending: isGithubLoggingConfigured(),
+      github_log_path: "",
       github_log_enabled: isGithubLoggingConfigured(),
       customer_access_code: customerAccess.code,
       totals,
@@ -412,18 +433,44 @@ module.exports = async (req, res) => {
       qr_code_base64: data?.point_of_interaction?.transaction_data?.qr_code_base64 || "",
       ticket_url: data?.point_of_interaction?.transaction_data?.ticket_url || data?.transaction_details?.external_resource_url || ""
     });
+
+    const postResponseTasks = [
+      () => appendOrderLead(leadRecord)
+    ];
+
+    if (paymentBody.payment_method_id === "pix") {
+      postResponseTasks.push(
+        () => trackPaymentEvent("process_payment_started", paymentBody, items, totals, {
+          pageType: body.context?.pageType,
+          path: body.context?.path
+        }),
+        () => trackPaymentEvent("pix_created", paymentBody, items, totals, {
+          pageType: body.context?.pageType,
+          path: body.context?.path,
+          paymentId: data.id,
+          status: data.status,
+          statusDetail: data.status_detail
+        })
+      );
+    }
+
+    scheduleAfterResponse(postResponseTasks, "payment-success-log");
+    return;
   } catch (error) {
     const body = parseBody(req);
     const paymentMethodId = String(body?.formData?.payment_method_id || "").trim();
+    const errorPayload = {
+      error: error.message || "Erro ao processar pagamento transparente."
+    };
     if (paymentMethodId === "pix") {
-      await trackPaymentEvent("pix_failed", { payment_method_id: paymentMethodId }, [], {}, {
+      res.status(500).json(errorPayload);
+      scheduleAfterResponse([() => trackPaymentEvent("pix_failed", { payment_method_id: paymentMethodId }, [], {}, {
         pageType: body.context?.pageType,
         path: body.context?.path,
         errorMessage: error.message || "Erro ao processar pagamento transparente."
-      });
+      })], "payment-error-log");
+      return;
     }
-    return res.status(500).json({
-      error: error.message || "Erro ao processar pagamento transparente."
-    });
+    return res.status(500).json(errorPayload);
   }
 };
