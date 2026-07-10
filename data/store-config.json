@@ -27,7 +27,9 @@
   "globalPricing": {
     "active": false,
     "type": "percent",
-    "value": 50
+    "value": 50,
+    "label": "",
+    "validUntil": ""
   },
   "deletedCoupons": [
     "BEMVINDO10",

@@ -24,7 +24,9 @@ module.exports = {
   globalPricing: {
     active: false,
     type: "percent",
-    value: 0
+    value: 0,
+    label: "",
+    validUntil: ""
   },
   deletedCoupons: [],
   coupons: {},

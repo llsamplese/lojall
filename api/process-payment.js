@@ -22,9 +22,22 @@ function normalizeClientRequestId(value) {
   return clean || `${Date.now()}-${Math.random().toString(36).slice(2, 12)}`;
 }
 
+function isGlobalPricingExpired(globalPricing = {}) {
+  const validUntil = String(globalPricing.validUntil || "").trim();
+  if (!validUntil) {
+    return false;
+  }
+  const parsed = new Date(validUntil);
+  return !Number.isNaN(parsed.getTime()) && Date.now() > parsed.getTime();
+}
+
 function applyGlobalPricing(basePrice, globalPricing = {}) {
   const numericBase = roundCurrency(basePrice || 0);
   if (!globalPricing?.active || numericBase <= 0) {
+    return numericBase;
+  }
+
+  if (isGlobalPricingExpired(globalPricing)) {
     return numericBase;
   }
 
