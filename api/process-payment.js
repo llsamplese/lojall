@@ -1,11 +1,12 @@
 const { validateCoupon, roundCurrency } = require("../lib/coupon-utils");
-const { appendOrderLead, assignCustomerAccessCode, isGithubLoggingConfigured } = require("../lib/github-order-log");
+const { DEFAULT_NEW_ACCESS_CODE, appendOrderLead, assignCustomerAccessCode, isGithubLoggingConfigured } = require("../lib/github-order-log");
 const { appendTrafficRecord } = require("../lib/github-traffic-log");
 const { getStoreConfig } = require("../lib/store-config");
 const { buildCatalogMap, isProductOnline } = require("../lib/product-catalog");
 const { isWithinSchedule } = require("../lib/schedule-utils");
 
 const PAYMENT_API = "https://api.mercadopago.com/v1/payments";
+const CUSTOMER_ACCESS_TIMEOUT_MS = 700;
 
 function parseBody(req) {
   if (!req.body) return {};
@@ -22,6 +23,31 @@ function parseBody(req) {
 function normalizeClientRequestId(value) {
   const clean = String(value || "").trim().replace(/[^a-zA-Z0-9_-]/g, "").slice(0, 48);
   return clean || `${Date.now()}-${Math.random().toString(36).slice(2, 12)}`;
+}
+
+async function assignCustomerAccessCodeFast(email) {
+  let timeoutId = null;
+  const lookupPromise = assignCustomerAccessCode(email)
+    .then((access) => ({ access }))
+    .catch((error) => ({ error }));
+  const timeoutPromise = new Promise((resolve) => {
+    timeoutId = setTimeout(() => {
+      resolve({
+        access: {
+          code: DEFAULT_NEW_ACCESS_CODE,
+          source: "timeout_fallback"
+        }
+      });
+    }, CUSTOMER_ACCESS_TIMEOUT_MS);
+  });
+  const result = await Promise.race([lookupPromise, timeoutPromise]);
+  if (timeoutId) clearTimeout(timeoutId);
+  lookupPromise.then((lateResult) => {
+    if (lateResult.error) {
+      console.error("[customer-access-lookup]", lateResult.error);
+    }
+  });
+  return result;
 }
 
 function applyGlobalPricing(basePrice, globalPricing = {}) {
@@ -362,9 +388,7 @@ module.exports = async (req, res) => {
     const body = parseBody(req);
     const payerEmail = String(body?.formData?.payer?.email || "").trim();
     const configPromise = getStoreConfig();
-    const customerAccessPromise = assignCustomerAccessCode(payerEmail)
-      .then((access) => ({ access }))
-      .catch((error) => ({ error }));
+    const customerAccessPromise = assignCustomerAccessCodeFast(payerEmail);
     const config = await configPromise;
     const items = await sanitizeItems(body.items, config);
     if (!items.length) {
