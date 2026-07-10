@@ -1,5 +1,5 @@
 const { validateCoupon, roundCurrency } = require("../lib/coupon-utils");
-const { getStoreConfig } = require("../lib/store-config");
+const { getBundledStoreConfig } = require("../lib/bundled-store-config");
 
 function parseBody(req) {
   if (!req.body) return {};
@@ -23,7 +23,7 @@ module.exports = async (req, res) => {
     const body = parseBody(req);
     const subtotal = roundCurrency(body.subtotal || 0);
     const itemsCount = Number(body.itemsCount || 0);
-    const storeConfig = await getStoreConfig();
+    const storeConfig = getBundledStoreConfig();
     const result = await validateCoupon(body.code, {
       subtotal,
       itemsCount,

@@ -1,6 +1,6 @@
 const { validateCoupon, roundCurrency } = require("../lib/coupon-utils");
 const { DEFAULT_NEW_ACCESS_CODE, isGithubLoggingConfigured } = require("../lib/github-order-log");
-const { getStoreConfig } = require("../lib/store-config");
+const { getBundledStoreConfig } = require("../lib/bundled-store-config");
 const { buildCatalogMap, isProductOnline } = require("../lib/product-catalog");
 const { isWithinSchedule } = require("../lib/schedule-utils");
 
@@ -287,7 +287,7 @@ module.exports = async (req, res) => {
 
   try {
     const body = parseBody(req);
-    const config = await getStoreConfig();
+    const config = getBundledStoreConfig();
     const items = await sanitizeItems(body.items, config);
     if (!items.length) {
       throw new Error("Nenhum item válido foi enviado.");
