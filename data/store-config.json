@@ -25,7 +25,7 @@
     "lastAutoExpiredAt": ""
   },
   "globalPricing": {
-    "active": true,
+    "active": false,
     "type": "percent",
     "value": 50
   },
