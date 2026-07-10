@@ -25,9 +25,9 @@
     "lastAutoExpiredAt": ""
   },
   "globalPricing": {
-    "active": false,
-    "type": "fixed_price",
-    "value": 40
+    "active": true,
+    "type": "percent",
+    "value": 50
   },
   "deletedCoupons": [
     "BEMVINDO10",
