@@ -1,5 +1,6 @@
 module.exports = {
   "LL Bass Arrocha v3": "https://we.tl/t-VmsOdC1F66V6zPoJ",
+  "LL Guitarra Arrocha v3": "https://we.tl/t-jcThJ6pOcVB4k7Pk",
   "LL Pacote Produção Raphaela Santos": "https://we.tl/t-gjGBHcpx12CzaODG",
   "LL Drums Raphaela Santos": "https://we.tl/t-5HvABwb3JoHbDjGC",
   "LL Pacote Produção Chicotada": "https://we.tl/t-Pk6QWn6C9JCPU49x",
