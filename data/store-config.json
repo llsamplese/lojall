@@ -25,7 +25,7 @@
     "lastAutoExpiredAt": ""
   },
   "globalPricing": {
-    "active": false,
+    "active": true,
     "type": "percent",
     "value": 50,
     "label": "Promoção de Aniversário LL Samples (4 Anos)",
