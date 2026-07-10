@@ -32,6 +32,7 @@
     "type": "percent",
     "value": 50,
     "label": "Promoção de Aniversário \nLL Samples (4 Anos)",
+    "startsAt": "",
     "validUntil": "2026-07-18T23:59"
   },
   "deletedCoupons": [
@@ -49,7 +50,7 @@
       "minItems": 1,
       "validUntil": "",
       "usageLimit": "",
-      "usedCount": 14,
+      "usedCount": 15,
       "usedPayments": [
         "156281036638",
         "158213356094",
@@ -64,7 +65,8 @@
         "163411526370",
         "167277961739",
         "167279771267",
-        "168138329100"
+        "168138329100",
+        "168176527756"
       ],
       "expiredAt": "",
       "hidden": true,
