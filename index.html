@@ -3510,6 +3510,9 @@
             showAvailableCouponsPanelHome: true,
             showAvailableCouponsPanelProductDirect: true,
             showAvailableCouponsPanelPackageDirect: true,
+            showGlobalPromotionHome: true,
+            showGlobalPromotionProductDirect: true,
+            showGlobalPromotionPackageDirect: true,
             showPackagesPanel: true,
             showPackagesPanelHome: true,
             showPackagesPanelProductDirect: true,
@@ -3557,6 +3560,9 @@
             showAvailableCouponsPanelHome: legacyCouponPanel === false ? false : true,
             showAvailableCouponsPanelProductDirect: legacyCouponPanelDirect === false ? false : (legacyCouponPanel === false ? false : true),
             showAvailableCouponsPanelPackageDirect: legacyCouponPanelDirect === false ? false : (legacyCouponPanel === false ? false : true),
+            showGlobalPromotionHome: true,
+            showGlobalPromotionProductDirect: true,
+            showGlobalPromotionPackageDirect: true,
             showPackagesPanel: true,
             showPackagesPanelHome: true,
             showPackagesPanelProductDirect: legacyPackagesDirect === false ? false : true,
@@ -3921,28 +3927,29 @@
         if (!panel || !list || !empty) return;
 
         const ui = getStoreUi();
-        const coupons = getPublicCoupons();
-        const globalPricing = getActiveGlobalPricing();
         const pageContext = getPageDisplayContext();
 
-        const panelVisible = pageContext === 'package_direct'
+        const couponsVisible = pageContext === 'package_direct'
             ? ui.showAvailableCouponsPanelPackageDirect !== false
             : pageContext === 'product_direct'
                 ? ui.showAvailableCouponsPanelProductDirect !== false
                 : ui.showAvailableCouponsPanelHome !== false;
+        const globalPromotionVisible = pageContext === 'package_direct'
+            ? ui.showGlobalPromotionPackageDirect !== false
+            : pageContext === 'product_direct'
+                ? ui.showGlobalPromotionProductDirect !== false
+                : ui.showGlobalPromotionHome !== false;
+        const coupons = couponsVisible ? getPublicCoupons() : [];
+        const globalPricing = globalPromotionVisible ? getActiveGlobalPricing() : null;
 
-        if (!panelVisible) {
+        if ((!couponsVisible && !globalPromotionVisible) || (!coupons.length && !globalPricing)) {
             panel.style.display = 'none';
+            list.innerHTML = '';
+            empty.style.display = 'none';
             return;
         }
 
         panel.style.display = '';
-        if (!coupons.length && !globalPricing) {
-            list.innerHTML = '';
-            empty.style.display = 'block';
-            return;
-        }
-
         empty.style.display = 'none';
         const globalPricingMarkup = globalPricing ? `
             <article class="available-coupon-card">
