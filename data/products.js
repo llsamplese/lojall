@@ -1,14 +1,14 @@
 const LL_PRODUCTS = [
   {
-    "nome": "LL Bass Arrocha v3",
-    "valor": 80,
-    "video": "https://youtu.be/zsQqggDEqzMw",
-    "launchAt": ""
-  },
-  {
     "nome": "LL Guitarra Arrocha v3",
     "valor": 70,
     "video": "https://youtu.be/e7a5ZL7Qauk",
+    "launchAt": ""
+  },
+  {
+    "nome": "LL Bass Arrocha v3",
+    "valor": 80,
+    "video": "https://youtu.be/zsQqggDEqzMw",
     "launchAt": ""
   },
   {
