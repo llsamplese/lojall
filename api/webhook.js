@@ -1,5 +1,11 @@
 const crypto = require('node:crypto');
-const { appendOrderLead, hasApprovedPaymentLog, hasSuccessfulEmailLog, hasSuccessfulWhatsAppLog } = require('../lib/github-order-log');
+const {
+  appendOrderLeads,
+  getRecentOrderRecords,
+  hasApprovedPaymentLog,
+  hasSuccessfulEmailLog,
+  hasSuccessfulWhatsAppLog
+} = require('../lib/github-order-log');
 const { sendPurchaseApprovedEmail } = require('../lib/email-delivery');
 const { buildWhatsappConfirmationFromPayment, enviarWhatsappConfirmacaoCompra } = require('../lib/whatsapp-delivery');
 const { registerCouponUsage } = require('../lib/coupon-utils');
@@ -121,6 +127,67 @@ function normalizePayment(payment) {
   };
 }
 
+function buildPaymentLogRecord(normalizedPayment) {
+  return {
+    created_at: new Date().toISOString(),
+    status: normalizedPayment.status,
+    status_detail: normalizedPayment.status_detail,
+    payment_id: normalizedPayment.id,
+    payment_type_id: normalizedPayment.payment_type_id,
+    transaction_amount: normalizedPayment.transaction_amount,
+    payer_email: normalizedPayment.payer?.email || '',
+    customer_name: normalizedPayment.metadata?.customer_name || '',
+    customer_email: normalizedPayment.metadata?.customer_email || normalizedPayment.payer?.email || '',
+    customer_phone: normalizedPayment.metadata?.customer_phone || '',
+    customer_access_code: normalizedPayment.metadata?.customer_access_code || '',
+    coupon_code: normalizedPayment.metadata?.coupon_code || '',
+    items: Array.isArray(normalizedPayment.metadata?.original_items) ? normalizedPayment.metadata.original_items : []
+  };
+}
+
+function buildEmailLogRecord(normalizedPayment, email) {
+  return {
+    created_at: new Date().toISOString(),
+    event: email.sent ? 'email_sent' : 'email_error',
+    payment_id: normalizedPayment.id,
+    customer_email: normalizedPayment.metadata?.customer_email || normalizedPayment.payer?.email || '',
+    customer_name: normalizedPayment.metadata?.customer_name || '',
+    customer_access_code: normalizedPayment.metadata?.customer_access_code || '',
+    resend_email_id: email.id || '',
+    delivery_url: email.delivery_url || '',
+    error: email.sent ? '' : email.reason || 'email_send_failed'
+  };
+}
+
+function buildWhatsAppLogRecord(normalizedPayment, whatsapp, whatsappPayload = {}) {
+  return {
+    created_at: new Date().toISOString(),
+    event: whatsapp.sent ? 'whatsapp_sent' : 'whatsapp_error',
+    payment_id: normalizedPayment.id,
+    customer_email: normalizedPayment.metadata?.customer_email || normalizedPayment.payer?.email || '',
+    customer_name: normalizedPayment.metadata?.customer_name || '',
+    customer_phone: normalizedPayment.metadata?.customer_phone || '',
+    whatsapp_message_id: whatsapp.id || '',
+    whatsapp_to: whatsapp.to || '',
+    delivery_url: whatsappPayload.link || '',
+    error: whatsapp.sent ? '' : whatsapp.reason || 'whatsapp_not_sent'
+  };
+}
+
+async function safeAppendOrderLeads(records, context) {
+  const entries = Array.isArray(records) ? records.filter(Boolean) : [records].filter(Boolean);
+  if (!entries.length) {
+    return { saved: false, reason: 'empty_records' };
+  }
+
+  try {
+    return await appendOrderLeads(entries);
+  } catch (error) {
+    console.error(`[order-log:${context}]`, error);
+    return { saved: false, reason: error.message || 'order_log_failed' };
+  }
+}
+
 module.exports = async (req, res) => {
   if (req.method === 'GET') {
     return res.status(200).json({ ok: true, endpoint: 'mercado-pago-webhook' });
@@ -159,31 +226,68 @@ module.exports = async (req, res) => {
 
     const payment = await fetchPayment(resourceId);
     const normalizedPayment = normalizePayment(payment);
+    const isApproved = normalizedPayment.status === 'approved';
+    const recentRecords = isApproved ? await getRecentOrderRecords(3) : [];
 
-    const shouldSkipApprovedLog = normalizedPayment.status === 'approved'
-      && await hasApprovedPaymentLog(normalizedPayment.id);
-
-    if (!shouldSkipApprovedLog) {
-      await appendOrderLead({
-        created_at: new Date().toISOString(),
-        status: normalizedPayment.status,
-        status_detail: normalizedPayment.status_detail,
-        payment_id: normalizedPayment.id,
-        payment_type_id: normalizedPayment.payment_type_id,
-        transaction_amount: normalizedPayment.transaction_amount,
-        payer_email: normalizedPayment.payer?.email || '',
-        customer_name: normalizedPayment.metadata?.customer_name || '',
-        customer_email: normalizedPayment.metadata?.customer_email || normalizedPayment.payer?.email || '',
-        customer_phone: normalizedPayment.metadata?.customer_phone || '',
-        customer_access_code: normalizedPayment.metadata?.customer_access_code || '',
-        coupon_code: normalizedPayment.metadata?.coupon_code || '',
-        items: Array.isArray(normalizedPayment.metadata?.original_items) ? normalizedPayment.metadata.original_items : []
-      });
+    const deliveryLogs = [];
+    const paymentLog = buildPaymentLogRecord(normalizedPayment);
+    const shouldSkipApprovedLog = isApproved && await hasApprovedPaymentLog(normalizedPayment.id, recentRecords);
+    if (!isApproved || !shouldSkipApprovedLog) {
+      deliveryLogs.push(paymentLog);
     }
 
+    let orderLog = { saved: false, reason: 'not_flushed_yet' };
     let email = { sent: false, skipped: true, reason: 'payment_not_approved' };
     let whatsapp = { sent: false, skipped: true, reason: 'payment_not_approved' };
-    if (normalizedPayment.status === 'approved') {
+
+    if (isApproved) {
+      const [alreadySent, alreadyWhatsappSent] = await Promise.all([
+        hasSuccessfulEmailLog(normalizedPayment.id, recentRecords),
+        hasSuccessfulWhatsAppLog(normalizedPayment.id, recentRecords)
+      ]);
+
+      let whatsappPayload = {};
+      const emailPromise = alreadySent
+        ? Promise.resolve({ sent: false, skipped: true, reason: 'already_sent' })
+        : Promise.resolve()
+          .then(() => sendPurchaseApprovedEmail(normalizedPayment))
+          .catch((emailError) => {
+            console.error('[purchase-email]', emailError);
+            return {
+              sent: false,
+              skipped: false,
+              reason: emailError.message || 'email_send_failed'
+            };
+          });
+
+      const whatsappPromise = alreadyWhatsappSent
+        ? Promise.resolve({ sent: false, skipped: true, reason: 'already_sent' })
+        : Promise.resolve()
+          .then(async () => {
+            whatsappPayload = buildWhatsappConfirmationFromPayment(normalizedPayment);
+            return enviarWhatsappConfirmacaoCompra(whatsappPayload);
+          })
+          .catch((whatsappError) => {
+            console.error('[purchase-whatsapp]', whatsappError);
+            return {
+              sent: false,
+              skipped: false,
+              reason: whatsappError.message || 'whatsapp_send_failed'
+            };
+          });
+
+      [email, whatsapp] = await Promise.all([emailPromise, whatsappPromise]);
+
+      if (email.sent || !email.skipped) {
+        deliveryLogs.push(buildEmailLogRecord(normalizedPayment, email));
+      }
+
+      if (whatsapp.sent || !whatsapp.skipped || whatsapp.reason === 'whatsapp_not_configured') {
+        deliveryLogs.push(buildWhatsAppLogRecord(normalizedPayment, whatsapp, whatsappPayload));
+      }
+
+      orderLog = await safeAppendOrderLeads(deliveryLogs, 'approved-delivery');
+
       const couponCode = normalizedPayment.metadata?.coupon_code || '';
       if (couponCode) {
         try {
@@ -192,91 +296,8 @@ module.exports = async (req, res) => {
           console.error('[coupon-usage]', couponError);
         }
       }
-      const alreadySent = await hasSuccessfulEmailLog(normalizedPayment.id);
-      const alreadyWhatsappSent = await hasSuccessfulWhatsAppLog(normalizedPayment.id);
-      if (alreadySent) {
-        email = { sent: false, skipped: true, reason: 'already_sent' };
-        whatsapp = { sent: false, skipped: true, reason: 'already_processed' };
-      } else {
-        try {
-          email = await sendPurchaseApprovedEmail(normalizedPayment);
-          if (email.sent) {
-            await appendOrderLead({
-              created_at: new Date().toISOString(),
-              event: 'email_sent',
-              payment_id: normalizedPayment.id,
-              customer_email: normalizedPayment.metadata?.customer_email || normalizedPayment.payer?.email || '',
-              customer_name: normalizedPayment.metadata?.customer_name || '',
-              customer_access_code: normalizedPayment.metadata?.customer_access_code || '',
-              resend_email_id: email.id || '',
-              delivery_url: email.delivery_url || ''
-            });
-          }
-        } catch (emailError) {
-          email = {
-            sent: false,
-            skipped: false,
-            reason: emailError.message || 'email_send_failed'
-          };
-          await appendOrderLead({
-            created_at: new Date().toISOString(),
-            event: 'email_error',
-            payment_id: normalizedPayment.id,
-            customer_email: normalizedPayment.metadata?.customer_email || normalizedPayment.payer?.email || '',
-            customer_name: normalizedPayment.metadata?.customer_name || '',
-            error: email.reason
-          });
-          console.error('[purchase-email]', emailError);
-        }
-
-        if (alreadyWhatsappSent) {
-          whatsapp = { sent: false, skipped: true, reason: 'already_sent' };
-        } else {
-          try {
-            const whatsappPayload = buildWhatsappConfirmationFromPayment(normalizedPayment);
-            whatsapp = await enviarWhatsappConfirmacaoCompra(whatsappPayload);
-            if (whatsapp.sent) {
-              await appendOrderLead({
-                created_at: new Date().toISOString(),
-                event: 'whatsapp_sent',
-                payment_id: normalizedPayment.id,
-                customer_email: normalizedPayment.metadata?.customer_email || normalizedPayment.payer?.email || '',
-                customer_name: normalizedPayment.metadata?.customer_name || '',
-                customer_phone: normalizedPayment.metadata?.customer_phone || '',
-                whatsapp_message_id: whatsapp.id || '',
-                whatsapp_to: whatsapp.to || '',
-                delivery_url: whatsappPayload.link || ''
-              });
-            } else if (!whatsapp.skipped || whatsapp.reason === 'whatsapp_not_configured') {
-              await appendOrderLead({
-                created_at: new Date().toISOString(),
-                event: 'whatsapp_error',
-                payment_id: normalizedPayment.id,
-                customer_email: normalizedPayment.metadata?.customer_email || normalizedPayment.payer?.email || '',
-                customer_name: normalizedPayment.metadata?.customer_name || '',
-                customer_phone: normalizedPayment.metadata?.customer_phone || '',
-                error: whatsapp.reason || 'whatsapp_not_sent'
-              });
-            }
-          } catch (whatsappError) {
-            whatsapp = {
-              sent: false,
-              skipped: false,
-              reason: whatsappError.message || 'whatsapp_send_failed'
-            };
-            await appendOrderLead({
-              created_at: new Date().toISOString(),
-              event: 'whatsapp_error',
-              payment_id: normalizedPayment.id,
-              customer_email: normalizedPayment.metadata?.customer_email || normalizedPayment.payer?.email || '',
-              customer_name: normalizedPayment.metadata?.customer_name || '',
-              customer_phone: normalizedPayment.metadata?.customer_phone || '',
-              error: whatsapp.reason
-            });
-            console.error('[purchase-whatsapp]', whatsappError);
-          }
-        }
-      }
+    } else {
+      orderLog = await safeAppendOrderLeads(deliveryLogs, 'payment-status');
     }
 
     console.log(JSON.stringify({
@@ -287,7 +308,8 @@ module.exports = async (req, res) => {
       signature,
       payment: normalizedPayment,
       email,
-      whatsapp
+      whatsapp,
+      orderLog
     }));
 
     return res.status(200).json({
@@ -295,7 +317,8 @@ module.exports = async (req, res) => {
       notificationType,
       payment: normalizedPayment,
       email,
-      whatsapp
+      whatsapp,
+      orderLog
     });
   } catch (error) {
     console.error('[mercado-pago-webhook]', error);
