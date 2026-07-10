@@ -3147,7 +3147,7 @@
         </div>
     </div>
     <section id="availableCouponsPanel" class="available-coupons-panel" style="display:none;">
-        <div class="available-coupons-head">
+        <div id="availableCouponsHead" class="available-coupons-head">
             <div class="available-coupons-eyebrow">Cupons disponíveis</div>
         </div>
         <div id="availableCouponsList" class="available-coupons-list"></div>
@@ -3922,6 +3922,7 @@
 
     function renderAvailableCouponsPanel() {
         const panel = document.getElementById('availableCouponsPanel');
+        const head = document.getElementById('availableCouponsHead');
         const list = document.getElementById('availableCouponsList');
         const empty = document.getElementById('availableCouponsEmpty');
         if (!panel || !list || !empty) return;
@@ -3944,12 +3945,16 @@
 
         if ((!couponsVisible && !globalPromotionVisible) || (!coupons.length && !globalPricing)) {
             panel.style.display = 'none';
+            if (head) head.style.display = '';
             list.innerHTML = '';
             empty.style.display = 'none';
             return;
         }
 
         panel.style.display = '';
+        if (head) {
+            head.style.display = coupons.length ? '' : 'none';
+        }
         empty.style.display = 'none';
         const globalPricingMarkup = globalPricing ? `
             <article class="available-coupon-card">
