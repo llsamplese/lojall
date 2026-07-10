@@ -1,6 +1,8 @@
 ﻿const MERCADO_PAGO_API = "https://api.mercadopago.com/checkout/preferences";
 const { validateCoupon, roundCurrency } = require("../lib/coupon-utils");
 const { getStoreConfig } = require("../lib/store-config");
+const { buildCatalogMap, isProductOnline } = require("../lib/product-catalog");
+const { isWithinSchedule } = require("../lib/schedule-utils");
 
 function parseBody(req) {
   if (!req.body) return {};
@@ -18,22 +20,13 @@ function normalizeMode(mode) {
   return mode === "card" ? "card" : "pix";
 }
 
-function isGlobalPricingExpired(globalPricing = {}) {
-  const validUntil = String(globalPricing.validUntil || "").trim();
-  if (!validUntil) {
-    return false;
-  }
-  const parsed = new Date(validUntil);
-  return !Number.isNaN(parsed.getTime()) && Date.now() > parsed.getTime();
-}
-
 function applyGlobalPricing(basePrice, globalPricing = {}) {
   const numericBase = roundCurrency(basePrice || 0);
   if (!globalPricing?.active || numericBase <= 0) {
     return numericBase;
   }
 
-  if (isGlobalPricingExpired(globalPricing)) {
+  if (!isWithinSchedule(globalPricing)) {
     return numericBase;
   }
 
@@ -170,6 +163,7 @@ function buildPaymentMethods(mode) {
 async function sanitizeItems(items) {
   if (!Array.isArray(items)) return [];
   const config = await getStoreConfig();
+  const catalogMap = buildCatalogMap();
   const overrides = config?.productOverrides || {};
   const globalPricing = config?.globalPricing || {};
 
@@ -188,7 +182,10 @@ async function sanitizeItems(items) {
         download_url: String(item?.download_url || "").trim()
       };
     })
-    .filter((item) => item.title && item.unit_price > 0 && item.quantity > 0);
+    .filter((item) => {
+      const catalogProduct = catalogMap[item.title];
+      return item.title && item.unit_price > 0 && item.quantity > 0 && catalogProduct && isProductOnline(catalogProduct);
+    });
 }
 
 async function buildPreference(body) {

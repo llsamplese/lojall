@@ -2,6 +2,8 @@ const { validateCoupon, roundCurrency } = require("../lib/coupon-utils");
 const { appendOrderLead, assignCustomerAccessCode, isGithubLoggingConfigured } = require("../lib/github-order-log");
 const { appendTrafficRecord } = require("../lib/github-traffic-log");
 const { getStoreConfig } = require("../lib/store-config");
+const { buildCatalogMap, isProductOnline } = require("../lib/product-catalog");
+const { isWithinSchedule } = require("../lib/schedule-utils");
 
 const PAYMENT_API = "https://api.mercadopago.com/v1/payments";
 
@@ -22,22 +24,13 @@ function normalizeClientRequestId(value) {
   return clean || `${Date.now()}-${Math.random().toString(36).slice(2, 12)}`;
 }
 
-function isGlobalPricingExpired(globalPricing = {}) {
-  const validUntil = String(globalPricing.validUntil || "").trim();
-  if (!validUntil) {
-    return false;
-  }
-  const parsed = new Date(validUntil);
-  return !Number.isNaN(parsed.getTime()) && Date.now() > parsed.getTime();
-}
-
 function applyGlobalPricing(basePrice, globalPricing = {}) {
   const numericBase = roundCurrency(basePrice || 0);
   if (!globalPricing?.active || numericBase <= 0) {
     return numericBase;
   }
 
-  if (isGlobalPricingExpired(globalPricing)) {
+  if (!isWithinSchedule(globalPricing)) {
     return numericBase;
   }
 
@@ -149,6 +142,7 @@ function resolvePackageForItems(items, packageCode, packages = {}) {
 
 async function sanitizeItems(items, config = null) {
   if (!Array.isArray(items)) return [];
+  const catalogMap = buildCatalogMap();
   const overrides = config?.productOverrides || {};
   const globalPricing = config?.globalPricing || {};
   return items
@@ -164,7 +158,10 @@ async function sanitizeItems(items, config = null) {
       })()),
       quantity: Number(item?.quantity || 1)
     }))
-    .filter((item) => item.title && item.unit_price > 0 && item.quantity > 0);
+    .filter((item) => {
+      const catalogProduct = catalogMap[item.title];
+      return item.title && item.unit_price > 0 && item.quantity > 0 && catalogProduct && isProductOnline(catalogProduct);
+    });
 }
 
 async function buildTotals(items, couponCode, packageCode, config = null) {

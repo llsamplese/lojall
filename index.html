@@ -3505,7 +3505,8 @@
         ? window.LL_PRODUCTS.map((sample) => ({
             nome: String(sample?.nome || '').trim(),
             valor: Number(sample?.valor || 0),
-            video: String(sample?.video || '').trim()
+            video: String(sample?.video || '').trim(),
+            launchAt: String(sample?.launchAt || '').trim()
         })).filter((sample) => sample.nome)
         : [];
     const CHECKOUT_ENDPOINT = '/api/create-preference';
@@ -3634,11 +3635,8 @@
             return numericBase;
         }
 
-        if (globalPricing.validUntil) {
-            const validUntil = parseCouponDate(globalPricing.validUntil);
-            if (validUntil && Date.now() > validUntil.getTime()) {
-                return numericBase;
-            }
+        if (isScheduledForFuture(globalPricing.startsAt) || isScheduleExpired(globalPricing.validUntil)) {
+            return numericBase;
         }
 
         const value = Number(globalPricing.value || 0);
@@ -3703,6 +3701,11 @@
     function parseCouponDate(value) {
         const raw = String(value || '').trim();
         if (!raw) return null;
+        const match = raw.match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})(?::(\d{2}))?$/);
+        if (match) {
+            const [, year, month, day, hour, minute, second = '0'] = match;
+            return new Date(Date.UTC(Number(year), Number(month) - 1, Number(day), Number(hour) + 3, Number(minute), Number(second)));
+        }
         const parsed = new Date(raw);
         return Number.isNaN(parsed.getTime()) ? null : parsed;
     }
@@ -3710,16 +3713,32 @@
     function formatCouponDate(value) {
         const parsed = parseCouponDate(value);
         if (!parsed) return '';
-        return parsed.toLocaleString('pt-BR');
+        return parsed.toLocaleString('pt-BR', { timeZone: 'America/Fortaleza' });
+    }
+
+    function isScheduledForFuture(value) {
+        const parsed = parseCouponDate(value);
+        return Boolean(parsed && Date.now() < parsed.getTime());
+    }
+
+    function isScheduleExpired(value) {
+        const parsed = parseCouponDate(value);
+        return Boolean(parsed && Date.now() > parsed.getTime());
+    }
+
+    function isSampleOnline(sample) {
+        return !isScheduledForFuture(sample?.launchAt);
+    }
+
+    function getVisibleSamples() {
+        return samplesData.filter(isSampleOnline);
     }
 
     function getPublicCoupons() {
         const coupons = Object.values(storeConfig.coupons || {});
-        const now = Date.now();
         return coupons.filter((coupon) => {
             if (!coupon || !coupon.active || coupon.hidden) return false;
-            const validUntil = parseCouponDate(coupon.validUntil);
-            if (validUntil && now > validUntil.getTime()) return false;
+            if (isScheduleExpired(coupon.validUntil)) return false;
             return true;
         }).sort((a, b) => String(a.code || '').localeCompare(String(b.code || ''), 'pt-BR'));
     }
@@ -3834,12 +3853,7 @@
             return null;
         }
 
-        if (pricing.validUntil) {
-            const validUntil = parseCouponDate(pricing.validUntil);
-            if (validUntil && Date.now() > validUntil.getTime()) {
-                return null;
-            }
-        }
+        if (isScheduledForFuture(pricing.startsAt) || isScheduleExpired(pricing.validUntil)) return null;
 
         return pricing;
     }
@@ -5330,7 +5344,7 @@
             || entry.fullRawSlug === rawSlugTarget
             || entry.displayRawSlug === rawSlugTarget
         );
-        if (exactMatch) return exactMatch.index;
+        if (exactMatch && isSampleOnline(samplesData[exactMatch.index])) return exactMatch.index;
 
         const startsWithMatch = productEntries.find((entry) =>
             entry.normalizedName.startsWith(normalizedTarget + ' ')
@@ -5342,7 +5356,7 @@
             || entry.fullRawSlug.startsWith(rawSlugTarget + '-')
             || entry.displayRawSlug.startsWith(rawSlugTarget + '-')
         );
-        if (startsWithMatch) return startsWithMatch.index;
+        if (startsWithMatch && isSampleOnline(samplesData[startsWithMatch.index])) return startsWithMatch.index;
 
         const containsMatch = productEntries.find((entry) =>
             entry.normalizedName.includes(normalizedTarget)
@@ -5354,7 +5368,8 @@
             || entry.fullRawSlug.includes(rawSlugTarget)
             || entry.displayRawSlug.includes(rawSlugTarget)
         );
-        return containsMatch ? containsMatch.index : -1;
+        if (containsMatch && isSampleOnline(samplesData[containsMatch.index])) return containsMatch.index;
+        return -1;
     }
 
     function applyLinkedProductFromUrl() {
@@ -6020,7 +6035,7 @@
         const productMode = isProductMode();
         let filtered = productMode
             ? [samplesData[linkedProductIndex]].filter(Boolean)
-            : samplesData.filter((s) => {
+            : getVisibleSamples().filter((s) => {
                 if (activeStyle !== 'all' && getStyle(s.nome) !== activeStyle) return false;
                 if (activeInstrument !== 'all' && getInstrument(s.nome) !== activeInstrument) return false;
                 if (search && !normalizeForComparison(s.nome).includes(search)) return false;
@@ -6141,9 +6156,11 @@
             openDirectCheckoutIfRequested();
         });
         setInterval(() => {
+            renderCatalog(document.getElementById('searchInput')?.value || '');
+            updateProductFocusBanner();
             updateCouponCountdowns();
             updatePackageCountdowns();
-        }, 1000);
+        }, 30000);
         setCheckoutStatus('Selecione os samples para liberar o checkout.');
     })();
 </script>

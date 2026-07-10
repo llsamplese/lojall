@@ -50,6 +50,7 @@ function getProductsWithDownloads() {
       nome,
       valor: normalizePrice(product?.valor),
       video: String(product?.video || "").trim(),
+      launchAt: String(product?.launchAt || "").trim(),
       downloadUrl: String(DOWNLOAD_LINKS?.[nome] || "").trim(),
       order: index + 1,
       originalName: nome
@@ -63,6 +64,7 @@ function normalizeProduct(product, index) {
     nome: String(product?.nome || "").trim(),
     valor: normalizePrice(product?.valor),
     video: String(product?.video || "").trim(),
+    launchAt: String(product?.launchAt || "").trim(),
     downloadUrl: String(product?.downloadUrl || product?.download_url || "").trim(),
     order: Number.parseInt(String(product?.order || index + 1), 10) || index + 1
   };
@@ -101,7 +103,8 @@ function serializeProducts(products) {
   const publicProducts = products.map((product) => ({
     nome: product.nome,
     valor: product.valor,
-    video: product.video
+    video: product.video,
+    launchAt: product.launchAt || ""
   }));
 
   return `const LL_PRODUCTS = ${JSON.stringify(publicProducts, null, 2)};\n\nif (typeof module !== "undefined" && module.exports) {\n  module.exports = LL_PRODUCTS;\n}\n\nif (typeof window !== "undefined") {\n  window.LL_PRODUCTS = LL_PRODUCTS;\n}\n`;

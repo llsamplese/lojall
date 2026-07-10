@@ -29,6 +29,7 @@ module.exports = {
     type: "percent",
     value: 0,
     label: "",
+    startsAt: "",
     validUntil: ""
   },
   deletedCoupons: [],
