@@ -84,8 +84,10 @@
       "minItems": 1,
       "validUntil": "",
       "usageLimit": "",
-      "usedCount": 0,
-      "usedPayments": [],
+      "usedCount": 1,
+      "usedPayments": [
+        "168289821304"
+      ],
       "expiredAt": "",
       "hidden": true,
       "allowWithPackage": false
