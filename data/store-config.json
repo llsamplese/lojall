@@ -402,6 +402,18 @@
         "LL Bass Forró"
       ],
       "validUntil": ""
+    },
+    "COMBO2": {
+      "code": "COMBO2",
+      "label": "Combo com 4 samples",
+      "mode": "custom_choice",
+      "visibility": "direct_only",
+      "routeSlug": "combo2",
+      "active": true,
+      "quantity": 4,
+      "fixedPrice": 100,
+      "includedItems": [],
+      "validUntil": ""
     }
   }
 }
