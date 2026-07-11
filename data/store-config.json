@@ -30,7 +30,7 @@
   "globalPricing": {
     "active": true,
     "type": "percent",
-    "value": 50,
+    "value": 40,
     "label": "Promoção de Aniversário \nLL Samples (4 Anos)",
     "startsAt": "2026-07-11T00:00",
     "validUntil": "2026-07-18T23:59"
