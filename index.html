@@ -3938,6 +3938,19 @@
         });
     }
 
+    let countdownTimer = null;
+    function startCountdownTimer() {
+        if (countdownTimer) return;
+
+        const tick = () => {
+            updateCouponCountdowns();
+            updatePackageCountdowns();
+        };
+
+        tick();
+        countdownTimer = setInterval(tick, 1000);
+    }
+
     function selectPackage(code) {
         const normalized = String(code || '').trim().toUpperCase();
         const nextCode = selectedPackageCode === normalized ? '' : normalized;
@@ -6143,16 +6156,14 @@
             focusLinkedProductCard();
         });
         updateCouponUI();
-        updateCouponCountdowns();
-        updatePackageCountdowns();
+        startCountdownTimer();
         trackStorefrontVisit();
         loadStoreConfig().then(() => {
             applyLinkedProductFromUrl();
             updateProductFocusBanner();
             refreshRenderedCatalogPrices();
             updateCouponUI();
-            updateCouponCountdowns();
-            updatePackageCountdowns();
+            startCountdownTimer();
             openDirectCheckoutIfRequested();
         });
         setInterval(() => {
