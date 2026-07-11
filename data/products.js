@@ -6,6 +6,12 @@ const LL_PRODUCTS = [
     "launchAt": ""
   },
   {
+    "nome": "LL Piano Romântico v2",
+    "valor": 80,
+    "video": "https://youtu.be/_KZ5KONNyYY",
+    "launchAt": ""
+  },
+  {
     "nome": "LL Bass Arrocha v3",
     "valor": 80,
     "video": "https://youtu.be/zsQqggDEqzMw",
