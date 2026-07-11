@@ -2,7 +2,7 @@ const LL_PRODUCTS = [
   {
     "nome": "LL Piano Romântico v2",
     "valor": 80,
-    "video": "https://youtu.be/_KZ5KONNyYY",
+    "video": "https://youtu.be/Ot9999qmDIo",
     "launchAt": ""
   },
   {
