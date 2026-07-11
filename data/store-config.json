@@ -77,7 +77,7 @@
     "TESTE99": {
       "code": "TESTE99",
       "label": "Teste 99%",
-      "active": false,
+      "active": true,
       "type": "percent",
       "value": 99,
       "minSubtotal": 0,
