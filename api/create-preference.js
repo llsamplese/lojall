@@ -170,10 +170,16 @@ async function sanitizeItems(items) {
   return items
     .map((item) => {
       const title = String(item?.title || "").trim();
+      const catalogProduct = catalogMap[title];
+      if (!catalogProduct || !isProductOnline(catalogProduct)) {
+        return null;
+      }
+
       const override = overrides[title] || {};
+      const basePrice = Number(catalogProduct.valor || 0);
       const effectivePrice = override.active && Number(override.promoPrice) > 0
         ? Number(override.promoPrice)
-        : applyGlobalPricing(item?.unit_price || 0, globalPricing);
+        : applyGlobalPricing(basePrice, globalPricing);
 
       return {
         title,
@@ -182,10 +188,7 @@ async function sanitizeItems(items) {
         download_url: String(item?.download_url || "").trim()
       };
     })
-    .filter((item) => {
-      const catalogProduct = catalogMap[item.title];
-      return item.title && item.unit_price > 0 && item.quantity > 0 && catalogProduct && isProductOnline(catalogProduct);
-    });
+    .filter((item) => item && item.title && item.unit_price > 0 && item.quantity > 0);
 }
 
 async function buildPreference(body) {

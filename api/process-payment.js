@@ -145,22 +145,26 @@ async function sanitizeItems(items, config = null) {
   const overrides = config?.productOverrides || {};
   const globalPricing = config?.globalPricing || {};
   return items
-    .map((item) => ({
-      title: String(item?.title || "").trim(),
-      unit_price: roundCurrency((() => {
-        const title = String(item?.title || "").trim();
-        const override = overrides[title] || {};
-        if (override.active && Number(override.promoPrice) > 0) {
-          return override.promoPrice;
-        }
-        return applyGlobalPricing(item?.unit_price || 0, globalPricing);
-      })()),
-      quantity: Number(item?.quantity || 1)
-    }))
-    .filter((item) => {
-      const catalogProduct = catalogMap[item.title];
-      return item.title && item.unit_price > 0 && item.quantity > 0 && catalogProduct && isProductOnline(catalogProduct);
-    });
+    .map((item) => {
+      const title = String(item?.title || "").trim();
+      const catalogProduct = catalogMap[title];
+      if (!catalogProduct || !isProductOnline(catalogProduct)) {
+        return null;
+      }
+
+      const override = overrides[title] || {};
+      const basePrice = Number(catalogProduct.valor || 0);
+      const effectivePrice = override.active && Number(override.promoPrice) > 0
+        ? Number(override.promoPrice)
+        : applyGlobalPricing(basePrice, globalPricing);
+
+      return {
+        title,
+        unit_price: roundCurrency(effectivePrice),
+        quantity: Number(item?.quantity || 1)
+      };
+    })
+    .filter((item) => item && item.title && item.unit_price > 0 && item.quantity > 0);
 }
 
 async function buildTotals(items, couponCode, packageCode, config = null) {
