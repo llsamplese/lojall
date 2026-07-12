@@ -4308,23 +4308,6 @@
         });
     }
 
-    function getCompactFieldWrapper(input) {
-        const candidates = [];
-        let current = input.parentElement;
-        while (current && current.id !== 'paymentBrick_container' && candidates.length < 5) {
-            candidates.push(current);
-            current = current.parentElement;
-        }
-
-        return candidates.find((node) => {
-            const rect = node.getBoundingClientRect();
-            const text = (node.textContent || '').replace(/\s+/g, ' ').trim().toLowerCase();
-            return rect.height > 0
-                && rect.height < 180
-                && (text.includes('e-mail') || text.includes('email') || node.querySelector('input') === input);
-        }) || input.closest('label') || input.parentElement;
-    }
-
     function syncMercadoPagoEmailField() {
         const email = String(document.getElementById('checkoutCustomerEmail')?.value || '').trim();
         getPaymentBrickEmailInputs().forEach((input) => {
@@ -4335,14 +4318,6 @@
             }
             input.setAttribute('tabindex', '-1');
             input.setAttribute('aria-hidden', 'true');
-
-            const wrapper = getCompactFieldWrapper(input);
-            if (wrapper instanceof HTMLElement) {
-                wrapper.dataset.llHiddenMpEmail = 'true';
-                wrapper.style.display = 'none';
-            } else {
-                input.style.display = 'none';
-            }
         });
     }
 
