@@ -4285,13 +4285,20 @@
 
         return Array.from(container.querySelectorAll('input')).filter((input) => {
             if (!(input instanceof HTMLInputElement)) return false;
+            const nearbyText = [
+                input.closest('label')?.textContent,
+                input.parentElement?.textContent,
+                input.parentElement?.parentElement?.textContent,
+                input.parentElement?.parentElement?.parentElement?.textContent
+            ].join(' ').replace(/\s+/g, ' ').toLowerCase();
             const haystack = [
                 input.type,
                 input.name,
                 input.id,
                 input.placeholder,
                 input.getAttribute('aria-label'),
-                input.getAttribute('autocomplete')
+                input.getAttribute('autocomplete'),
+                nearbyText
             ].join(' ').toLowerCase();
 
             return input.type === 'email'
@@ -4339,20 +4346,36 @@
         });
     }
 
+    function runMercadoPagoEmailSyncBurst() {
+        syncMercadoPagoEmailField();
+        [80, 200, 500, 1000, 1800, 3000].forEach((delay) => {
+            setTimeout(syncMercadoPagoEmailField, delay);
+        });
+    }
+
     function observePaymentBrickOptions() {
         const container = document.getElementById('paymentBrick_container');
         if (!container) return;
 
         hideUnwantedPaymentOptions();
-        syncMercadoPagoEmailField();
+        runMercadoPagoEmailSyncBurst();
+
+        container.addEventListener('click', runMercadoPagoEmailSyncBurst);
+        container.addEventListener('change', runMercadoPagoEmailSyncBurst);
+        container.addEventListener('input', runMercadoPagoEmailSyncBurst);
 
         const observer = new MutationObserver(() => {
             hideUnwantedPaymentOptions();
-            syncMercadoPagoEmailField();
+            runMercadoPagoEmailSyncBurst();
         });
 
         observer.observe(container, { childList: true, subtree: true });
-        setTimeout(() => observer.disconnect(), 15000);
+        setTimeout(() => {
+            observer.disconnect();
+            container.removeEventListener('click', runMercadoPagoEmailSyncBurst);
+            container.removeEventListener('change', runMercadoPagoEmailSyncBurst);
+            container.removeEventListener('input', runMercadoPagoEmailSyncBurst);
+        }, 30000);
     }
 
     function stopPaymentStatusPolling() {
@@ -4863,11 +4886,11 @@
             callbacks: {
                 onReady: () => {
                     observePaymentBrickOptions();
-                    syncMercadoPagoEmailField();
+                    runMercadoPagoEmailSyncBurst();
                     setBrickStatus('', '');
                 },
                 onSubmit: ({ formData }) => {
-                    syncMercadoPagoEmailField();
+                    runMercadoPagoEmailSyncBurst();
                     const paymentMethodId = String(formData?.payment_method_id || '').trim();
                     if (paymentMethodId === 'pix' || paymentMethodId === 'bank_transfer') {
                         trackCheckoutEvent('pix_submit_clicked', { paymentMethodId });
