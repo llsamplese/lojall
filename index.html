@@ -4279,14 +4279,76 @@
         }
     }
 
+    function getPaymentBrickEmailInputs() {
+        const container = document.getElementById('paymentBrick_container');
+        if (!container) return [];
+
+        return Array.from(container.querySelectorAll('input')).filter((input) => {
+            if (!(input instanceof HTMLInputElement)) return false;
+            const haystack = [
+                input.type,
+                input.name,
+                input.id,
+                input.placeholder,
+                input.getAttribute('aria-label'),
+                input.getAttribute('autocomplete')
+            ].join(' ').toLowerCase();
+
+            return input.type === 'email'
+                || haystack.includes('email')
+                || haystack.includes('e-mail')
+                || haystack.includes('payer.email');
+        });
+    }
+
+    function getCompactFieldWrapper(input) {
+        const candidates = [];
+        let current = input.parentElement;
+        while (current && current.id !== 'paymentBrick_container' && candidates.length < 5) {
+            candidates.push(current);
+            current = current.parentElement;
+        }
+
+        return candidates.find((node) => {
+            const rect = node.getBoundingClientRect();
+            const text = (node.textContent || '').replace(/\s+/g, ' ').trim().toLowerCase();
+            return rect.height > 0
+                && rect.height < 180
+                && (text.includes('e-mail') || text.includes('email') || node.querySelector('input') === input);
+        }) || input.closest('label') || input.parentElement;
+    }
+
+    function syncMercadoPagoEmailField() {
+        const email = String(document.getElementById('checkoutCustomerEmail')?.value || '').trim();
+        getPaymentBrickEmailInputs().forEach((input) => {
+            if (input.value !== email) {
+                input.value = email;
+                input.dispatchEvent(new Event('input', { bubbles: true }));
+                input.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+            input.setAttribute('tabindex', '-1');
+            input.setAttribute('aria-hidden', 'true');
+
+            const wrapper = getCompactFieldWrapper(input);
+            if (wrapper instanceof HTMLElement) {
+                wrapper.dataset.llHiddenMpEmail = 'true';
+                wrapper.style.display = 'none';
+            } else {
+                input.style.display = 'none';
+            }
+        });
+    }
+
     function observePaymentBrickOptions() {
         const container = document.getElementById('paymentBrick_container');
         if (!container) return;
 
         hideUnwantedPaymentOptions();
+        syncMercadoPagoEmailField();
 
         const observer = new MutationObserver(() => {
             hideUnwantedPaymentOptions();
+            syncMercadoPagoEmailField();
         });
 
         observer.observe(container, { childList: true, subtree: true });
@@ -4416,6 +4478,18 @@
             throw new Error('Informe o telefone ou WhatsApp antes de pagar.');
         }
         return customer;
+    }
+
+    function buildPaymentFormDataWithCustomerEmail(formData, customer) {
+        const nextFormData = {
+            ...(formData || {}),
+            payer: {
+                ...((formData || {}).payer || {}),
+                email: String(customer?.email || '').trim()
+            }
+        };
+
+        return nextFormData;
     }
 
     async function loadTransparentCheckoutConfig() {
@@ -4633,10 +4707,11 @@
         lastTransparentFormData = formData;
         setCheckoutRetryPanel(false);
         const customer = validateCheckoutCustomer();
+        const paymentFormData = buildPaymentFormDataWithCustomerEmail(formData, customer);
         const items = getSelectedItems();
         const totals = getCartTotals();
         const { signal, timeoutId } = createTimeoutSignal(PAYMENT_REQUEST_TIMEOUT_MS);
-        const paymentMethodId = String(formData?.payment_method_id || '').trim();
+        const paymentMethodId = String(paymentFormData?.payment_method_id || '').trim();
         const paymentRequestSignature = JSON.stringify({
             paymentMethodId,
             customer,
@@ -4658,7 +4733,7 @@
                 headers: { 'Content-Type': 'application/json' },
                 signal,
                 body: JSON.stringify({
-                    formData,
+                    formData: paymentFormData,
                     customer,
                     items: items.map(item => ({
                         title: item.nome,
@@ -4742,6 +4817,7 @@
     async function renderTransparentCheckoutBrick() {
         const config = await loadTransparentCheckoutConfig();
         const totals = getCartTotals();
+        const customer = getCheckoutCustomer();
 
         if (!window.MercadoPago) {
             throw new Error('SDK do Mercado Pago não carregado.');
@@ -4764,7 +4840,10 @@
 
         brickController = await bricksBuilder.create('payment', 'paymentBrick_container', {
             initialization: {
-                amount: totals.pix
+                amount: totals.pix,
+                payer: {
+                    email: customer.email || ''
+                }
             },
             customization: {
                 visual: {
@@ -4784,9 +4863,11 @@
             callbacks: {
                 onReady: () => {
                     observePaymentBrickOptions();
+                    syncMercadoPagoEmailField();
                     setBrickStatus('', '');
                 },
                 onSubmit: ({ formData }) => {
+                    syncMercadoPagoEmailField();
                     const paymentMethodId = String(formData?.payment_method_id || '').trim();
                     if (paymentMethodId === 'pix' || paymentMethodId === 'bank_transfer') {
                         trackCheckoutEvent('pix_submit_clicked', { paymentMethodId });
@@ -6146,6 +6227,7 @@
     });
 
     window.addEventListener('resize', scheduleNameMarqueeUpdate);
+    document.getElementById('checkoutCustomerEmail')?.addEventListener('input', syncMercadoPagoEmailField);
 
     // Renderiza catálogo inicial
     (async function initStorefront() {
