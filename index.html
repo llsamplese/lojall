@@ -4285,12 +4285,7 @@
 
         return Array.from(container.querySelectorAll('input')).filter((input) => {
             if (!(input instanceof HTMLInputElement)) return false;
-            const nearbyText = [
-                input.closest('label')?.textContent,
-                input.parentElement?.textContent,
-                input.parentElement?.parentElement?.textContent,
-                input.parentElement?.parentElement?.parentElement?.textContent
-            ].join(' ').replace(/\s+/g, ' ').toLowerCase();
+            const directLabel = input.closest('label')?.textContent || '';
             const haystack = [
                 input.type,
                 input.name,
@@ -4298,7 +4293,7 @@
                 input.placeholder,
                 input.getAttribute('aria-label'),
                 input.getAttribute('autocomplete'),
-                nearbyText
+                directLabel
             ].join(' ').toLowerCase();
 
             return input.type === 'email'
