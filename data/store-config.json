@@ -207,13 +207,13 @@
       "code": "COMBO1",
       "label": "Combo 1",
       "active": true,
-      "quantity": 4,
-      "fixedPrice": 160,
+      "quantity": 7,
+      "fixedPrice": 150,
       "includedItems": [],
       "mode": "custom_choice",
       "visibility": "direct_only",
       "routeSlug": "combo1",
-      "validUntil": ""
+      "validUntil": "2026-07-18T23:59"
     },
     "COMBO3": {
       "code": "COMBO3",
