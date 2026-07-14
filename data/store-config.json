@@ -431,6 +431,23 @@
         "LL Bass Arrocha v3"
       ],
       "validUntil": ""
+    },
+    "ORCAMENTO4LLKEYSPA": {
+      "code": "ORCAMENTO4LLKEYSPA",
+      "label": "Orçamento 4 samples",
+      "mode": "fixed_set",
+      "visibility": "direct_only",
+      "routeSlug": "orcamento-4-ll-keys-pagodao-ll-bass-pagodao-v2-ll-guitarra-pagodao-v3-ll-pagodao-rythm-v2",
+      "active": true,
+      "quantity": 4,
+      "fixedPrice": 290,
+      "includedItems": [
+        "LL Keys Pagodao",
+        "LL Bass Pagodao v2",
+        "LL Guitarra Pagodao v3",
+        "LL Pagodao Rythm v2"
+      ],
+      "validUntil": ""
     }
   }
 }
