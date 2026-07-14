@@ -463,6 +463,22 @@
         "LL Drums Toque Dez"
       ],
       "validUntil": ""
+    },
+    "ORCAMENTO3LLGUITAR": {
+      "code": "ORCAMENTO3LLGUITAR",
+      "label": "Orçamento 3 samples",
+      "mode": "fixed_set",
+      "visibility": "direct_only",
+      "routeSlug": "orcamento-3-ll-guitarra-arrocha-v3-ll-drums-toque-dez-ll-bass-arrocha-v3-23000",
+      "active": true,
+      "quantity": 3,
+      "fixedPrice": 230,
+      "includedItems": [
+        "LL Guitarra Arrocha v3",
+        "LL Drums Toque Dez",
+        "LL Bass Arrocha v3"
+      ],
+      "validUntil": ""
     }
   }
 }
