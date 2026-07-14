@@ -448,6 +448,21 @@
         "LL Pagodao Rythm v2"
       ],
       "validUntil": ""
+    },
+    "ORCAMENTO2LLGUITAR3": {
+      "code": "ORCAMENTO2LLGUITAR3",
+      "label": "Orçamento 2 samples",
+      "mode": "fixed_set",
+      "visibility": "direct_only",
+      "routeSlug": "orcamento-2-ll-guitarra-arrocha-v3-ll-drums-toque-dez-15000",
+      "active": true,
+      "quantity": 2,
+      "fixedPrice": 150,
+      "includedItems": [
+        "LL Guitarra Arrocha v3",
+        "LL Drums Toque Dez"
+      ],
+      "validUntil": ""
     }
   }
 }
