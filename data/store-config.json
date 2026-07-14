@@ -416,6 +416,21 @@
       "fixedPrice": 100,
       "includedItems": [],
       "validUntil": "2026-07-13T23:59"
+    },
+    "ORCAMENTO2LLGUITAR2": {
+      "code": "ORCAMENTO2LLGUITAR2",
+      "label": "Orçamento 2 samples",
+      "mode": "fixed_set",
+      "visibility": "direct_only",
+      "routeSlug": "orcamento-2-ll-guitarra-arrocha-v3-ll-bass-arrocha-v3-16000",
+      "active": true,
+      "quantity": 2,
+      "fixedPrice": 160,
+      "includedItems": [
+        "LL Guitarra Arrocha v3",
+        "LL Bass Arrocha v3"
+      ],
+      "validUntil": ""
     }
   }
 }
