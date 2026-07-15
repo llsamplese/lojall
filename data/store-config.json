@@ -412,8 +412,8 @@
       "visibility": "direct_only",
       "routeSlug": "combo2",
       "active": true,
-      "quantity": 4,
-      "fixedPrice": 100,
+      "quantity": 7,
+      "fixedPrice": 150,
       "includedItems": [],
       "validUntil": "2026-07-18T23:59"
     },
