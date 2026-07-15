@@ -407,7 +407,7 @@
     },
     "COMBO2": {
       "code": "COMBO2",
-      "label": "Combo com 4 samples",
+      "label": "Combo com 7 samples",
       "mode": "custom_choice",
       "visibility": "direct_only",
       "routeSlug": "combo2",
