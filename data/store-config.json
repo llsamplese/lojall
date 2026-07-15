@@ -217,15 +217,15 @@
     },
     "COMBO3": {
       "code": "COMBO3",
-      "label": "Combo com 7 samples",
+      "label": "Combo com 10 samples",
       "mode": "custom_choice",
       "visibility": "direct_only",
       "routeSlug": "combo3",
       "active": true,
-      "quantity": 3,
-      "fixedPrice": 100,
+      "quantity": 10,
+      "fixedPrice": 200,
       "includedItems": [],
-      "validUntil": "2026-04-25T23:59"
+      "validUntil": "2026-07-18T23:59"
     },
     "ORCAMENTO2LLDRUMSC": {
       "code": "ORCAMENTO2LLDRUMSC",
