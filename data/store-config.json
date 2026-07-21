@@ -479,6 +479,24 @@
         "LL Bass Arrocha v3"
       ],
       "validUntil": ""
+    },
+    "ORCAMENTO5LLACORDE": {
+      "code": "ORCAMENTO5LLACORDE",
+      "label": "Orçamento 5 samples",
+      "mode": "fixed_set",
+      "visibility": "direct_only",
+      "routeSlug": "orcamento-5-ll-acordeon-arrasta-pe-ll-acordeon-pe-de-serra-ll-pe-de-serra-drums-e-perc-ll",
+      "active": true,
+      "quantity": 5,
+      "fixedPrice": 160,
+      "includedItems": [
+        "LL Acordeon Arrasta-Pe",
+        "LL Acordeon Pé-de-Serra",
+        "LL Pe de Serra Drums e Perc",
+        "LL Guitarra Piseiro",
+        "LL Guitarra Arrasta-Pe"
+      ],
+      "validUntil": ""
     }
   }
 }
