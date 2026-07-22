@@ -121,7 +121,7 @@
       "minSubtotal": 0,
       "minItems": 1,
       "usageLimit": "",
-      "usedCount": 18,
+      "usedCount": 17,
       "usedPayments": [
         "157228849830",
         "156504325981",
@@ -139,18 +139,17 @@
         "166015909245",
         "166322168691",
         "167211688218",
-        "167781447070",
-        "170081336392"
+        "167781447070"
       ],
       "hidden": false,
-      "validUntil": "",
+      "validUntil": "2026-07-22T23:59",
       "expiredAt": "2026-07-22T23:10:39.763Z",
       "allowWithPackage": false
     },
     "LL20": {
       "code": "LL20",
       "label": "20%OFF",
-      "active": false,
+      "active": true,
       "type": "percent",
       "value": 20,
       "minSubtotal": 0,
@@ -166,7 +165,7 @@
       "usedCount": 5,
       "expiredAt": "2026-06-29T05:20:45.787Z",
       "usageLimit": "",
-      "hidden": false,
+      "hidden": true,
       "allowWithPackage": false
     },
     "LL30": {
