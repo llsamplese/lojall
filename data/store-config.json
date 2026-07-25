@@ -512,6 +512,22 @@
         "LL Acordeon Piseiro"
       ],
       "validUntil": ""
+    },
+    "ORCAMENTO3LLDRUMSL": {
+      "code": "ORCAMENTO3LLDRUMSL",
+      "label": "Orçamento 3 samples",
+      "mode": "fixed_set",
+      "visibility": "direct_only",
+      "routeSlug": "orcamento-3-ll-drums-leo-foguete-ll-acordeon-piseiro-ll-bass-piseiro-v2-19000",
+      "active": true,
+      "quantity": 3,
+      "fixedPrice": 190,
+      "includedItems": [
+        "LL Drums Leo Foguete",
+        "LL Acordeon Piseiro",
+        "LL Bass Piseiro v2"
+      ],
+      "validUntil": ""
     }
   }
 }
