@@ -497,6 +497,21 @@
         "LL Guitarra Arrasta-Pe"
       ],
       "validUntil": ""
+    },
+    "ORCAMENTO2LLDRUMSL": {
+      "code": "ORCAMENTO2LLDRUMSL",
+      "label": "Orçamento 2 samples",
+      "mode": "fixed_set",
+      "visibility": "direct_only",
+      "routeSlug": "orcamento-2-ll-drums-leo-foguete-ll-acordeon-piseiro-13000",
+      "active": true,
+      "quantity": 2,
+      "fixedPrice": 130,
+      "includedItems": [
+        "LL Drums Leo Foguete",
+        "LL Acordeon Piseiro"
+      ],
+      "validUntil": ""
     }
   }
 }
