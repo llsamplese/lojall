@@ -213,7 +213,7 @@
       "mode": "custom_choice",
       "visibility": "direct_only",
       "routeSlug": "combo1",
-      "validUntil": "2026-07-19T23:59"
+      "validUntil": "2026-07-26T23:59"
     },
     "COMBO3": {
       "code": "COMBO3",
