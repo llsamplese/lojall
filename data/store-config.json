@@ -208,12 +208,12 @@
       "label": "Combo 1",
       "active": true,
       "quantity": 4,
-      "fixedPrice": 100,
+      "fixedPrice": 120,
       "includedItems": [],
       "mode": "custom_choice",
       "visibility": "direct_only",
       "routeSlug": "combo1",
-      "validUntil": "2026-07-18T23:59"
+      "validUntil": "2026-07-19T23:59"
     },
     "COMBO3": {
       "code": "COMBO3",
