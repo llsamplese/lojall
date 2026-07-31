@@ -154,7 +154,7 @@
       "value": 20,
       "minSubtotal": 0,
       "minItems": 1,
-      "validUntil": "",
+      "validUntil": "2026-08-01T23:59",
       "usedPayments": [
         "155988280750",
         "155667933469",
@@ -165,7 +165,7 @@
       "usedCount": 5,
       "expiredAt": "2026-06-29T05:20:45.787Z",
       "usageLimit": "",
-      "hidden": true,
+      "hidden": false,
       "allowWithPackage": false
     },
     "LL30": {
