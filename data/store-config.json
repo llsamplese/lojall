@@ -154,7 +154,7 @@
       "value": 20,
       "minSubtotal": 0,
       "minItems": 1,
-      "validUntil": "2026-08-01T09:16",
+      "validUntil": "2026-08-01T23:59",
       "usedPayments": [
         "155988280750",
         "155667933469",
