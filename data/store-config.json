@@ -149,12 +149,12 @@
     "LL20": {
       "code": "LL20",
       "label": "20%OFF",
-      "active": true,
+      "active": false,
       "type": "percent",
       "value": 20,
       "minSubtotal": 0,
       "minItems": 1,
-      "validUntil": "2026-08-01T23:59",
+      "validUntil": "",
       "usedPayments": [
         "155988280750",
         "155667933469",
@@ -163,7 +163,7 @@
         "163969847546"
       ],
       "usedCount": 5,
-      "expiredAt": "2026-06-29T05:20:45.787Z",
+      "expiredAt": "2026-08-02T00:03:30.474Z",
       "usageLimit": "",
       "hidden": false,
       "allowWithPackage": false
