@@ -149,9 +149,9 @@
     "LL20": {
       "code": "LL20",
       "label": "Bem-vindo 10%",
-      "active": false,
+      "active": true,
       "type": "percent",
-      "value": 10,
+      "value": 20,
       "minSubtotal": 0,
       "minItems": 1,
       "validUntil": "",
