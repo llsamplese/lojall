@@ -151,7 +151,7 @@
       "label": "20% OFF",
       "active": true,
       "type": "percent",
-      "value": 10,
+      "value": 20,
       "minSubtotal": 0,
       "minItems": 1,
       "validUntil": "2026-08-09T07:20",
