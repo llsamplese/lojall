@@ -115,7 +115,7 @@
     "LL15": {
       "code": "LL15",
       "label": "Bem-vindo 15%",
-      "active": false,
+      "active": true,
       "type": "percent",
       "value": 15,
       "minSubtotal": 0,
@@ -142,31 +142,28 @@
         "167781447070"
       ],
       "hidden": false,
-      "validUntil": "",
+      "validUntil": "2026-08-09T07:16",
       "expiredAt": "2026-08-07T00:07:26.583Z",
       "allowWithPackage": false
     },
     "LL20": {
       "code": "LL20",
-      "label": "20%OFF",
-      "active": true,
+      "label": "Bem-vindo 10%",
+      "active": false,
       "type": "percent",
-      "value": 20,
+      "value": 10,
       "minSubtotal": 0,
       "minItems": 1,
       "validUntil": "",
       "usedPayments": [
-        "155988280750",
-        "155667933469",
-        "159641913682",
-        "162430460852",
-        "163969847546",
-        "172173909376"
+        "157067961813",
+        "157633622387",
+        "159361582283"
       ],
-      "usedCount": 6,
-      "expiredAt": "2026-08-03T00:36:33.458Z",
+      "usedCount": 3,
+      "expiredAt": "2026-06-16T01:03:31.301Z",
       "usageLimit": "",
-      "hidden": true,
+      "hidden": false,
       "allowWithPackage": false
     },
     "LL30": {
