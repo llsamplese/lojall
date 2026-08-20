@@ -1,4 +1,5 @@
 module.exports = {
+  "LL Drums Heitor Santos": "https://we.tl/t-ghGtTtk3hg2wLYVL",
   "LL Piano Romântico v2": "https://we.tl/t-y7uQAiHB0vSAfMbs",
   "LL Guitarra Arrocha v3": "https://we.tl/t-jcThJ6pOcVB4k7Pk",
   "LL Bass Arrocha v3": "https://we.tl/t-VmsOdC1F66V6zPoJ",
