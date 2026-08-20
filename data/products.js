@@ -1,5 +1,11 @@
 const LL_PRODUCTS = [
   {
+    "nome": "LL Drums Heitor Santos",
+    "valor": 70,
+    "video": "https://youtu.be/FOiDZw_SCGM",
+    "launchAt": ""
+  },
+  {
     "nome": "LL Piano Romântico v2",
     "valor": 80,
     "video": "https://youtu.be/Ot9999qmDIo",
