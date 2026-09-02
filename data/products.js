@@ -6,6 +6,12 @@ const LL_PRODUCTS = [
     "launchAt": ""
   },
   {
+    "nome": "LL Drums Wesley Safadão",
+    "valor": 70,
+    "video": "https://youtu.be/0GRa4AS7i8U",
+    "launchAt": ""
+  },
+  {
     "nome": "LL Drums Heitor Santos",
     "valor": 70,
     "video": "https://youtu.be/FOiDZw_SCGM",
