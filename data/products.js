@@ -1,14 +1,14 @@
 const LL_PRODUCTS = [
   {
-    "nome": "LL Drums Wesley Safadão",
-    "valor": 70,
-    "video": "https://youtu.be/0GRa4AS7i8U",
-    "launchAt": ""
-  },
-  {
     "nome": "LL Drums Zé Vaqueiro Forrozão",
     "valor": 70,
     "video": "https://youtu.be/u1IzGTX4mig",
+    "launchAt": ""
+  },
+  {
+    "nome": "LL Drums Wesley Safadão",
+    "valor": 70,
+    "video": "https://youtu.be/0GRa4AS7i8U",
     "launchAt": ""
   },
   {
