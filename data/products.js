@@ -6,6 +6,12 @@ const LL_PRODUCTS = [
     "launchAt": ""
   },
   {
+    "nome": "LL Drums Zé Vaqueiro Forrozão",
+    "valor": 70,
+    "video": "https://youtu.be/u1IzGTX4mig",
+    "launchAt": ""
+  },
+  {
     "nome": "LL Drums Cumbia",
     "valor": 70,
     "video": "https://youtu.be/j-tpEKqYQt0",
