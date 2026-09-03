@@ -1,5 +1,6 @@
 module.exports = {
   "LL Drums Wesley Safadão": "https://we.tl/t-jx5OJ88CkjCp6xsW",
+  "LL Drums Zé Vaqueiro Forrozão": "https://we.tl/t-SnM3PKtbwZwjBic0",
   "LL Drums Cumbia": "https://we.tl/t-98aoR72u92PvxoeZ",
   "LL Drums Heitor Santos": "https://we.tl/t-ghGtTtk3hg2wLYVL",
   "LL Piano Romântico v2": "https://we.tl/t-y7uQAiHB0vSAfMbs",
