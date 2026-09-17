@@ -141,7 +141,7 @@
         "167211688218",
         "167781447070"
       ],
-      "hidden": false,
+      "hidden": true,
       "validUntil": "",
       "expiredAt": "2026-08-07T00:07:26.583Z",
       "allowWithPackage": false
