@@ -145,8 +145,8 @@
         "178618846599",
         "179601587408"
       ],
-      "hidden": true,
-      "validUntil": "",
+      "hidden": false,
+      "validUntil": "2026-09-20T23:59",
       "expiredAt": "2026-08-07T00:07:26.583Z",
       "allowWithPackage": false
     },
