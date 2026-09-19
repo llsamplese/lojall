@@ -6,6 +6,12 @@ const LL_PRODUCTS = [
     "launchAt": ""
   },
   {
+    "nome": "LL Drums Igor Ferrari",
+    "valor": 75,
+    "video": "https://youtu.be/WWdh3iFkUKk",
+    "launchAt": ""
+  },
+  {
     "nome": "LL Drums Zé Vaqueiro Forrozão",
     "valor": 70,
     "video": "https://youtu.be/u1IzGTX4mig",
