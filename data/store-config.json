@@ -550,6 +550,23 @@
         "LL Bass Piseiro v2"
       ],
       "validUntil": ""
+    },
+    "ORCAMENTO4LLCAVACO": {
+      "code": "ORCAMENTO4LLCAVACO",
+      "label": "Orçamento 4 samples",
+      "mode": "fixed_set",
+      "visibility": "direct_only",
+      "routeSlug": "orcamento-4-ll-cavaco-prime-v2-ll-bass-pagode-ll-violao-pagode-samba-ll-pagode-drums-e-per",
+      "active": true,
+      "quantity": 4,
+      "fixedPrice": 250,
+      "includedItems": [
+        "LL Cavaco Prime v2",
+        "LL Bass Pagode",
+        "LL Violao Pagode Samba",
+        "LL Pagode Drums e Percussion"
+      ],
+      "validUntil": ""
     }
   }
 }
