@@ -43,7 +43,7 @@
     "TESTE98": {
       "code": "TESTE98",
       "label": "Teste 98%",
-      "active": false,
+      "active": true,
       "type": "percent",
       "value": 98,
       "minSubtotal": 0,
