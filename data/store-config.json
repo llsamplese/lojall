@@ -582,6 +582,20 @@
         "LL Metais 2.0"
       ],
       "validUntil": ""
+    },
+    "ORCAMENTO1LLMETAIS2": {
+      "code": "ORCAMENTO1LLMETAIS2",
+      "label": "Orçamento 1 sample",
+      "mode": "fixed_set",
+      "visibility": "direct_only",
+      "routeSlug": "orcamento-1-ll-metais-2-0-6500",
+      "active": true,
+      "quantity": 1,
+      "fixedPrice": 65,
+      "includedItems": [
+        "LL Metais 2.0"
+      ],
+      "validUntil": ""
     }
   }
 }
