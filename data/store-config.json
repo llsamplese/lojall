@@ -568,6 +568,20 @@
         "LL Pagode Drums e Percussion"
       ],
       "validUntil": ""
+    },
+    "ORCAMENTO1LLMETAIS": {
+      "code": "ORCAMENTO1LLMETAIS",
+      "label": "Orçamento 1 sample",
+      "mode": "fixed_set",
+      "visibility": "direct_only",
+      "routeSlug": "orcamento-1-ll-metais-2-0-6600",
+      "active": true,
+      "quantity": 1,
+      "fixedPrice": 66,
+      "includedItems": [
+        "LL Metais 2.0"
+      ],
+      "validUntil": ""
     }
   }
 }
